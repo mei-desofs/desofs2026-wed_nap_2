@@ -1,0 +1,169 @@
+@startuml ArcadeHaven_Domain Model
+
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+
+' ─────────────────────────────────────────
+' AGGREGATE: User
+' ─────────────────────────────────────────
+package "User Aggregate" {
+
+    class User <<Aggregate Root>> {
+        - id: UUID
+        - username: String
+        - email: String
+        - passwordHash: String
+        - role: Role
+        - active: boolean
+        - createdAt: LocalDateTime
+        --
+        + deactivate(): void
+        + changeRole(role: Role): void
+        + isActive(): boolean
+    }
+
+    enum Role <<Value Object>> {
+        ADMIN
+        PUBLISHER
+        BUYER
+    }
+
+    User "1" --> "1" Role
+}
+
+' ─────────────────────────────────────────
+' AGGREGATE: Game
+' ─────────────────────────────────────────
+package "Game Aggregate" {
+
+    class Game <<Aggregate Root>> {
+        - id: UUID
+        - title: String
+        - description: String
+        - price: BigDecimal
+        - status: GameStatus
+        - rawgApiId: String
+        - createdAt: LocalDateTime
+        --
+        + approve(): void
+        + remove(): void
+        + addFile(filename, path): void
+        + updatePrice(price: BigDecimal): void
+    }
+
+    class Category <<Entity>> {
+        - id: UUID
+        - name: String
+        - description: String
+    }
+
+    class GameFile <<Value Object>> {
+        - filename: String
+        - path: String
+        - fileType: FileType
+        - uploadedAt: LocalDateTime
+    }
+
+    enum GameStatus <<Value Object>> {
+        PENDING
+        ACTIVE
+        REMOVED
+    }
+
+    enum FileType <<Value Object>> {
+        IMAGE
+        SCREENSHOT
+        COVER
+    }
+
+    Game "1" --> "1" GameStatus
+    Game "1" *--> "0..*" GameFile
+    Game "0..*" --> "1..*" Category
+    GameFile "1" --> "1" FileType
+}
+
+' ─────────────────────────────────────────
+' AGGREGATE: Order
+' ─────────────────────────────────────────
+package "Order Aggregate" {
+
+    class Order <<Aggregate Root>> {
+        - id: UUID
+        - totalPrice: BigDecimal
+        - status: OrderStatus
+        - invoicePath: String
+        - createdAt: LocalDateTime
+        --
+        + complete(invoicePath: String): void
+        + cancel(): void
+        + calculateTotal(): BigDecimal
+    }
+
+    class OrderItem <<Entity>> {
+        - id: UUID
+        - price: BigDecimal
+        - activationKey: String
+        --
+        + generateActivationKey(): void
+    }
+
+    enum OrderStatus <<Value Object>> {
+        PENDING
+        COMPLETED
+        CANCELLED
+    }
+
+    Order "1" *--> "1..*" OrderItem
+    Order "1" --> "1" OrderStatus
+}
+
+' ─────────────────────────────────────────
+' AGGREGATE: Library
+' ─────────────────────────────────────────
+package "Library Aggregate" {
+
+    class Library <<Aggregate Root>> {
+        - id: UUID
+        - createdAt: LocalDateTime
+        --
+        + addGame(game, activationKey): void
+        + ownsGame(gameId: UUID): boolean
+        + getEntries(): List<LibraryEntry>
+    }
+
+    class LibraryEntry <<Entity>> {
+        - id: UUID
+        - activationKey: String
+        - acquiredAt: LocalDateTime
+        - status: EntryStatus
+        --
+        + refund(): void
+        + suspend(): void
+    }
+
+    enum EntryStatus <<Value Object>> {
+        ACTIVE
+        REFUNDED
+        SUSPENDED
+    }
+
+    Library "1" *--> "0..*" LibraryEntry
+    LibraryEntry "1" --> "1" EntryStatus
+}
+
+' ─────────────────────────────────────────
+' RELAÇÕES ENTRE AGREGADOS
+' ─────────────────────────────────────────
+User "1" --o "1" Library : owns >
+User "1" --o "0..*" Order : places >
+User "1" --o "0..*" Game : publishes >
+
+Order "1" --o "1..*" Game : references >
+OrderItem "1" --o "1" Game : references >
+
+LibraryEntry "1" --o "1" Game : references >
+
+@enduml
