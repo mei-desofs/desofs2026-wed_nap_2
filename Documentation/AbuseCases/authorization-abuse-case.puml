@@ -1,0 +1,28 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor User
+actor Admin
+actor Attacker
+
+rectangle "ArcadeHaven - Auth & User Management" {
+
+  User --> (Register)
+  User --> (Login)
+  User --> (Manage Profile)
+
+  Admin --> (Manage Users)
+  Admin --> (Change User Role)
+
+  Attacker --> (Brute Force Login)
+  Attacker --> (JWT Token Theft)
+  Attacker --> (Privilege Escalation)
+
+  (Brute Force Login) ..> (Login) : <<abuses>>
+  (JWT Token Theft) ..> (Login) : <<abuses>>
+  (Privilege Escalation) ..> (Change User Role) : <<abuses>>
+  (Privilege Escalation) ..> (Manage Users) : <<abuses>>
+}
+
+@enduml

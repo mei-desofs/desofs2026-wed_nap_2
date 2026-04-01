@@ -22,7 +22,7 @@ During this phase, the workload was distributed among the group members as follo
   - [Domain Model](../Documentation/Analysis/Diagrams/DomainModel/ArcadeHaven_Domain_Model.svg)
 
 - 1250505 - Diogo José
-    - [Requirements](../Documentation/Requirements/requirements.md)
+  - [Requirements](../Documentation/Requirements/requirements.md)
 
 - 1250491 - Acácio Coutinho
 
