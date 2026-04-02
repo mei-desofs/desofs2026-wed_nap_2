@@ -1,0 +1,29 @@
+@startuml file_operations_abuse_case
+left to right direction
+skinparam packageStyle rectangle
+
+actor Publisher
+actor Buyer
+actor System
+actor Attacker
+
+rectangle "ArcadeHaven - File Operations" {
+
+  Publisher --> (Upload Game Images)
+  Buyer --> (Download Invoice)
+  System --> (Create Directory Structure)
+  System --> (Store Invoices)
+  System --> (Store Activation Keys)
+
+  Attacker --> (Malicious Upload Bypass)
+  Attacker --> (Invoice Path Traversal)
+  Attacker --> (Unsafe Startup Path Abuse)
+  Attacker --> (Sensitive Log Exposure)
+
+  (Malicious Upload Bypass) ..> (Upload Game Images) : <<abuses>>
+  (Invoice Path Traversal) ..> (Download Invoice) : <<abuses>>
+  (Unsafe Startup Path Abuse) ..> (Create Directory Structure) : <<abuses>>
+  (Sensitive Log Exposure) ..> (Store Activation Keys) : <<abuses>>
+}
+
+@enduml
