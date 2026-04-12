@@ -1,0 +1,32 @@
+@startuml auth_abuse_case
+left to right direction
+skinparam packageStyle rectangle
+
+actor Guest
+actor User
+actor Admin
+actor Attacker
+
+rectangle "ArcadeHaven - Authentication and Authorization" {
+
+  Guest --> (Register)
+  Guest --> (Login)
+  User --> (Access Protected Endpoint)
+  Admin --> (Change User Role)
+  Admin --> (Manage User Activation)
+
+  Attacker --> (Brute Force Login)
+  Attacker --> (JWT Token Replay)
+  Attacker --> (Username Enumeration)
+  Attacker --> (Password Reset Token Guessing)
+  Attacker --> (Privilege Escalation)
+
+  (Brute Force Login) ..> (Login) : <<abuses>>
+  (JWT Token Replay) ..> (Access Protected Endpoint) : <<abuses>>
+  (Username Enumeration) ..> (Login) : <<abuses>>
+  (Password Reset Token Guessing) ..> (Login) : <<abuses>>
+  (Privilege Escalation) ..> (Change User Role) : <<abuses>>
+  (Privilege Escalation) ..> (Manage User Activation) : <<abuses>>
+}
+
+@enduml

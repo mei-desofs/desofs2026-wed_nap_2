@@ -1,0 +1,28 @@
+@startuml game_abuse_case
+left to right direction
+skinparam packageStyle rectangle
+
+actor Publisher
+actor Admin
+actor Attacker
+
+rectangle "ArcadeHaven - Game Management" {
+
+  Publisher --> (Submit Game)
+  Publisher --> (Update Game)
+  Admin --> (Approve or Reject Game)
+
+  Attacker --> (Forced Browse Publisher Routes)
+  Attacker --> (Forced Browse Admin Approval Routes)
+  Attacker --> (Stored XSS in Game Description)
+  Attacker --> (RAWG Payload Pollution)
+
+  (Forced Browse Publisher Routes) ..> (Submit Game) : <<abuses>>
+  (Forced Browse Publisher Routes) ..> (Update Game) : <<abuses>>
+  (Forced Browse Admin Approval Routes) ..> (Approve or Reject Game) : <<abuses>>
+  (Stored XSS in Game Description) ..> (Submit Game) : <<abuses>>
+  (Stored XSS in Game Description) ..> (Update Game) : <<abuses>>
+  (RAWG Payload Pollution) ..> (Submit Game) : <<abuses>>
+}
+
+@enduml
