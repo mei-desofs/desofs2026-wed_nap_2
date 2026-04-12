@@ -17,12 +17,12 @@ This document serves as the main index for Phase 1 of the **ArcadeHaven** projec
 
 ## Abuse-Case Diagrams
 
-- [Expanded Abuse Cases Catalog](AbuseCases/AbuseCasesExpanded.md)
-- [Auth Abuse Cases Diagram](AbuseCases/AuthAbuseCase.puml)
-- [Game Abuse Cases Diagram](AbuseCases/GameAbuseCase.puml)
-- [Orders and Library Abuse Cases Diagram](AbuseCases/OrdersLibraryAbuseCase.puml)
-- [File Operations Abuse Cases Diagram](AbuseCases/FileOperationsAbuseCase.puml)
-- [Legacy Authorization Abuse Cases Diagram](AbuseCases/authorization-abuse-case.puml)
+- [Expanded Abuse Cases Catalog](AbuseCases/v1/AbuseCasesExpanded.md)
+- [Auth Abuse Cases Diagram](AbuseCases/v1/AuthAbuseCase.puml)
+- [Game Abuse Cases Diagram](AbuseCases/v1/GameAbuseCase.puml)
+- [Orders and Library Abuse Cases Diagram](AbuseCases/v1/OrdersLibraryAbuseCase.puml)
+- [File Operations Abuse Cases Diagram](AbuseCases/v1/FileOperationsAbuseCase.puml)
+- [Legacy Authorization Abuse Cases Diagram](AbuseCases/v2/authorization-abuse-case.puml)
 
 ## ASVS Extensions
 

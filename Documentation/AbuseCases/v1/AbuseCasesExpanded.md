@@ -10,7 +10,7 @@ This document expands abuse-case coverage to all major ArcadeHaven domains and l
 - Game management diagram: [game-abuse-case.puml](game-abuse-case.puml)
 - Orders and library diagram: [orders-library-abuse-case.puml](orders-library-abuse-case.puml)
 - File operations diagram: [file-operations-abuse-case.puml](file-operations-abuse-case.puml)
-- Legacy seed diagram: [authorization-abuse-case.puml](authorization-abuse-case.puml)
+- Legacy seed diagram: [authorization-abuse-case.puml](../v2/authorization-abuse-case.puml)
 
 ## 2. Abuse Cases Catalog
 
