@@ -1,0 +1,33 @@
+@startuml
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor Publisher
+actor Attacker
+
+rectangle "ArcadeHaven - Game Submission Abuse Case" {
+
+  Publisher --> (Submit Game)
+  Publisher --> (Upload Game Image)
+
+  Attacker --> (Upload Malicious File)
+  Attacker --> (Upload Oversized File)
+  Attacker --> (Bypass MIME Type Check)
+
+  (Submit Game) ..> (File Name Sanitization) : <<includes>>
+  (Submit Game) ..> (File Size Validation) : <<includes>>
+
+  (Upload Game Image) ..> (File Name Sanitization) : <<includes>>
+  (Upload Game Image) ..> (File Size Validation) : <<includes>>
+  (Upload Game Image) ..> (MIME Type Verification) : <<includes>>
+
+  (File Name Sanitization) ..> (Upload Malicious File) : <<mitigates>>
+  (MIME Type Verification) ..> (Upload Malicious File) : <<mitigates>>
+  (File Size Validation) ..> (Upload Oversized File) : <<mitigates>>
+
+  (Bypass MIME Type Check) ..> (Submit Game) : <<threatens>>
+
+}
+
+@enduml

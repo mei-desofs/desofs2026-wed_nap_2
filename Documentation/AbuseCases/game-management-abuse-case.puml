@@ -1,0 +1,38 @@
+@startuml
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor User
+actor Attacker
+
+rectangle "ArcadeHaven - Game Management Abuse Case" {
+
+    User --> (View Game Catalog)
+    User --> (Create Order)
+    User --> (Add Game to Order)
+    User --> (Cancel Pending Order)
+    User --> (Finish Order)
+
+    Attacker --> (Force Duplicated Purchase)
+    Attacker --> (Modify Order)
+    Attacker --> (Bypass Payment)
+    Attacker --> (Guess Game Key)
+
+    (Activate Game Key) ..> (Add Game to Library) : <<includes>>
+
+    (Create Order) ..> (Authentication Check) : <<includes>>
+    (Add Game to Order) ..> (Server-side Validation) : <<includes>>
+    (Finish Order) ..> (Server-side Validation) : <<includes>>
+    (Finish Order) ..> (Generate Invoice) : <<includes>>
+    (Finish Order) ..> (Activate Game Key) : <<includes>>
+
+    (Authentication Check) ..> (Modify Order) : <<mitigates>>
+    (Server-side Validation) ..> (Force Duplicated Purchase) : <<mitigates>>
+    (Server-side Validation) ..> (Modify Order) : <<mitigates>>
+    (Server-side Validation) ..> (Bypass Payment) : <<mitigates>>
+
+    (Guess Game Key) ..> (Activate Game Key) : <<threatens>>
+}
+
+@enduml

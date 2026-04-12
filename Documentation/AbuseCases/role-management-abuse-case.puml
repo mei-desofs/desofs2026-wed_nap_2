@@ -1,0 +1,29 @@
+@startuml
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor User
+actor Attacker
+actor Administrator
+
+rectangle "ArcadeHaven - Role Management Abuse Case" {
+
+  Administrator --> (Manage User Activation)
+  Administrator --> (Change User Role)
+
+  Attacker --> (Privilege Escalation)
+  Attacker --> (JWT Token Theft)
+
+  (Change User Role) ..> (RBAC Validation) : <<includes>>
+  (Change User Role) ..> (Endpoint Authentication) : <<includes>>
+
+  (Manage User Activation) ..> (RBAC Validation) : <<includes>>
+  (Manage User Activation) ..> (Endpoint Authentication) : <<includes>>
+
+  (RBAC Validation) ..> (Privilege Escalation) : <<mitigates>>
+  (Endpoint Authentication) ..> (JWT Token Theft) : <<mitigates>>
+
+}
+
+@enduml

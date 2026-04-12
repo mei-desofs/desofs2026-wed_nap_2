@@ -1,28 +1,38 @@
 @startuml
+
 left to right direction
 skinparam packageStyle rectangle
 
 actor User
-actor Admin
 actor Attacker
 
-rectangle "ArcadeHaven - Auth & User Management" {
+rectangle "ArcadeHaven - Authentication Abuse Case" {
 
   User --> (Register)
   User --> (Login)
-  User --> (Manage Profile)
 
-  Admin --> (Manage Users)
-  Admin --> (Change User Role)
-
+  Attacker --> (Inject Malicious Code)
+  Attacker --> (Hijack Account)
   Attacker --> (Brute Force Login)
+  Attacker --> (Dictionary Attack)
   Attacker --> (JWT Token Theft)
-  Attacker --> (Privilege Escalation)
 
-  (Brute Force Login) ..> (Login) : <<abuses>>
-  (JWT Token Theft) ..> (Login) : <<abuses>>
-  (Privilege Escalation) ..> (Change User Role) : <<abuses>>
-  (Privilege Escalation) ..> (Manage Users) : <<abuses>>
+  (Register) ..> (Input Sanitization) : <<includes>>
+
+  (Login) ..> (Input Sanitization) : <<includes>>
+  (Login) ..> (MFA) : <<includes>>
+  (Login) ..> (Lock account after 5 tries) : <<includes>>
+
+  (Input Sanitization) ..> (Inject Malicious Code) : <<mitigates>>
+
+  (MFA) ..> (Hijack Account) : <<mitigates>>
+  (MFA) ..> (Brute Force Login) : <<mitigates>>
+  (MFA) ..> (Dictionary Attack) : <<mitigates>>
+
+  (Lock account after 5 tries) ..> (Brute Force Login) : <<mitigates>>
+
+  (JWT Token Theft) ..> (Login) : <<threatens>>
+
 }
 
 @enduml

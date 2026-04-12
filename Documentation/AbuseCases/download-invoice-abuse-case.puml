@@ -1,0 +1,35 @@
+@startuml
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor User
+actor Admin
+actor Attacker
+
+rectangle "ArcadeHaven - Download Invoice Abuse Case" {
+
+  User --> (View Purchase History)
+  User --> (View Game Invoice)
+  User --> (Download Invoice)
+
+  Attacker --> (Unauthorized Invoice Access)
+  Attacker --> (Path Traversal Attack)
+  Attacker --> (Invoice ID Enumeration)
+
+  (View Purchase History) ..> (View Game Invoice) : <<includes>>
+  (View Game Invoice) ..> (Download Invoice) : <<includes>>
+
+  (View Purchase History) ..> (Authorization Check) : <<includes>>
+  (View Game Invoice) ..> (Authorization Check) : <<includes>>
+  (Download Invoice) ..> (Authorization Check) : <<includes>>
+  (Download Invoice) ..> (Secure File Storage) : <<includes>>
+
+  (Authorization Check) ..> (Invoice ID Enumeration) : <<mitigates>>
+  (Secure File Storage) ..> (Path Traversal Attack) : <<mitigates>>
+
+  (Unauthorized Invoice Access) ..> (Download Invoice) : <<threatens>>
+
+}
+
+@enduml
