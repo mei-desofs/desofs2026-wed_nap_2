@@ -20,10 +20,26 @@ During this phase, the workload was distributed among the group members as follo
 
 - 1221137 - Diogo Pereira
   - [Domain Model](../Documentation/Analysis/Diagrams/DomainModel/ArcadeHaven_Domain_Model.svg)
+  - [Authentication ASVS Requirements](../Documentation/SecurityTesting/ASVS/V6-Authentication/authentication.md)
+  - [Web Frontend Security]()
+  - [API and Web Service]()
+  - [Self-contained Tokens]()
+  - [OAuth and OIDC]()
+  - [Secure Communication]()
+  - [WebRTC]()
+  - [Data Protection]()
+  - [File Handling]()
+  - 
+
 
 - 1250505 - Diogo José
   - [Requirements](../Documentation/Requirements/requirements.md)
+  - [Abuse Cases](../Documentation/AbuseCases/v2/AbuseCases.md)
+ 
 
 - 1250491 - Acácio Coutinho
+  - [API and Web Service]()
 
 - 1250516 - Gabriel Proença
+  - [Abuse Cases](../Documentation/AbuseCases/v1/AbuseCasesExpanded.md)
+  - [WebRTC]()
