@@ -582,7 +582,7 @@
 
 ## Summary
 
-| Section | Total  | ✅ Compliant | ⚠️ Planned | 🔵 N/A | ❌ Non-Compliant |
+| Section | Total  | ✅ Compliant |  Planned |  N/A | ❌ Non-Compliant |
 |---|--------|-------------|------------|--------|-----------------|
 | V6.1 Authentication Documentation | 3      | 0           | 3          | 0      | 0               |
 | V6.2 Password Security | 12     | 0           | 10         | 2      | 0               |

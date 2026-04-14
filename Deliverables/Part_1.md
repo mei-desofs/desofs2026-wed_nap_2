@@ -24,12 +24,12 @@ During this phase, the workload was distributed among the group members as follo
     - [Authentication](../Documentation/SecurityTesting/ASVS/V6_Authentication/authentication.md)
     - [Web Frontend Security]()
     - [API and Web Service]()
-    - [Self-contained Tokens]()
-    - [OAuth and OIDC](../Documentation/SecurityTesting/ASVS/10_OAuthOIDC/oauthOidc.md)
+    - [Self-contained Tokens](../Documentation/SecurityTesting/ASVS/V9_Self-contained%20Tokens/self_containedTokens.md)
+    - [OAuth and OIDC](../Documentation/SecurityTesting/ASVS/V10_OAuthOIDC/oauthOidc.md)
     - [Secure Communication](../Documentation/SecurityTesting/ASVS/V12_SecureCommunication/secureCommunication.md)
     - [WebRTC]()
     - [Data Protection](../Documentation/SecurityTesting/ASVS/V14_DataProtection/dataProtection.md)
-    - [File Handling]()
+    - [File Handling](../Documentation/SecurityTesting/ASVS/V5_FileHandling/fileHandling.md)
   - 
 
 - 1250505 - Diogo José
