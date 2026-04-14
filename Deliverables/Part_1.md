@@ -20,17 +20,17 @@ During this phase, the workload was distributed among the group members as follo
 
 - 1221137 - Diogo Pereira
   - [Domain Model](../Documentation/Analysis/Diagrams/DomainModel/ArcadeHaven_Domain_Model.svg)
-  - [Authentication ASVS Requirements](../Documentation/SecurityTesting/ASVS/V6-Authentication/authentication.md)
-  - [Web Frontend Security]()
-  - [API and Web Service]()
-  - [Self-contained Tokens]()
-  - [OAuth and OIDC]()
-  - [Secure Communication]()
-  - [WebRTC]()
-  - [Data Protection]()
-  - [File Handling]()
+  - [ASVS](../Documentation/SecurityTesting/ASVS)
+    - [Authentication](../Documentation/SecurityTesting/ASVS/V6_Authentication/authentication.md)
+    - [Web Frontend Security]()
+    - [API and Web Service]()
+    - [Self-contained Tokens]()
+    - [OAuth and OIDC](../Documentation/SecurityTesting/ASVS/10_OAuthOIDC/oauthOidc.md)
+    - [Secure Communication](../Documentation/SecurityTesting/ASVS/V12_SecureCommunication/secureCommunication.md)
+    - [WebRTC]()
+    - [Data Protection](../Documentation/SecurityTesting/ASVS/V14_DataProtection/dataProtection.md)
+    - [File Handling]()
   - 
-
 
 - 1250505 - Diogo José
   - [Requirements](../Documentation/Requirements/requirements.md)
@@ -39,6 +39,7 @@ During this phase, the workload was distributed among the group members as follo
 
 - 1250491 - Acácio Coutinho
   - [API and Web Service]()
+
 
 - 1250516 - Gabriel Proença
   - [Abuse Cases](../Documentation/AbuseCases/v1/AbuseCasesExpanded.md)

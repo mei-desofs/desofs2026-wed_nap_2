@@ -26,7 +26,7 @@ This document serves as the main index for Phase 1 of the **ArcadeHaven** projec
 
 ## ASVS Extensions
 
-- [V6 Authentication ASVS Detail](SecurityTesting/ASVS/V6-Authentication/authentication.md): Detailed authentication requirements and traceability based on ASVS V6 controls.
+- [V6 Authentication ASVS Detail](SecurityTesting/ASVS/V6_Authentication/authentication.md): Detailed authentication requirements and traceability based on ASVS V6 controls.
 
 - [V16 Logging and Error Handling](SecurityTesting/ASVS/V16-Logging-Error-Handling.md): ASVS V16 applicability assessment covering 17 requirements with item-by-item evaluation. Maps to RNF-07 (Logging), RNF-06 (Input Validation), and RNF-23 (Secrets Management). Primary testing via ST-008 (structured logging verification) and ST-016 (configuration review).
 
