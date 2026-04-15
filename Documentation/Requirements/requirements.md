@@ -252,22 +252,50 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 ---
 
-| **Field**        | **Value**                                                                     |
-| ---------------- |-------------------------------------------------------------------------------|
-| **ID**           | RF-17                                                                         |
-| **Name**         | Activate Game Key                                                             |
-| **Description**  | The system must activate game key for a purchased game upon order completion. |
-| **Actors**       | System                                                                        |
-| **Restrictions** | Order must be completed and invoice generated                                 |
-| **Verification** | Validate activation key                                                       |
-| **Priority**     | Essential                                                                     |
-| **State**        | Approved                                                                      |
+| **Field**        | **Value**                                                                              |
+| ---------------- |----------------------------------------------------------------------------------------|
+| **ID**           | RF-17                                                                                  |
+| **Name**         | Activate Game Key Upon Order Completion                                                |
+| **Description**  | The system must allow the user to activate a purchased game key upon order completion. |
+| **Actors**       | System                                                                                 |
+| **Restrictions** | Order must be completed and invoice generated                                          |
+| **Verification** | Validate activation key                                                                |
+| **Priority**     | Essential                                                                              |
+| **State**        | Approved                                                                               |
+
+---
+
+---
+
+| **Field**        | **Value**                                                                                 |
+| ---------------- |-------------------------------------------------------------------------------------------|
+| **ID**           | RF-18                                                                                     |
+| **Name**         | Download Activation Key Card                                                              |
+| **Description**  | The system must allow the user to download the activation key card upon order completion. |
+| **Actors**       | System                                                                                    |
+| **Restrictions** | Order must be completed and invoice generated                                             |
+| **Verification** | Validate activation key                                                                   |
+| **Priority**     | Essential                                                                                 |
+| **State**        | Approved                                                                                  |
+
+---
+
+| **Field**        | **Value**                                                                       |
+| ---------------- |---------------------------------------------------------------------------------|
+| **ID**           | RF-19                                                                           |
+| **Name**         | Import a Game Key                                                               |
+| **Description**  | The system must allow the user to import a game key and activate a game with it |
+| **Actors**       | System                                                                          |
+| **Restrictions** |                                                                                 |
+| **Verification** | Validate activation key                                                         |
+| **Priority**     | Essential                                                                       |
+| **State**        | Approved                                                                        |
 
 ---
 
 | **Field**        | **Value**                                        |
 | ---------------- | ------------------------------------------------ |
-| **ID**           | RF-18                                            |
+| **ID**           | RF-20                                            |
 | **Name**         | View Order History                               |
 | **Description**  | Buyers must be able to view their order history. |
 | **Actors**       | Buyer                                            |
@@ -280,20 +308,33 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                 |
 | ---------------- | --------------------------------------------------------- |
-| **ID**           | RF-19                                                     |
+| **ID**           | RF-21                                                     |
 | **Name**         | Download Invoice                                          |
 | **Description**  | Buyers must be able to download the invoice for an order. |
 | **Actors**       | Buyer                                                     |
 | **Restrictions** | User must be authenticated                                |
-| **Verification** | Validate invoice download                                 |
+| **Verification** | Validate invoice to download                              |
 | **Priority**     | High                                                      |
 | **State**        | Approved                                                  |
 
 ---
 
+| **Field**        | **Value**                                                  |
+| ---------------- | ---------------------------------------------------------- |
+| **ID**           | RF-22                                                      |
+| **Name**         | Download Game Key Card                                     |
+| **Description**  | Buyers must be able to download the key card for an order. |
+| **Actors**       | Buyer                                                      |
+| **Restrictions** | User must be authenticated                                 |
+| **Verification** | Validate key card to download                              |
+| **Priority**     | High                                                       |
+| **State**        | Approved                                                   |
+
+---
+
 | **Field**        | **Value**                                                         |
 | ---------------- | ----------------------------------------------------------------- |
-| **ID**           | RF-20                                                             |
+| **ID**           | RF-23                                                             |
 | **Name**         | Cancel Pending Order                                              |
 | **Description**  | Buyers must be able to cancel an order that is in pending status. |
 | **Actors**       | Buyer                                                             |
@@ -307,7 +348,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                                                       |
 | ---------------- | ----------------------------------------------------------------------------------------------- |
-| **ID**           | RF-21                                                                                           |
+| **ID**           | RF-24                                                                                           |
 | **Name**         | Add Games to Library                                                                            |
 | **Description**  | The system must automatically add purchased games to the buyer's library upon order completion. |
 | **Actors**       | System                                                                                          |
@@ -320,7 +361,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                               |
 | ---------------- | ------------------------------------------------------- |
-| **ID**           | RF-22                                                   |
+| **ID**           | RF-25                                                   |
 | **Name**         | View Library                                            |
 | **Description**  | Buyers must be able to view all games in their library. |
 | **Actors**       | Buyer                                                   |
@@ -333,7 +374,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                                         |
 | ---------------- |-----------------------------------------------------------------------------------|
-| **ID**           | RF-23                                                                             |
+| **ID**           | RF-26                                                                             |
 | **Name**         | Prevent Duplicate Library Entries                                                 |
 | **Description**  | The system must prevent the same game from being added twice to the same library. |
 | **Actors**       | System                                                                            |
@@ -346,7 +387,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                                   |
 | ---------------- |-----------------------------------------------------------------------------|
-| **ID**           | RF-24                                                                       |
+| **ID**           | RF-27                                                                       |
 | **Name**         | Manage Library Entries                                                      |
 | **Description**  | Administrator must be able to suspend or revoke library entries for a user. |
 | **Actors**       | Administrator                                                               |
@@ -360,7 +401,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                                          |
 | ---------------- |------------------------------------------------------------------------------------|
-| **ID**           | RF-25                                                                              |
+| **ID**           | RF-28                                                                              |
 | **Name**         | Automatic Directory Structure                                                      |
 | **Description**  | The system must automatically create the necessary directory structure on startup. |
 | **Actors**       | System                                                                             |
@@ -373,7 +414,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                    |
 | ---------------- |--------------------------------------------------------------|
-| **ID**           | RF-26                                                        |
+| **ID**           | RF-29                                                        |
 | **Name**         | Store Generated Invoices                                     |
 | **Description**  | The system must store generated invoice files on the server. |
 | **Actors**       | System                                                       |
@@ -386,7 +427,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                               |
 | ---------------- |-------------------------------------------------------------------------|
-| **ID**           | RF-27                                                                   |
+| **ID**           | RF-30                                                                   |
 | **Name**         | Store Activation Keys                                                   |
 | **Description**  | The system must store generated activation keys in files on the server. |
 | **Actors**       | System                                                                  |
@@ -399,7 +440,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                                                 |
 | ---------------- |-------------------------------------------------------------------------------------------|
-| **ID**           | RF-28                                                                                     |
+| **ID**           | RF-31                                                                                     |
 | **Name**         | Upload Game Images                                                                        |
 | **Description**  | Publishers must be able to upload game images to server.                                  |
 | **Actors**       | Publisher                                                                                 |
@@ -412,7 +453,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                     |
 | ---------------- |---------------------------------------------------------------|
-| **ID**           | RF-29                                                         |
+| **ID**           | RF-32                                                         |
 | **Name**         | Validate Uploaded Files                                       |
 | **Description**  | The system must validate the type and size of uploaded files. |
 | **Actors**       | System                                                        |
