@@ -119,7 +119,25 @@ Project charter explicitly defines scope as e-commerce and file distribution. Re
 
 ---
 
-## 3. Threat Model & Risk Context
+## 3. Communication Security Handled Elsewhere
+
+Determining V17 as not applicable does **not** mean ArcadeHaven ignores communication security. The following table maps where each relevant concern is actually addressed:
+
+| Communication Concern | V17 Applicable? | Where Addressed in ArcadeHaven |
+|-----------------------|-----------------|-------------------------------|
+| Encryption of all client-server traffic (HTTPS) | No (V17 = real-time media) | **V12 Secure Communication** — TLS 1.2+ enforced via AC-005 (RNF-05); tested by ST-005 |
+| Rate-limiting on API endpoints | No (V17 = signaling rate-limits) | **V6 / RNF-09** — brute-force protection and API rate-limiting; tested by ST-010 |
+| Input validation on external API calls (RAWG) | No (V17 = signaling malformed requests) | **RNF-06 / IV-001-003** — output from RAWG API validated before use; abuse case AC-19 |
+| WebSocket connections | No (V17 = WebRTC/DTLS) | **V4.4** — also declared N/A; ArcadeHaven uses synchronous REST exclusively |
+| Peer-to-peer file sharing | No (V17 = p2p/TURN) | Not in scope; file delivery is server-to-client over HTTPS only |
+
+**Note on WebSocket:** ASVS V4.4 covers WebSocket security. ArcadeHaven has no WebSocket connections — all communication is synchronous REST API over HTTPS. V4.4 is also declared Not Applicable and is documented in [V4 API and Web Service Security assessment](V4_API_WebServiceSecurity/apiWebservice.md).
+
+**Note on RAWG API Integration (AC-19):** The RAWG external API integration (RF-12) uses synchronous REST calls over HTTPS. While this involves external communication, it falls under standard HTTP client security (input validation, response sanitisation) covered by RNF-06 and AC-019 abuse case — not WebRTC or real-time media protocols.
+
+---
+
+## 4. Threat Model & Risk Context (No V17 Threats Identified)
 
 **Relevant Threats (from threatIdentificationAndAnalysis.md):**
 - TH-01 to TH-09: All threats map to API security, data protection, and configuration exposure
@@ -135,19 +153,38 @@ Project charter explicitly defines scope as e-commerce and file distribution. Re
 
 ---
 
-## 4. Applicability Decision Matrix
+## 5. Applicability Decision Matrix
 
 | V17 Section | Scenario | TURN Deployment | Media Server | Signaling | Applicable? |
 |----------|----------|---|---|---|---|
-| V17.1 | TURN servers protect p2p from untrusted parties | ❌ No | — | — | **N/A** |
-| V17.2 | Media servers encrypt/process streams securely | — | ❌ No | — | **N/A** |
-| V17.3 | Signaling servers rate-limit and validate messages | — | — | ❌ No | **N/A** |
+| V17.1 | TURN servers protect p2p from untrusted parties | No | — | — | **N/A** |
+| V17.2 | Media servers encrypt/process streams securely | — | No | — | **N/A** |
+| V17.3 | Signaling servers rate-limit and validate messages | — | — | No | **N/A** |
 
 ---
 
-## 5. Conclusion
+## 6. Re-evaluation Trigger Checklist
 
-✅ **V17 Communications is formally determined to be 100% NOT APPLICABLE to ArcadeHaven Phase 1 and beyond.**
+If ArcadeHaven is ever extended with real-time features, V17 must be re-evaluated. The following checklist defines the trigger conditions:
+
+| Trigger | V17 Sections to Re-evaluate |
+|---------|-----------------------------|
+| Real-time multiplayer game sessions (any p2p or relay) | V17.1 (TURN), V17.2 (Media), V17.3 (Signaling) |
+| In-platform voice or video chat between users | V17.1, V17.2 (SRTP, DTLS), V17.3 |
+| Live game streaming or spectating features | V17.2 (media servers, transcoding, SRTP) |
+| Peer-to-peer file sharing or delivery | V17.1 (TURN), V17.3 (signaling) |
+| WebRTC-based download acceleration or CDN bypass | V17.1, V17.2 |
+| Browser-based game execution with WebRTC data channels | V17.3 (signaling), V17.2 |
+
+**Re-evaluation owner:** Threat Model Owner (as defined in SecurityTesting.md Section 4.2).
+
+**Re-evaluation SLA:** Must be completed before any feature involving real-time communication enters Sprint 1 development.
+
+---
+
+## 7. Conclusion
+
+**V17 Communications is formally determined to be 100% NOT APPLICABLE to ArcadeHaven Phase 1 and beyond.**
 
 **Section-by-Section Applicability:**
 - **V17.1 (TURN Servers):** Not applicable — ArcadeHaven has no peer-to-peer infrastructure or NAT traversal requirements
