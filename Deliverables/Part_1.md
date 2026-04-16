@@ -48,4 +48,13 @@ During this phase, the workload was distributed among the group members as follo
 
 - 1250516 - Gabriel Proença
   - [Abuse Cases](../Documentation/AbuseCases/v1/AbuseCasesExpanded.md)
-  - [WebRTC]()
+  - [ASVS](../Documentation/SecurityTesting/ASVS)
+    - [Cryptography](../Documentation/SecurityTesting/ASVS/V11_Cryptography/V11-Cryptography.md)
+    - [Secure Coding and Architecture](../Documentation/SecurityTesting/ASVS/V15_Secure_Coding_and_Archite/V15-SecureCoding.md)
+    - [Security Logging and Error Handling](../Documentation/SecurityTesting/ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md)
+    - [Communications](../Documentation/SecurityTesting/ASVS/V17_Communications/V17-Communications.md)
+  - [Security Testing](../Documentation/SecurityTesting/)
+    - [Master Objective Plan](../Documentation/SecurityTesting/MasterObjectivePlan.md)
+    - [Security Testing Plan](../Documentation/SecurityTesting/securityTesting.md)
+    - [Threat Model Review Workflow](../Documentation/SecurityTesting/ThreatModelReviewWorkflow.md)
+    - [Traceability Matrix v2](../Documentation/SecurityTesting/TraceabilityMatrix-V2.md)

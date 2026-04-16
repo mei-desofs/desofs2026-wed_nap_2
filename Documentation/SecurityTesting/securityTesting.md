@@ -93,6 +93,7 @@ The table below lists all 20 abuse cases used as the baseline for this plan.
 | AC-18 | Exposure of sensitive logs with tokens/passwords | Logging output | RNF-07, RNF-23 |
 | AC-19 | Abuse of RAWG integration for payload pollution | External API enrichment | RF-12, RNF-06, RNF-16 |
 | AC-20 | Abuse of startup directory creation with unsafe paths | File system initialization | RF-26, RF-27 |
+| AC-21 | Log injection via CRLF — attacker injects newline characters into user-controlled fields (login username, search query, game description) to forge or corrupt structured log entries | Any input field that is logged (login, search, game description, profile) | RNF-06, RNF-07 |
 
 ### 3.2 Abuse-Case Coverage Rule
 
@@ -111,7 +112,7 @@ Each abuse case must have:
 | Input Validation and Injection | 4 | AC-04, AC-13, AC-14, AC-19 | TH-04 |
 | File and Storage Operations | 4 | AC-05, AC-06, AC-07, AC-20 | TH-05, TH-06, TH-07 |
 | Orders and Business Logic | 3 | AC-08, AC-15, AC-16 | TH-08 |
-| Logging and Secrets | 1 | AC-18 | TH-07, TH-09 |
+| Logging and Error Handling | 2 | AC-18, AC-21 | TH-07, TH-09 |
 
 ## 4. Threat Model Review Process
 
@@ -168,24 +169,25 @@ Threat model review is mandatory when any of the following occurs:
 
 For the expanded matrix with ASVS references, owner roles, and sprint allocation, see [traceability-matrix-v2.md](traceability-matrix-v2.md). For ASVS-specific assessments see [ASVS/V16_Logging-ErrorHandling.md](ASVS/V16_Logging-ErrorHandling.md) and [ASVS/V17_Communications.md](ASVS/V17_Communications.md).
 
-| Requirement ID | Security Requirement | Abuse Case | Planned Test ID | Test Focus | Planned Evidence | Status |
-| --- | --- | --- | --- | --- | --- | --- |
-| RNF-01 | Password Storage with BCrypt | AC-01 | ST-001 | Hashing policy and no plaintext storage | Code scan result and unit test output | Planned |
-| RNF-02 | JWT authentication with expiration | AC-02 | ST-002 | Token expiration and invalid token rejection | API test report | Planned |
-| RNF-03 | Endpoint authentication enforcement | AC-02 | ST-003 | Anonymous access denied on protected routes | Access-control test log | Planned |
-| RNF-04 | Role-based access control | AC-03 | ST-004 | Role isolation for admin and publisher routes | Authorization matrix test result | Planned |
-| RNF-05 | HTTPS-only communication | AC-02 | ST-005 | Insecure transport rejection and TLS enforcement | Environment and gateway config evidence | Planned |
-| RNF-06 | Input validation and sanitization | AC-04 | ST-006 | SQL injection payload rejection | Negative test run output | Planned |
-| RNF-06 | Input validation and sanitization | AC-04 | ST-007 | XSS payload neutralization/rejection | Validation test output | Planned |
-| RNF-07 | Critical event logging | AC-03 | ST-008 | Log generation for login and role-change events | Structured log samples | Planned |
-| RNF-08 | Secure activation key generation | AC-07 | ST-009 | Entropy and uniqueness checks for keys | Unit/integration test evidence | Planned |
-| RNF-09 | Brute-force protection | AC-01 | ST-010 | Rate limiting and temporary lockout behavior | API attack simulation report | Planned |
-| RNF-10 | MIME verification on uploads | AC-05 | ST-011 | Extension/MIME mismatch rejection | Upload validation report | Planned |
-| RNF-23 | Sensitive configuration management | AC-18 | ST-016 | Verify secrets are externalized and masked in logs | Config and log review evidence | Planned |
-| RF-19 | Download invoice | AC-06 | ST-012 | Authorization and path traversal prevention | Endpoint security test output | Planned |
-| RF-29 | Upload game images | AC-05 | ST-013 | Authenticated-only upload and file constraints | Integration test report | Planned |
-| RF-30 | Validate uploaded files | AC-05 | ST-014 | Oversized and unsupported-type rejection | Validation evidence | Planned |
-| RF-14 | Create order | AC-08 | ST-015 | Server-side ownership and integrity checks | Business-security test report | Planned |
+| Requirement ID | Security Requirement | Abuse Case | Planned Test ID | ASVS Req | Test Focus | Planned Evidence | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| RNF-01 | Password Storage with BCrypt | AC-01 | ST-001 | V6.2.1 | Hashing policy and no plaintext storage | Code scan result and unit test output | Planned |
+| RNF-02 | JWT authentication with expiration | AC-02 | ST-002 | V9.2.1, V9.3.1 | Token expiration and invalid token rejection | API test report | Planned |
+| RNF-03 | Endpoint authentication enforcement | AC-02 | ST-003 | V4.1.2, V6.1.3 | Anonymous access denied on protected routes | Access-control test log | Planned |
+| RNF-04 | Role-based access control | AC-03 | ST-004 | V3.1.1, V3.2.1 | Role isolation for admin and publisher routes | Authorization matrix test result | Planned |
+| RNF-05 | HTTPS-only communication | AC-02 | ST-005 | V12.1.1, V12.2.1 | Insecure transport rejection and TLS enforcement | Environment and gateway config evidence | Planned |
+| RNF-06 | Input validation and sanitization | AC-04 | ST-006 | V5.1.1, V5.2.1 | SQL injection payload rejection | Negative test run output | Planned |
+| RNF-06 | Input validation and sanitization | AC-04 | ST-007 | V5.1.3, V5.2.4 | XSS payload neutralization/rejection | Validation test output | Planned |
+| RNF-07 | Critical event logging | AC-03 | ST-008 | V16.2.1, V16.2.4, V16.3.2 | Log generation for login and role-change events | Structured log samples | Planned |
+| RNF-08 | Secure activation key generation | AC-07 | ST-009 | V6.3.1 | Entropy and uniqueness checks for keys | Unit/integration test evidence | Planned |
+| RNF-09 | Brute-force protection | AC-01 | ST-010 | V6.2.2, V6.1.1 | Rate limiting and temporary lockout behavior | API attack simulation report | Planned |
+| RNF-10 | MIME verification on uploads | AC-05 | ST-011 | V5.3.1, V5.3.2 | Extension/MIME mismatch rejection | Upload validation report | Planned |
+| RNF-23 | Sensitive configuration management | AC-18 | ST-016 | V16.5.3, V16.5.4, V14.2.1 | Verify secrets are externalized and masked in logs | Config and log review evidence | Planned |
+| RF-19 | Download invoice | AC-06 | ST-012 | V5.3.4 | Authorization and path traversal prevention | Endpoint security test output | Planned |
+| RF-29 | Upload game images | AC-05 | ST-013 | V5.3.1, V5.3.2 | Authenticated-only upload and file constraints | Integration test report | Planned |
+| RF-30 | Validate uploaded files | AC-05 | ST-014 | V5.3.1, V5.3.3 | Oversized and unsupported-type rejection | Validation evidence | Planned |
+| RF-14 | Create order | AC-08 | ST-015 | V3.3.1 | Server-side ownership and integrity checks | Business-security test report | Planned |
+| RNF-06, RNF-07 | Error response security and log injection prevention | AC-18, AC-21 | ST-017 | V16.4.1, V16.5.2 | API error responses do not expose stack traces, internal paths, or SQL fragments; CRLF injection sanitised in logged fields | Negative test output (trigger 4xx/5xx errors; inject CRLF in logged input fields) | Planned |
 
 ## 6. Sprint and Phase Roadmap
 
@@ -204,7 +206,7 @@ Success criteria:
 
 ### 6.2 Sprint 1 (Execution Start)
 
-- Implement and execute ST-001 to ST-011 and ST-016.
+- Implement and execute ST-001 to ST-011, ST-016, and ST-017.
 - Run SAST, SCA, and first DAST pass.
 - Open remediation backlog for findings.
 - Define evidence templates per test (ST-001 to ST-016).
@@ -254,13 +256,3 @@ Each executed test must record:
 ### 7.3 Release Gate Rule
 
 No Critical-severity finding may remain unresolved at release. High-severity findings require either a fix or a documented risk acceptance approved by the Security Reviewer. The release decision record must list all accepted residual risks with owner sign-off.
-
-## 8. Completion Checklist
-
-- Methodology section approved.
-- Abuse-case mapping approved (20 abuse cases, 6 domains covered).
-- Threat model review workflow approved.
-- Traceability matrix approved.
-- No security requirement left without a planned test.
-- Evidence format defined for each planned test (ST-001 to ST-016).
-- Release gate rule documented and accepted by team.
