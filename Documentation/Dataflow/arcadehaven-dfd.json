@@ -1,0 +1,77 @@
+{
+  "version": "2.6.0",
+  "summary": {
+    "title": "ArcadeHaven - DFDs",
+    "owner": "Diogo Sousa",
+    "description": "Dataflow diagrams of the ArcadeHaven system",
+    "id": 0
+  },
+  "detail": {
+    "contributors": [],
+    "diagrams": [
+      {
+        "id": 7,
+        "title": "DFD - Level 0",
+        "diagramType": "STRIDE",
+        "placeholder": "New STRIDE diagram description",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "version": "2.6.0",
+        "cells": [],
+        "description": "ArcadeHaven DFD"
+      },
+      {
+        "id": 12,
+        "title": "DFD - Level 1 - ArcadeHaven System",
+        "diagramType": "STRIDE",
+        "placeholder": "New STRIDE diagram description",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "version": "2.6.0",
+        "cells": [],
+        "description": "ArcadeHaven System DFD"
+      },
+      {
+        "id": 13,
+        "title": "DFD - Level 1 - Auth API",
+        "diagramType": "STRIDE",
+        "placeholder": "New STRIDE diagram description",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "version": "2.6.0",
+        "cells": [],
+        "description": "Auth API DFD"
+      },
+      {
+        "id": 14,
+        "title": "DFDF - Level 1 - RAWG API",
+        "diagramType": "STRIDE",
+        "placeholder": "New STRIDE diagram description",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "version": "2.6.0",
+        "cells": [],
+        "description": "RAWG API DFD"
+      },
+      {
+        "id": 15,
+        "title": "DFD - Level 1 - Database",
+        "diagramType": "STRIDE",
+        "placeholder": "New STRIDE diagram description",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "version": "2.6.0",
+        "cells": [],
+        "description": "Database DFD"
+      },
+      {
+        "id": 18,
+        "title": "DFD - Level 2 - Game Management",
+        "diagramType": "STRIDE",
+        "placeholder": "New STRIDE diagram description",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "version": "2.6.0",
+        "cells": [],
+        "description": "Game Management DFD"
+      }
+    ],
+    "diagramTop": 19,
+    "reviewer": "Diogo Sousa",
+    "threatTop": 2
+  }
+}

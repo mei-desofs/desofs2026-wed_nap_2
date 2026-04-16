@@ -346,16 +346,16 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 ### 2.4 Library Management Requirements
 
-| **Field**        | **Value**                                                                                       |
-| ---------------- | ----------------------------------------------------------------------------------------------- |
-| **ID**           | RF-24                                                                                           |
-| **Name**         | Add Games to Library                                                                            |
-| **Description**  | The system must automatically add purchased games to the buyer's library upon order completion. |
-| **Actors**       | System                                                                                          |
-| **Restrictions** | Order must be completed                                                                         |
-| **Verification** | None                                                                                            |
-| **Priority**     | Essential                                                                                       |
-| **State**        | Approved                                                                                        |
+| **Field**        | **Value**                                                                           |
+| ---------------- | ----------------------------------------------------------------------------------- |
+| **ID**           | RF-24                                                                               |
+| **Name**         | Add Games to Library                                                                |
+| **Description**  | The system must automatically add games to the buyer's library upon key activation. |
+| **Actors**       | System                                                                              |
+| **Restrictions** | Order must be completed                                                             |
+| **Verification** | None                                                                                |
+| **Priority**     | Essential                                                                           |
+| **State**        | Approved                                                                            |
 
 ---
 
