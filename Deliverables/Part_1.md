@@ -38,7 +38,12 @@ During this phase, the workload was distributed among the group members as follo
  
 
 - 1250491 - Acácio Coutinho
-  - [API and Web Service]()
+  - [ASVS](../Documentation/SecurityTesting/ASVS)
+    - [Encoding and Sanitization](../Documentation/SecurityTesting/ASVS/V1_EncodingAndSanitization/encondingAndSanitization.md)
+    - [Validation and Business Logic](../Documentation/SecurityTesting/ASVS/V2_ValidationAndBusinessLogic/validationAndBusinessLogic.md)
+    - [Session Management](../Documentation/SecurityTesting/ASVS/V7_SessionManagement/sessionManagement.md)
+    - [Authorization](../Documentation/SecurityTesting/ASVS/V8_Authorization/authorization.md)
+    - [Configuration](../Documentation/SecurityTesting/ASVS/V13_Configuration/configuration.md)
 
 
 - 1250516 - Gabriel Proença
