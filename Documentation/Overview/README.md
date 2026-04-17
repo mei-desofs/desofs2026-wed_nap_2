@@ -4,14 +4,52 @@ This document serves as the main index for Phase 1 of the **ArcadeHaven** projec
 
 ## Document Structure
 
-- [Analysis](Analysis/analysis.md): System overview, architecture, and domain model of the ArcadeHaven platform, covering the four core DDD aggregates: **User**, **Game**, **Order**, and **Library**.
-- [Dataflow](Dataflow/dataflow.md): Documentation of data flows across the platform, including DFDs (levels 0, 1, and higher if needed), system components, trust boundaries, and external entities such as the RAWG.io API.
-- [Threat Identification and Analysis](ThreatIdentificationAndAnalysis/threatIdentificationAndAnalysis.md): Identification and analysis of threats specific to ArcadeHaven, including STRIDE application per DFD element, attack vectors, threat agents, and abuse cases (e.g. unauthorized access to a user's Library, activation key theft).
-- [Risk Assessment](RiskAssessment/riskAssessment.md): Complete risk assessment using DREAD methodology — initial scoring for TH-01 to TH-09, risk treatment plan, residual risk analysis, and release acceptance rules.
-- [Mitigations](Mitigations/mitigations.md): Proposed mitigations for identified threats, focusing on high-priority risks such as broken access control, insecure file handling, and credential exposure.
-- [Requirements](Requirements/requirements.md): Justified security requirements for ArcadeHaven, covering authentication and authorization (Admin, Publisher, Buyer roles), data security, secure communication, input validation, third-party components (RAWG.io), logging, and monitoring.
-- [Security Testing](SecurityTesting/securityTesting.md): Security testing methodology for ArcadeHaven, including abuse cases, threat model review process, and ASVS assessment focused on the platform architecture.
-- [Security Traceability Matrix v2](SecurityTesting/TraceabilityMatrix-v2.md): Requirement-to-threat-to-test mapping with owner and sprint planning.
+```
+Documentation/
+│
+├── Overview/
+│   └── README.md
+│
+├── Requirements/
+│   └── requirements.md
+│
+├── Architecture/
+│   ├── Diagrams/
+│   │   └── DomainModel/
+│   ├── dataflow/
+│   │   ├── level-0/
+│   │   ├── level-1/
+│   │   └── level-2/
+│   └── dataflow.md
+│
+├── ThreatModeling/
+│   ├── AbuseCases/
+│   ├── RiskAssessment/
+│   └── ThreathIdentificationAndAnalysis/
+│
+├── Mitigations/
+│   └── mitigations.md
+│
+├── SecurityTesting/
+│   ├── ASVS/
+|   ├── MasterObjectivePlan.md
+|   ├── securityTesting.md
+│   ├── ThreatModelReviewWorkflow.md
+│   └── TraceabilityMatrix.md
+│
+└── SSDLC/
+    ├── SSDLC.md
+    └── DREAD.md
+```
+
+- [Arquitecture](../Architecture/analysis.md): System overview, architecture, and domain model of the ArcadeHaven platform, covering the four core DDD aggregates: **User**, **Game**, **Order**, and **Library**.
+- [Dataflow](../Architecture/Dataflow/dataflow.md): Documentation of data flows across the platform, including DFDs (levels 0, 1, and higher if needed), system components, trust boundaries, and external entities such as the RAWG.io API.
+- [Threat Identification and Analysis](../ThreatModeling/ThreatIdentificationAndAnalysis/ThreatIdentificationAndAnalysis/threatIdentificationAndAnalysis.md): Identification and analysis of threats specific to ArcadeHaven, including STRIDE application per DFD element, attack vectors, threat agents, and abuse cases (e.g. unauthorized access to a user's Library, activation key theft).
+- [Risk Assessment](../ThreatModeling/RiskAssessment/riskAssessment.md): Complete risk assessment using DREAD methodology — initial scoring for TH-01 to TH-09, risk treatment plan, residual risk analysis, and release acceptance rules.
+- [Mitigations](../Mitigations/mitigations.md): Proposed mitigations for identified threats, focusing on high-priority risks such as broken access control, insecure file handling, and credential exposure.
+- [Requirements](../Requirements/requirements.md): Justified security requirements for ArcadeHaven, covering authentication and authorization (Admin, Publisher, Buyer roles), data security, secure communication, input validation, third-party components (RAWG.io), logging, and monitoring.
+- [Security Testing](../SecurityTesting/securityTesting.md): Security testing methodology for ArcadeHaven, including abuse cases, threat model review process, and ASVS assessment focused on the platform architecture.
+- [Security Traceability Matrix v2](../SecurityTesting/TraceabilityMatrix-V2.md): Requirement-to-threat-to-test mapping with owner and sprint planning.
 
 
 
