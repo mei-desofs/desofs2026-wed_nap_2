@@ -16,24 +16,24 @@ Documentation/
 ├── Architecture/
 │   ├── Diagrams/
 │   │   └── DomainModel/
-│   ├── dataflow/
-│   │   ├── level-0/
-│   │   ├── level-1/
-│   │   └── level-2/
+│   ├── Dataflow/
+│   │   ├── Level-0/
+│   │   ├── Level-1/
+│   │   └── Level-2/
 │   └── dataflow.md
 │
 ├── ThreatModeling/
 │   ├── AbuseCases/
 │   ├── RiskAssessment/
-│   └── ThreathIdentificationAndAnalysis/
+│   └── ThreatIdentificationAndAnalysis/
 │
 ├── Mitigations/
-│   └── mitigations.md
+│   └── Mitigations.md
 │
 ├── SecurityTesting/
 │   ├── ASVS/
 |   ├── MasterObjectivePlan.md
-|   ├── securityTesting.md
+|   ├── SecurityTesting.md
 │   ├── ThreatModelReviewWorkflow.md
 │   └── TraceabilityMatrix.md
 │
@@ -42,33 +42,37 @@ Documentation/
     └── DREAD.md
 ```
 
-- [Arquitecture](../Architecture/analysis.md): System overview, architecture, and domain model of the ArcadeHaven platform, covering the four core DDD aggregates: **User**, **Game**, **Order**, and **Library**.
+- [Architecture](../Architecture/analysis.md): System overview, architecture, and domain model of the ArcadeHaven platform, covering the four core DDD aggregates: **User**, **Game**, **Order**, and **Library**.
+- [Architecture Views](../Architecture/Diagrams/Views/README.md): Logical and physical architecture views, including Docker deployment view for API and database.
+- [Logical View Diagram](../Architecture/Diagrams/Views/logical-view.puml): Minimal logical responsibilities view used as stable architecture contract.
+- [Physical Deployment Diagram (Docker)](../Architecture/Diagrams/Views/physical-deployment-docker.puml): Physical deployment view with API and database in separate Docker containers.
 - [Dataflow](../Architecture/Dataflow/dataflow.md): Documentation of data flows across the platform, including DFDs (levels 0, 1, and higher if needed), system components, trust boundaries, and external entities such as the RAWG.io API.
-- [Threat Identification and Analysis](../ThreatModeling/ThreatIdentificationAndAnalysis/ThreatIdentificationAndAnalysis/threatIdentificationAndAnalysis.md): Identification and analysis of threats specific to ArcadeHaven, including STRIDE application per DFD element, attack vectors, threat agents, and abuse cases (e.g. unauthorized access to a user's Library, activation key theft).
+- [Threat Identification and Analysis](../ThreatModeling/ThreatIdentificationAndAnalysis/threatIdentificationAndAnalysis.md): Identification and analysis of threats specific to ArcadeHaven, including STRIDE application per DFD element, attack vectors, threat agents, and abuse cases (e.g. unauthorized access to a user's Library, activation key theft).
+- [Attack Trees](../ThreatModeling/AttackTrees/AttackTrees.md): Goal-oriented decomposition of high-priority threats (TH-01, TH-04, TH-08) with OR/AND attack paths mapped to controls, tests, and requirements.
 - [Risk Assessment](../ThreatModeling/RiskAssessment/riskAssessment.md): Complete risk assessment using DREAD methodology — initial scoring for TH-01 to TH-09, risk treatment plan, residual risk analysis, and release acceptance rules.
-- [Mitigations](../Mitigations/mitigations.md): Proposed mitigations for identified threats, focusing on high-priority risks such as broken access control, insecure file handling, and credential exposure.
+- [Mitigations](../Mitigations/Mitigations.md): Proposed mitigations for identified threats, focusing on high-priority risks such as broken access control, insecure file handling, and credential exposure.
 - [Requirements](../Requirements/requirements.md): Justified security requirements for ArcadeHaven, covering authentication and authorization (Admin, Publisher, Buyer roles), data security, secure communication, input validation, third-party components (RAWG.io), logging, and monitoring.
-- [Security Testing](../SecurityTesting/securityTesting.md): Security testing methodology for ArcadeHaven, including abuse cases, threat model review process, and ASVS assessment focused on the platform architecture.
+- [Security Testing](../SecurityTesting/SecurityTesting.md): Security testing methodology for ArcadeHaven, including abuse cases, threat model review process, and ASVS assessment focused on the platform architecture.
 - [Security Traceability Matrix v2](../SecurityTesting/TraceabilityMatrix-V2.md): Requirement-to-threat-to-test mapping with owner and sprint planning.
 
 
 
 ## Abuse-Case Diagrams
 
-- [Expanded Abuse Cases Catalog](AbuseCases/v1/AbuseCasesExpanded.md)
-- [Auth Abuse Cases Diagram](AbuseCases/v1/AuthAbuseCase.puml)
-- [Game Abuse Cases Diagram](AbuseCases/v1/GameAbuseCase.puml)
-- [Orders and Library Abuse Cases Diagram](AbuseCases/v1/OrdersLibraryAbuseCase.puml)
-- [File Operations Abuse Cases Diagram](AbuseCases/v1/FileOperationsAbuseCase.puml)
-- [Legacy Authorization Abuse Cases Diagram](AbuseCases/v2/authorization-abuse-case.puml)
+- [Expanded Abuse Cases Catalog](../ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md)
+- [Auth Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/AuthAbuseCase.puml)
+- [Game Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/GameAbuseCase.puml)
+- [Orders and Library Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/OrdersLibraryAbuseCase.puml)
+- [File Operations Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/FileOperationsAbuseCase.puml)
+- [Legacy Authorization Abuse Cases Diagram](../ThreatModeling/AbuseCases/v2/authorization-abuse-case.puml)
 
 ## ASVS Extensions
 
-- [V6 Authentication ASVS Detail](SecurityTesting/ASVS/V6_Authentication/authentication.md): Detailed authentication requirements and traceability based on ASVS V6 controls.
+- [V6 Authentication ASVS Detail](../SecurityTesting/ASVS/V6_Authentication/authentication.md): Detailed authentication requirements and traceability based on ASVS V6 controls.
 
-- [V16 Logging and Error Handling](SecurityTesting/ASVS/V16-Logging-Error-Handling.md): ASVS V16 applicability assessment covering 17 requirements with item-by-item evaluation. Maps to RNF-07 (Logging), RNF-06 (Input Validation), and RNF-23 (Secrets Management). Primary testing via ST-008 (structured logging verification) and ST-016 (configuration review).
+- [V16 Logging and Error Handling](../SecurityTesting/ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md): ASVS V16 applicability assessment covering 17 requirements with item-by-item evaluation. Maps to RNF-07 (Logging), RNF-06 (Input Validation), and RNF-23 (Secrets Management). Primary testing via ST-008 (structured logging verification) and ST-016 (configuration review).
 
-- [V17 Communications](SecurityTesting/ASVS/V17-Communications.md): ASVS V17 applicability assessment covering 12 requirements. **Determined 100% Not Applicable** due to REST API architecture with no real-time media, WebRTC, TURN, DTLS, or signaling infrastructure. Formal evidence provided from requirements analysis, data flow analysis, and project scope documentation.
+- [V17 Communications](../SecurityTesting/ASVS/V17_Communications/V17-Communications.md): ASVS V17 applicability assessment covering 12 requirements. **Determined 100% Not Applicable** due to REST API architecture with no real-time media, WebRTC, TURN, DTLS, or signaling infrastructure. Formal evidence provided from requirements analysis, data flow analysis, and project scope documentation.
 
 ## Evaluation Criteria
 
