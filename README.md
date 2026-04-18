@@ -44,6 +44,24 @@ Jogo adicionado à Library do BUYER
 
 ---
 
+## 🔐 Autenticação e Autorização
+
+O sistema irá utilizar o Keycloak como servidor de identidade, baseado em **OAuth2** e **OpenID Connect**.
+
+### Funcionalidades principais:
+- 🔑 Autenticação centralizada (Single Sign-On - SSO)
+- 🛡️ Gestão de utilizadores, roles e permissões
+- 🔄 Integração com **Spring Security**
+- 🎟️ Emissão de tokens **JWT**
+- 🔐 Suporte a login seguro e federado (extensível)
+
+### Integração com a aplicação:
+- O frontend obtém tokens via Keycloak
+- O backend valida os tokens JWT em cada pedido
+- As roles (Admin, Publisher, Buyer) são geridas no Keycloak
+
+---
+
 ## Operações com Ficheiros
 
 - 📄 Geração de faturas em **PDF**
@@ -71,7 +89,7 @@ library_entries
 | Componente | Tecnologia |
 |---|---|
 | Back-end | Java + Spring Boot |
-| Segurança | Spring Security + JWT |
+| Segurança | Spring Security + JWT + Keycloak |
 | Base de Dados | PostgreSQL |
 | ORM | JPA / Hibernate |
 | Migrações | Flyway |
