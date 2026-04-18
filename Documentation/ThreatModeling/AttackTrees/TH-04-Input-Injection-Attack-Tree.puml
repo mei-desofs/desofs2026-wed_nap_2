@@ -1,0 +1,37 @@
+@startuml
+title TH-04 Attack Tree - Data Compromise through Input Injection
+
+skinparam backgroundColor #f4f4f4
+skinparam shadowing false
+skinparam defaultTextAlignment center
+skinparam rectangle {
+	BorderColor #5c5c5c
+	FontColor #1f1f1f
+	RoundCorner 8
+}
+
+rectangle "Attacker compromises data\nthrough input injection\n(TH-04)" as ROOT #e6f7ff
+
+rectangle "Attacker submits SQL injection\npayloads in search/filter inputs\n(AC-04, AC-13)" as SQLI #ffffff
+rectangle "Attacker submits stored script\nin game metadata\n(AC-14)" as XSS #ffffff
+rectangle "Attacker pollutes external\nmetadata ingestion flow\n(AC-19, AC-21)" as POLLUTION #ffffff
+
+rectangle "Mitigate with strict server-side\ninput validation and\nparameterized query patterns\nControls: IV-001, IV-002\nTests: ST-006\nReq: RF-11, RNF-06" as M_SQLI #d6f5ea
+rectangle "Mitigate with output encoding,\ncontent sanitization, and\nauthenticated endpoint checks\nControls: IV-003, AC-003\nTests: ST-007\nReq: RNF-06" as M_XSS #d6f5ea
+rectangle "Mitigate with validation gates for\nexternal data and dependency hygiene\nControls: IV-001, DC-001\nTests: ST-006, ST-017\nReq: RNF-06, RNF-20" as M_POLLUTION #d6f5ea
+
+ROOT -down-> SQLI
+ROOT -down-> XSS
+ROOT -down-> POLLUTION
+
+SQLI -down-> M_SQLI
+XSS -down-> M_XSS
+POLLUTION -down-> M_POLLUTION
+
+note bottom
+Attack path logic:
+- Branches from ROOT are OR alternatives.
+- Each mitigation block defines the primary defensive response for that branch.
+end note
+
+@enduml
