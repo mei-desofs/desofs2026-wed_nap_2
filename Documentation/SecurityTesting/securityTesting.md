@@ -61,11 +61,11 @@ The seed abuse-case model covers authentication and authorization. The testing p
 
 Abuse-case diagram references:
 
-- Abuse-case catalog: [../AbuseCases/abuse-cases-expanded.md](../AbuseCases/abuse-cases-expanded.md)
-- Auth diagram: [../AbuseCases/auth-abuse-case.puml](../AbuseCases/auth-abuse-case.puml)
-- Game diagram: [../AbuseCases/game-abuse-case.puml](../AbuseCases/game-abuse-case.puml)
-- Orders and library diagram: [../AbuseCases/orders-library-abuse-case.puml](../AbuseCases/orders-library-abuse-case.puml)
-- File operations diagram: [../AbuseCases/file-operations-abuse-case.puml](../AbuseCases/file-operations-abuse-case.puml)
+- Abuse-case catalog: [../ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md](../ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md)
+- Auth diagram: [../ThreatModeling/AbuseCases/v1/AuthAbuseCase.puml](../ThreatModeling/AbuseCases/v1/AuthAbuseCase.puml)
+- Game diagram: [../ThreatModeling/AbuseCases/v1/GameAbuseCase.puml](../ThreatModeling/AbuseCases/v1/GameAbuseCase.puml)
+- Orders and library diagram: [../ThreatModeling/AbuseCases/v1/OrdersLibraryAbuseCase.puml](../ThreatModeling/AbuseCases/v1/OrdersLibraryAbuseCase.puml)
+- File operations diagram: [../ThreatModeling/AbuseCases/v1/FileOperationsAbuseCase.puml](../ThreatModeling/AbuseCases/v1/FileOperationsAbuseCase.puml)
 
 ### 3.1 Abuse Cases for Security Planning
 
@@ -167,7 +167,7 @@ Threat model review is mandatory when any of the following occurs:
 
 ## 5. Security Requirement to Planned Test Traceability Matrix
 
-For the expanded matrix with ASVS references, owner roles, and sprint allocation, see [traceability-matrix-v2.md](traceability-matrix-v2.md). For ASVS-specific assessments see [ASVS/V16_Logging-ErrorHandling.md](ASVS/V16_Logging-ErrorHandling.md) and [ASVS/V17_Communications.md](ASVS/V17_Communications.md).
+For the expanded matrix with ASVS references, owner roles, and sprint allocation, see [TraceabilityMatrix-V2.md](TraceabilityMatrix-V2.md). For ASVS-specific assessments see [ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md](ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md) and [ASVS/V17_Communications/V17-Communications.md](ASVS/V17_Communications/V17-Communications.md).
 
 | Requirement ID | Security Requirement | Abuse Case | Planned Test ID | ASVS Req | Test Focus | Planned Evidence | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |

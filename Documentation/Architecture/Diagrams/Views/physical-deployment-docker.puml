@@ -1,0 +1,54 @@
+@startuml
+title ArcadeHaven - Physical Deployment View (Docker)
+
+skinparam backgroundColor #f4f4f4
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+
+node "Host Machine / VM" {
+  node "Docker Network: arcadehaven-net" {
+    node "Container: arcadehaven-api" as API {
+      component "Spring Boot API" as APP
+      component "JWT/Auth/RBAC" as SEC
+      component "Application Logging" as ALOG
+    }
+
+    node "Container: arcadehaven-db" as DB {
+      database "PostgreSQL" as PG
+    }
+  }
+
+  folder "Docker Volume: db-data" as V_DB
+  folder "Docker Volume: app-uploads" as V_FILES
+}
+
+cloud "Internet" as NET
+cloud "RAWG API" as RAWG
+actor "Client (Browser/Postman)" as CLIENT
+
+CLIENT --> NET
+NET --> API : HTTPS / REST
+API --> RAWG : Outbound HTTPS
+APP --> PG : JDBC / SQL
+DB --> V_DB
+API --> V_FILES
+
+note right of API
+Physical controls to enforce:
+- TLS termination and secure transport
+- Secret injection via environment variables
+- Least privilege container runtime
+- Non-root execution
+- Health checks and restart policy
+end note
+
+note bottom
+This physical view is intentionally deployment-focused:
+- API in one Docker container
+- Database in one Docker container
+- Persistent volumes for DB and file storage
+- Database is internal-only (not exposed externally)
+end note
+
+@enduml
