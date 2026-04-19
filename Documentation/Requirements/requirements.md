@@ -484,9 +484,9 @@ This table represents the lifecycle of each requirement from initial proposal to
 | ---------------- | ------------------------------------------------------------------------ |
 | **ID**           | RNF-02                                                                   |
 | **Name**         | JWT Authentication                                                       |
-| **Description**  | Authentication must be performed using JWT with configurable expiration. |
+| **Description**  | Authentication must be performed using JWT token.                        |
 | **Actors**       | System                                                                   |
-| **Restrictions** | None                                                                     |
+| **Restrictions** | Token expiration must be configurable                                    |
 | **Verification** | Validate token generation                                                |
 | **Priority**     | Essential                                                                |
 | **State**        | Approved                                                                 |
@@ -520,15 +520,41 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 ---
 
+| **Field**        | **Value**                                                                         |
+| ---------------- | --------------------------------------------------------------------------------- |
+| **ID**           | RNF-05                                                                            |
+| **Name**         | Security Monitoring                                                               |
+| **Description**  | The system must monitor repeated login failures and unauthorized access attempts. |
+| **Actors**       | System                                                                            |
+| **Restrictions** | None                                                                              |
+| **Verification** | Validate login failures and anauthorized access attempts                          |
+| **Priority**     | High                                                                              |
+| **State**        | Approved                                                                          |
+
+---
+
+| **Field**        | **Value**                                                                               |
+| ---------------- | --------------------------------------------------------------------------------------- |
+| **ID**           | RNF-06                                                                                  |
+| **Name**         | Security Alerting                                                                       |
+| **Description**  | The system must generate alerts for failed logins and unauthorized access to resources. |
+| **Actors**       | System                                                                                  |
+| **Restrictions** | Alerts must be configurable                                                             |
+| **Verification** | Validate alert generated for high and critical events                                   |
+| **Priority**     | Medium                                                                                  |
+| **State**        | Approved                                                                                |
+
+---
+
 | **Field**        | **Value**                                                                                                  |
 | ---------------- | ---------------------------------------------------------------------------------------------------------- |
-| **ID**           | RNF-05                                                                                                     |
+| **ID**           | RNF-07                                                                                                     |
 | **Name**         | Ownership Validation                                                                                       |
-| **Description**  | AAccess to user-specific resources must be restricted to authenticated owner or authorized administrators. |
+| **Description**  | Access to user-specific resources must be restricted to authenticated owner or authorized administrators.  |
 | **Actors**       | System                                                                                                     |
 | **Restrictions** | None                                                                                                       |
 | **Verification** | Validate user identity and authorizations                                                                  |
-| **Priority**     | High                                                                                                       |
+| **Priority**     | Essencial                                                                                                  |
 | **State**        | Approved                                                                                                   |
 
 
@@ -536,7 +562,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                       |
 | ---------------- | ----------------------------------------------- |
-| **ID**           | RNF-06                                          |
+| **ID**           | RNF-08                                          |
 | **Name**         | Role-Based Access Control                       |
 | **Description**  | Access to resources must be restricted by role. |
 | **Actors**       | System                                          |
@@ -549,20 +575,20 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                      |
 | ---------------- | ---------------------------------------------- |
-| **ID**           | RNF-07                                         |
+| **ID**           | RNF-09                                         |
 | **Name**         | HTTPS Communication                            |
 | **Description**  | All communications must use HTTPS exclusively. |
 | **Actors**       | System                                         |
 | **Restrictions** | None                                           |
 | **Verification** | Validate HTTPS enforcement                     |
-| **Priority**     | Essential                                      |
+| **Priority**     | Medium                                         |
 | **State**        | Approved                                       |
 
 ---
 
 | **Field**        | **Value**                                                      |
 | ---------------- | -------------------------------------------------------------- |
-| **ID**           | RNF-08                                                         |
+| **ID**           | RNF-10                                                         |
 | **Name**         | Input Validation                                               |
 | **Description**  | User inputs must be validated and sanitized before processing. |
 | **Actors**       | System                                                         |
@@ -575,7 +601,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                                             |
 | ---------------- | ------------------------------------------------------------------------------------- |
-| **ID**           | RNF-09                                                                                |
+| **ID**           | RNF-11                                                                                |
 | **Name**         | External Data Sanitization                                                            |
 | **Description**  | Data received from external integrations validated and sanitized before presentation. |
 | **Actors**       | System                                                                                |
@@ -588,13 +614,13 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                                                                     |
 | ---------------- | ------------------------------------------------------------------------------------------------------------- |
-| **ID**           | RNF-10                                                                                                        |
+| **ID**           | RNF-12                                                                                                        |
 | **Name**         | External API Secret Protection                                                                                |
 | **Description**  | External API credentials must be protected from disclosure in logs, URLs, repositories, and client responses. |
 | **Actors**       | System                                                                                                        |
 | **Restrictions** | Secrets must not be hard-coded or written in plaintext to access logs                                         |
 | **Verification** | Validate that API keys are injected securely and masked in logging output                                     |
-| **Priority**     | High                                                                                                          |
+| **Priority**     | Essencial                                                                                                     |
 | **State**        | Approved                                                                                                      |
 
 
@@ -602,9 +628,9 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                              |
 | ---------------- | ---------------------------------------------------------------------- |
-| **ID**           | RNF-11                                                                 |
+| **ID**           | RNF-13                                                                 |
 | **Name**         | Critical Event Logging                                                 |
-| **Description**  | The system must log critical events (login, role changes, game order). |
+| **Description**  | The system must log critical events.                                   |
 | **Actors**       | System                                                                 |
 | **Restrictions** | Logging storage must be available                                      |
 | **Verification** | Validate event logging                                                 |
@@ -613,22 +639,35 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 ---
 
+| **Field**        | **Value**                                                                  |
+| ---------------- | -------------------------------------------------------------------------- |
+| **ID**           | RNF-14                                                                     |
+| **Name**         | Error Responses                                                            |
+| **Description**  | The system must not expose sensitive information through error messages.   |
+| **Actors**       | System                                                                     |
+| **Restrictions** | Client must not receive in-depth error information                         |
+| **Verification** | Validate that error responses do not reveal system internals or user data. |
+| **Priority**     | High                                                                       |
+| **State**        | Approved                                                                   |
+
+---
+
 | **Field**        | **Value**                                                            |
 | ---------------- | -------------------------------------------------------------------- |
-| **ID**           | RNF-12                                                               |
+| **ID**           | RNF-15                                                               |
 | **Name**         | Activation Key Generation                                            |
 | **Description**  | Activation keys must be generated securely using UUID or equivalent. |
 | **Actors**       | System                                                               |
 | **Restrictions** | None                                                                 |
 | **Verification** | Validate activation key generation                                   |
-| **Priority**     | High                                                                 |
+| **Priority**     | Essencial                                                            |
 | **State**        | Approved                                                             |
 
 ---
 
 | **Field**        | **Value**                                                                                   |
 | ---------------- | ------------------------------------------------------------------------------------------- |
-| **ID**           | RNF-13                                                                                      |
+| **ID**           | RNF-16                                                                                      |
 | **Name**         | Brute Force Protection                                                                      |
 | **Description**  | The system must protect against brute force attacks using rate limiting on login endpoints. |
 | **Actors**       | System                                                                                      |
@@ -639,14 +678,53 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 ---
 
+| **Field**        | **Value**                                                                              |    
+| ---------------- | -------------------------------------------------------------------------------------- |
+| **ID**           | RNF-17                                                                                 |
+| **Name**         | Data Confidentiality                                                                   |
+| **Description**  | Sensitive user data must be accessed only through authenticated application endpoints. |
+| **Actors**       | System                                                                                 |
+| **Restrictions** | Access must be restricted to authorized roles only                                     |
+| **Verification** | Validate authorization and access to data                                              |
+| **Priority**     | High                                                                                   |
+| **State**        | Approved                                                                               |
+
+---
+
+| **Field**        | **Value**                                                                      |
+| ---------------- | ------------------------------------------------------------------------------ |
+| **ID**           | RNF-18                                                                         |
+| **Name**         | Authorization Enforcement                                                      |
+| **Description**  | All protected operations must enforce authentication and authorization checks. |
+| **Actors**       | System                                                                         |
+| **Restrictions** | No operation may rely solely on client-provided identifiers                    |
+| **Verification** | Validate authorization checks                                                  |
+| **Priority**     | Essential                                                                      |
+| **State**        | Approved                                                                       |
+
+---
+
+| **Field**        | **Value**                                                       |
+| ---------------- | --------------------------------------------------------------- |
+| **ID**           | RNF-19                                                          |
+| **Name**         | Rate Limiting on Sensitive Endpoints                            |
+| **Description**  | The system must apply rate limiting to critical endpoints.      |
+| **Actors**       | System                                                          |
+| **Restrictions** | Limits must be configurable                                     |
+| **Verification** | Validate rate limiting behavior under load and stress scenarios |
+| **Priority**     | High                                                            |
+| **State**        | Approved                                                        |
+
+---
+
 | **Field**        | **Value**                                                                                     |
 | ---------------- | --------------------------------------------------------------------------------------------- |
-| **ID**           | RNF-14                                                                                        |
+| **ID**           | RNF-20                                                                                        |
 | **Name**         | Secure File Storage                                                                           |
-| **Description**  | Sensitive generated files must be  accessed only through authenticated application endpoints. |
+| **Description**  | Sensitive generated files must be accessed only through authenticated application endpoints.  |
 | **Actors**       | System                                                                                        |
-| **Restrictions** | Direct static-file access must not be allowed                                                |
-| **Verification** | Validate file cannot be accessed or downloaded without proper authorization                   |
+| **Restrictions** | Direct static-file access must not be allowed                                                 |
+| **Verification** | Validate that a file cannot be accessed or downloaded without proper authorization            |
 | **Priority**     | High                                                                                          |
 | **State**        | Approved                                                                                      |
 
@@ -654,20 +732,20 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                                                         |
 | ---------------- | ------------------------------------------------------------------------------------------------- |
-| **ID**           | RNF-15                                                                                            |
+| **ID**           | RNF-21                                                                                            |
 | **Name**         | File Path Safety                                                                                  |
 | **Description**  | All file read and write operations must use server-generated paths and filenames.                 |
 | **Actors**       | System                                                                                            |
 | **Restrictions** | Client-provided filenames and paths must not be used directly in storage or retrieval operations. |
 | **Verification** | Validate canonical path checks and rejection of traversal patterns such as ../ sequences.         |
-| **Priority**     | High                                                                                              |
+| **Priority**     | Medium                                                                                            |
 | **State**        | Approved                                                                                          |
 
 ---
 
 | **Field**        | **Value**                                                                             |
 | ---------------- | ------------------------------------------------------------------------------------- |
-| **ID**           | RNF-16                                                                                |
+| **ID**           | RNF-22                                                                                |
 | **Name**         | File MIME Verification                                                                |
 | **Description**  | Uploaded files must be verified for their actual MIME type, not just their extension. |
 | **Actors**       | System                                                                                |
@@ -681,7 +759,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                            |
 | ---------------- | -------------------------------------------------------------------- |
-| **ID**           | RNF-17                                                               |
+| **ID**           | RNF-23                                                               |
 | **Name**         | Game Listing Response Time                                           |
 | **Description**  | The system must respond to game listing requests in less than 500ms. |
 | **Actors**       | System                                                               |
@@ -694,7 +772,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                              |
 | ---------------- | ------------------------------------------------------ |
-| **ID**           | RNF-18                                                 |
+| **ID**           | RNF-24                                                 |
 | **Name**         | Concurrent Users Support                               |
 | **Description**  | The system must support at least 100 concurrent users. |
 | **Actors**       | System                                                 |
@@ -707,13 +785,13 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                         |
 | ---------------- | ------------------------------------------------- |
-| **ID**           | RNF-19                                            |
+| **ID**           | RNF-25                                            |
 | **Name**         | File Upload Size                                  |
 | **Description**  | The system must support image uploads up to 25MB. |
 | **Actors**       | System                                            |
 | **Restrictions** | File size limit must be enforced                  |
 | **Verification** | Validate file upload size limits                  |
-| **Priority**     | High                                              |
+| **Priority**     | Medium                                            |
 | **State**        | Approved                                          |
 
 
@@ -721,7 +799,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                                      |
 | ---------------- | ------------------------------------------------------------------------------ |
-| **ID**           | RNF-20                                                                         |
+| **ID**           | RNF-26                                                                         |
 | **Name**         | System Availability                                                            |
 | **Description**  | The system must have a minimum availability of 99% in production environments. |
 | **Actors**       | System                                                                         |
@@ -734,20 +812,20 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                       |
 | ---------------- | ----------------------------------------------- |
-| **ID**           | RNF-21                                          |
+| **ID**           | RNF-27                                          |
 | **Name**         | Database Backup                                 |
 | **Description**  | The database must have automatic daily backups. |
 | **Actors**       | System                                          |
 | **Restrictions** | Backup storage must be available                |
 | **Verification** | Validate backup execution and recovery          |
-| **Priority**     | High                                            |
+| **Priority**     | Medium                                          |
 | **State**        | Approved                                        |
 
 ---
 
 | **Field**        | **Value**                                                                        |
 | ---------------- | -------------------------------------------------------------------------------- |
-| **ID**           | RNF-22                                                                           |
+| **ID**           | RNF-28                                                                           |
 | **Name**         | API Resilience                                                                   |
 | **Description**  | The system must be resilient to RAWG API failures, using fallback to local data. |
 | **Actors**       | System                                                                           |
@@ -761,7 +839,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                                         |
 | ---------------- | --------------------------------------------------------------------------------- |
-| **ID**           | RNF-23                                                                            |
+| **ID**           | RNF-29                                                                            |
 | **Name**         | DDD Code Structure                                                                |
 | **Description**  | Code must follow Domain-Driven Design principles with clear separation of layers. |
 | **Actors**       | Developer Team                                                                    |
@@ -774,7 +852,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                         |
 | ---------------- | ------------------------------------------------- |
-| **ID**           | RNF-24                                            |
+| **ID**           | RNF-30                                            |
 | **Name**         | Database Migration Management                     |
 | **Description**  | Database migrations must be managed using Flyway. |
 | **Actors**       | Developer Team                                    |
@@ -787,7 +865,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                  |
 | ---------------- | ---------------------------------------------------------- |
-| **ID**           | RNF-25                                                     |
+| **ID**           | RNF-31                                                     |
 | **Name**         | Unit Test Coverage                                         |
 | **Description**  | The project must have a minimum of 80% unit test coverage. |
 | **Actors**       | Developer Team                                             |
@@ -800,7 +878,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                                     |
 | ---------------- | ------------------------------------------------------------- |
-| **ID**           | RNF-26                                                        |
+| **ID**           | RNF-32                                                        |
 | **Name**         | CI/CD Static Analysis                                         |
 | **Description**  | The CI/CD pipeline must execute static analysis on each push. |
 | **Actors**       | System                                                        |
@@ -814,37 +892,37 @@ This table represents the lifecycle of each requirement from initial proposal to
 
 | **Field**        | **Value**                                      |
 | ---------------- | ---------------------------------------------- |
-| **ID**           | RNF-27                                         |
+| **ID**           | RNF-33                                         |
 | **Name**         | Containerization                               |
 | **Description**  | The system must be containerized using Docker. |
 | **Actors**       | System                                         |
 | **Restrictions** | None                                           |
 | **Verification** | Validate container build and deployment        |
-| **Priority**     | High                                           |
+| **Priority**     | Medium                                         |
 | **State**        | Approved                                       |
 
 ---
 
 | **Field**        | **Value**                                                  |
 | ---------------- | ---------------------------------------------------------- |
-| **ID**           | RNF-28                                                     |
+| **ID**           | RNF-35                                                     |
 | **Name**         | Environment Replication                                    |
 | **Description**  | The environment must be reproducible using Docker Compose. |
 | **Actors**       | Developers                                                 |
 | **Restrictions** | None                                                       |
 | **Verification** | Validate environment setup                                 |
-| **Priority**     | High                                                       |
+| **Priority**     | Medium                                                     |
 | **State**        | Approved                                                   |
 
 ---
 
 | **Field**        | **Value**                                                                                 |
 | ---------------- | ----------------------------------------------------------------------------------------- |
-| **ID**           | RNF-29                                                                                    |
+| **ID**           | RNF-36                                                                                    |
 | **Name**         | Sensitive Configuration Management                                                        |
 | **Description**  | Sensitive configurations must be injected via environment variables and never hard-coded. |
 | **Actors**       | System                                                                                    |
 | **Restrictions** | Environment variable injection required                                                   |
 | **Verification** | Validate configuration management                                                         |
-| **Priority**     | High                                                                                      |
+| **Priority**     | Essencial                                                                                 |
 | **State**        | Approved                                                                                  |
