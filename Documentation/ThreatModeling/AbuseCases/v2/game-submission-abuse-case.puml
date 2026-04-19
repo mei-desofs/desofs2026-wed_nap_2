@@ -15,18 +15,18 @@ rectangle "ArcadeHaven - Game Submission Abuse Case" {
   Attacker --> (Upload Oversized File)
   Attacker --> (Bypass MIME Type Check)
 
-  (Submit Game) ..> (File Name Sanitization) : <<includes>>
-  (Submit Game) ..> (File Size Validation) : <<includes>>
+  (Submit Game) ..> (File Name Sanitization) : <<include>>
+  (Submit Game) ..> (File Size Validation) : <<include>>
 
-  (Upload Game Image) ..> (File Name Sanitization) : <<includes>>
-  (Upload Game Image) ..> (File Size Validation) : <<includes>>
-  (Upload Game Image) ..> (MIME Type Verification) : <<includes>>
+  (Upload Game Image) ..> (File Name Sanitization) : <<include>>
+  (Upload Game Image) ..> (File Size Validation) : <<include>>
+  (Upload Game Image) ..> (MIME Type Verification) : <<include>>
 
   (File Name Sanitization) ..> (Upload Malicious File) : <<mitigates>>
   (MIME Type Verification) ..> (Upload Malicious File) : <<mitigates>>
   (File Size Validation) ..> (Upload Oversized File) : <<mitigates>>
 
-  (Bypass MIME Type Check) ..> (Submit Game) : <<threatens>>
+  (Bypass MIME Type Check) ..> (Submit Game Image) : <<threatens>>
 
 }
 

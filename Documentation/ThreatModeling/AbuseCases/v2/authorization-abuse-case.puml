@@ -17,16 +17,17 @@ rectangle "ArcadeHaven - Authentication Abuse Case" {
   Attacker --> (Dictionary Attack)
   Attacker --> (JWT Token Theft)
 
-  (Register) ..> (Input Sanitization) : <<includes>>
+  (Register) ..> (Input Sanitization) : <<include>>
 
-  (Login) ..> (Input Sanitization) : <<includes>>
-  (Login) ..> (MFA) : <<includes>>
-  (Login) ..> (Lock account after 5 tries) : <<includes>>
+  (Login) ..> (Input Sanitization) : <<include>>
+  (Login) ..> (MFA) : <<include>>
+  (Login) ..> (Lock account after 5 tries) : <<include>>
 
   (Input Sanitization) ..> (Inject Malicious Code) : <<mitigates>>
 
+  (Lock account after 5 tries) ..> (Brute Force Login) : <<mitigates>>
+
   (MFA) ..> (Hijack Account) : <<mitigates>>
-  (MFA) ..> (Brute Force Login) : <<mitigates>>
   (MFA) ..> (Dictionary Attack) : <<mitigates>>
 
   (Lock account after 5 tries) ..> (Brute Force Login) : <<mitigates>>
