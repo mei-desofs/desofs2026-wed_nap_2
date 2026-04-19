@@ -1,0 +1,56 @@
+@startuml
+left to right direction
+skinparam backgroundColor #E8F4F8
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam ArrowColor #1F2A35
+skinparam ArrowFontColor #1F2A35
+skinparam RectangleBackgroundColor #76B9D9
+skinparam RectangleBorderColor #1F2A35
+skinparam UsecaseBackgroundColor #89C6E2
+skinparam UsecaseBorderColor #1F2A35
+skinparam ActorBorderColor #1F2A35
+skinparam ActorFontColor #1F2A35
+
+actor Publisher
+actor User
+actor Attacker
+
+rectangle "ArcadeHaven - File Operations Abuse Case" {
+
+  Publisher --> (Upload Game Image)
+  User --> (Download Invoice)
+
+  (Malicious Upload Bypass) --> Attacker
+  (Invoice Path Traversal) --> Attacker
+  (Unsafe Startup Path Abuse) --> Attacker
+  (Sensitive Log Exposure) --> Attacker
+
+  (Upload Game Image) -[hidden]left- Publisher
+  (Download Invoice) -[hidden]left- User
+  (Malicious Upload Bypass) -[hidden]right- Attacker
+  (Sensitive Log Exposure) -[hidden]right- Attacker
+
+  (Upload Game Image) ..> (File Name Sanitization) : <<include>>
+  (Upload Game Image) ..> (MIME Type Verification) : <<include>>
+
+  (Download Invoice) ..> (Authorization Check) : <<include>>
+  (Download Invoice) ..> (Secure File Storage) : <<include>>
+  (Download Invoice) ..> (Path Normalization) : <<include>>
+  (Download Invoice) ..> (Log Redaction) : <<include>>
+
+  (File Name Sanitization) ..> (Malicious Upload Bypass) : <<mitigates>>
+  (MIME Type Verification) ..> (Malicious Upload Bypass) : <<mitigates>>
+  (Authorization Check) ..> (Invoice Path Traversal) : <<mitigates>>
+  (Path Normalization) ..> (Invoice Path Traversal) : <<mitigates>>
+  (Path Normalization) ..> (Unsafe Startup Path Abuse) : <<mitigates>>
+  (Secure File Storage) ..> (Invoice Path Traversal) : <<mitigates>>
+  (Log Redaction) ..> (Sensitive Log Exposure) : <<mitigates>>
+
+  (Malicious Upload Bypass) ..> (Upload Game Image) : <<threatens>>
+  (Invoice Path Traversal) ..> (Download Invoice) : <<threatens>>
+  (Unsafe Startup Path Abuse) ..> (Download Invoice) : <<threatens>>
+  (Sensitive Log Exposure) ..> (Download Invoice) : <<threatens>>
+}
+
+@enduml

@@ -1,0 +1,64 @@
+@startuml
+left to right direction
+skinparam backgroundColor #E8F4F8
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam ArrowColor #1F2A35
+skinparam ArrowFontColor #1F2A35
+skinparam RectangleBackgroundColor #76B9D9
+skinparam RectangleBorderColor #1F2A35
+skinparam UsecaseBackgroundColor #89C6E2
+skinparam UsecaseBorderColor #1F2A35
+skinparam ActorBorderColor #1F2A35
+skinparam ActorFontColor #1F2A35
+
+actor User
+actor Admin
+actor Attacker
+
+rectangle "ArcadeHaven - Orders and Library Abuse Case" {
+
+  User --> (Create Order)
+  User --> (Cancel Pending Order)
+  User --> (View Library)
+  User --> (View Activation Keys)
+  (Manage Library Entries) --> Admin
+
+  (Order Tampering) --> Attacker
+  (Duplicate Order Race) --> Attacker
+  (Unauthorized Order Cancellation) --> Attacker
+  (Activation Key Disclosure) --> Attacker
+  (Unauthorized Library Revocation) --> Attacker
+
+  (Create Order) -[hidden]left- User
+  (View Library) -[hidden]left- User
+  (Manage Library Entries) -[hidden]right- Admin
+  (Activation Key Disclosure) -[hidden]right- Admin
+  (Unauthorized Order Cancellation) -[hidden]right- Admin
+  (Unauthorized Library Revocation) -[hidden]right- Admin
+  (Order Tampering) -[hidden]right- Attacker
+  Admin -[hidden]down- Attacker
+  (Unauthorized Library Revocation) -[hidden]right- Attacker
+
+  (Create Order) ..> (Authentication Check) : <<include>>
+  (Create Order) ..> (Server-side Validation) : <<include>>
+  (Create Order) ..> (Idempotency and Concurrency Control) : <<include>>
+
+  (Cancel Pending Order) ..> (Authorization Check) : <<include>>
+  (View Activation Keys) ..> (Authorization Check) : <<include>>
+  (Manage Library Entries) ..> (Authorization Check) : <<include>>
+
+  (Server-side Validation) ..> (Order Tampering) : <<mitigates>>
+  (Idempotency and Concurrency Control) ..> (Duplicate Order Race) : <<mitigates>>
+  (Authorization Check) ..> (Unauthorized Order Cancellation) : <<mitigates>>
+  (Authorization Check) ..> (Activation Key Disclosure) : <<mitigates>>
+  (Authorization Check) ..> (Unauthorized Library Revocation) : <<mitigates>>
+
+  (Order Tampering) ..> (Create Order) : <<threatens>>
+  (Duplicate Order Race) ..> (Create Order) : <<threatens>>
+  (Unauthorized Order Cancellation) ..> (Cancel Pending Order) : <<threatens>>
+  (Activation Key Disclosure) ..> (View Activation Keys) : <<threatens>>
+  (Unauthorized Library Revocation) ..> (Manage Library Entries) : <<threatens>>
+}
+
+@enduml

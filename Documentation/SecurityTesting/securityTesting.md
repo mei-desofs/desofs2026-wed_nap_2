@@ -62,10 +62,10 @@ The seed abuse-case model covers authentication and authorization. The testing p
 Abuse-case diagram references:
 
 - Abuse-case catalog: [../ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md](../ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md)
-- Auth diagram: [../ThreatModeling/AbuseCases/v1/AuthAbuseCase.puml](../ThreatModeling/AbuseCases/v1/AuthAbuseCase.puml)
-- Game diagram: [../ThreatModeling/AbuseCases/v1/GameAbuseCase.puml](../ThreatModeling/AbuseCases/v1/GameAbuseCase.puml)
-- Orders and library diagram: [../ThreatModeling/AbuseCases/v1/OrdersLibraryAbuseCase.puml](../ThreatModeling/AbuseCases/v1/OrdersLibraryAbuseCase.puml)
-- File operations diagram: [../ThreatModeling/AbuseCases/v1/FileOperationsAbuseCase.puml](../ThreatModeling/AbuseCases/v1/FileOperationsAbuseCase.puml)
+- Auth diagram: [../ThreatModeling/AbuseCases/v1/authorization-abuse-case.puml](../ThreatModeling/AbuseCases/v1/authorization-abuse-case.puml)
+- Game diagram: [../ThreatModeling/AbuseCases/v1/game-management-abuse-case.puml](../ThreatModeling/AbuseCases/v1/game-management-abuse-case.puml)
+- Orders and library diagram: [../ThreatModeling/AbuseCases/v1/orders-library-abuse-case.puml](../ThreatModeling/AbuseCases/v1/orders-library-abuse-case.puml)
+- File operations diagram: [../ThreatModeling/AbuseCases/v1/file-operations-abuse-case.puml](../ThreatModeling/AbuseCases/v1/file-operations-abuse-case.puml)
 
 ### 3.1 Abuse Cases for Security Planning
 

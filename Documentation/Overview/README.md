@@ -60,10 +60,10 @@ Documentation/
 ## Abuse-Case Diagrams
 
 - [Expanded Abuse Cases Catalog](../ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md)
-- [Auth Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/AuthAbuseCase.puml)
-- [Game Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/GameAbuseCase.puml)
-- [Orders and Library Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/OrdersLibraryAbuseCase.puml)
-- [File Operations Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/FileOperationsAbuseCase.puml)
+- [Auth Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/authorization-abuse-case.puml)
+- [Game Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/game-management-abuse-case.puml)
+- [Orders and Library Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/orders-library-abuse-case.puml)
+- [File Operations Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/file-operations-abuse-case.puml)
 - [Legacy Authorization Abuse Cases Diagram](../ThreatModeling/AbuseCases/v2/authorization-abuse-case.puml)
 
 ## ASVS Extensions

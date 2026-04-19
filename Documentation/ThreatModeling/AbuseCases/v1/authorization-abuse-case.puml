@@ -1,0 +1,67 @@
+@startuml
+left to right direction
+skinparam backgroundColor #E8F4F8
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam ArrowColor #1F2A35
+skinparam ArrowFontColor #1F2A35
+skinparam RectangleBackgroundColor #76B9D9
+skinparam RectangleBorderColor #1F2A35
+skinparam UsecaseBackgroundColor #89C6E2
+skinparam UsecaseBorderColor #1F2A35
+skinparam ActorBorderColor #1F2A35
+skinparam ActorFontColor #1F2A35
+
+actor User
+actor Admin
+actor Attacker
+
+rectangle "ArcadeHaven - Authentication and Authorization Abuse Case" {
+
+  User --> (Register)
+  User --> (Login)
+  User --> (Access Protected Endpoint)
+  (Change User Role) --> Admin
+  (Manage User Activation) --> Admin
+
+  (Brute Force Login) --> Attacker
+  (JWT Token Replay) --> Attacker
+  (Username Enumeration) --> Attacker
+  (Password Reset Token Guessing) --> Attacker
+  (Privilege Escalation) --> Attacker
+
+  (Register) -[hidden]left- User
+  (Access Protected Endpoint) -[hidden]left- User
+  (Change User Role) -[hidden]right- Admin
+  (Manage User Activation) -[hidden]right- Admin
+  (Brute Force Login) -[hidden]right- Attacker
+  (Privilege Escalation) -[hidden]right- Attacker
+  Admin -[hidden]up- Attacker
+
+  (Register) ..> (Input Sanitization) : <<include>>
+
+  (Login) ..> (MFA) : <<include>>
+  (Login) ..> (Lock Account After 5 Tries) : <<include>>
+  (Login) ..> (Generic Login Error Message) : <<include>>
+
+  (Access Protected Endpoint) ..> (Token Validation and Expiry) : <<include>>
+
+  (Change User Role) ..> (RBAC Validation) : <<include>>
+  (Manage User Activation) ..> (RBAC Validation) : <<include>>
+
+  (Input Sanitization) ..> (Username Enumeration) : <<mitigates>>
+  (MFA) ..> (Password Reset Token Guessing) : <<mitigates>>
+  (Lock Account After 5 Tries) ..> (Brute Force Login) : <<mitigates>>
+  (Generic Login Error Message) ..> (Username Enumeration) : <<mitigates>>
+  (Token Validation and Expiry) ..> (JWT Token Replay) : <<mitigates>>
+  (RBAC Validation) ..> (Privilege Escalation) : <<mitigates>>
+
+  (Brute Force Login) ..> (Login) : <<threatens>>
+  (JWT Token Replay) ..> (Access Protected Endpoint) : <<threatens>>
+  (Username Enumeration) ..> (Login) : <<threatens>>
+  (Password Reset Token Guessing) ..> (Login) : <<threatens>>
+  (Privilege Escalation) ..> (Change User Role) : <<threatens>>
+  (Privilege Escalation) ..> (Manage User Activation) : <<threatens>>
+}
+
+@enduml
