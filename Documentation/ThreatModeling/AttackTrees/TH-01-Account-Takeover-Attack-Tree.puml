@@ -1,5 +1,5 @@
 @startuml
-title TH-01 Attack Tree - Account Takeover and Login Abuse
+title Attack Tree - Account Takeover and Login Abuse
 
 skinparam backgroundColor #f4f4f4
 skinparam shadowing false
@@ -10,15 +10,15 @@ skinparam rectangle {
 	RoundCorner 8
 }
 
-rectangle "Attacker gains unauthorized\naccount access\n(TH-01)" as ROOT #e6f7ff
+rectangle "Attacker gains unauthorized\naccount access" as ROOT #e6f7ff
 
-rectangle "Attacker executes brute-force\nagainst login endpoint\n(AC-01, AC-09)" as BRUTEFORCE #ffffff
-rectangle "Attacker compromises and\nreplays authentication tokens\n(AC-02)" as TOKEN_REPLAY #ffffff
-rectangle "Attacker abuses password\nreset lifecycle weaknesses\n(AC-10)" as RESET_ABUSE #ffffff
+rectangle "Attacker executes brute-force\nagainst login endpoint" as BRUTEFORCE #ffffff
+rectangle "Attacker compromises and\nreplays authentication tokens" as TOKEN_REPLAY #ffffff
+rectangle "Attacker abuses password\nreset lifecycle weaknesses" as RESET_ABUSE #ffffff
 
-rectangle "Mitigate with rate limiting,\nlockout controls, and\nsecurity event logging\nControls: AC-006, LM-001\nTests: ST-010\nReq: RF-02, RNF-09" as M_BRUTEFORCE #d6f5ea
-rectangle "Mitigate with token expiry,\nmandatory auth checks,\nHTTPS-only transport, and\nsecrets hardening\nControls: AC-002, AC-003, AC-005, SC-001\nTests: ST-002, ST-003, ST-005\nReq: RNF-02, RNF-03, RNF-05, RNF-23" as M_TOKEN_REPLAY #d6f5ea
-rectangle "Mitigate with reset abuse\ndetection, rate limiting,\nand centralized logging\nControls: AC-006, LM-001\nTests: ST-010" as M_RESET_ABUSE #d6f5ea
+rectangle "Mitigate with rate limiting,\nlockout controls, and\nsecurity event logging" as M_BRUTEFORCE #d6f5ea
+rectangle "Mitigate with token expiry,\nmandatory auth checks,\nHTTPS-only transport, and\nsecrets hardening" as M_TOKEN_REPLAY #d6f5ea
+rectangle "Mitigate with reset abuse\ndetection, rate limiting,\nand centralized logging" as M_RESET_ABUSE #d6f5ea
 
 ROOT -down-> BRUTEFORCE
 ROOT -down-> TOKEN_REPLAY

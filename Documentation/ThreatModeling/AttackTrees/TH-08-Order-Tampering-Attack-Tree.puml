@@ -1,5 +1,5 @@
 @startuml
-title TH-08 Attack Tree - Order Tampering and Ownership Bypass
+title Attack Tree - Order Tampering and Ownership Bypass
 
 skinparam backgroundColor #f4f4f4
 skinparam shadowing false
@@ -10,15 +10,15 @@ skinparam rectangle {
 	RoundCorner 8
 }
 
-rectangle "Attacker manipulates order\nintegrity and ownership\n(TH-08)" as ROOT #e6f7ff
+rectangle "Attacker manipulates order\nintegrity and ownership" as ROOT #e6f7ff
 
-rectangle "Attacker tampers request\nparameters during order creation\n(AC-08)" as PARAM_TAMPERING #ffffff
-rectangle "Attacker abuses unauthorized\norder state transitions\n(AC-16)" as STATE_ABUSE #ffffff
-rectangle "Attacker exploits checkout\nconcurrency/race conditions\n(AC-15)" as RACE_ABUSE #ffffff
+rectangle "Attacker tampers request\nparameters during order creation" as PARAM_TAMPERING #ffffff
+rectangle "Attacker abuses unauthorized\norder state transitions" as STATE_ABUSE #ffffff
+rectangle "Attacker exploits checkout\nconcurrency/race conditions" as RACE_ABUSE #ffffff
 
-rectangle "Mitigate with server-side input\nvalidation and RBAC ownership checks\nControls: IV-001, AC-004\nTests: ST-015\nReq: RF-14, RF-20" as M_PARAM_TAMPERING #d6f5ea
-rectangle "Mitigate with strict authorization\non cancel/finalize operations\nControls: AC-004\nTests: ST-015\nReq: RF-20" as M_STATE_ABUSE #d6f5ea
-rectangle "Mitigate with idempotency and\ntransaction monitoring controls\nControls: IV-001, LM-002\nTests: ST-015" as M_RACE_ABUSE #d6f5ea
+rectangle "Mitigate with server-side input\nvalidation and RBAC ownership checks" as M_PARAM_TAMPERING #d6f5ea
+rectangle "Mitigate with strict authorization\non cancel/finalize operations" as M_STATE_ABUSE #d6f5ea
+rectangle "Mitigate with idempotency and\ntransaction monitoring controls" as M_RACE_ABUSE #d6f5ea
 
 ROOT -down-> PARAM_TAMPERING
 ROOT -down-> STATE_ABUSE
