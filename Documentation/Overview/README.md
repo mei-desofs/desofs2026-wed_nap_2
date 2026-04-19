@@ -35,7 +35,7 @@ Documentation/
 |   ├── MasterObjectivePlan.md
 |   ├── SecurityTesting.md
 │   ├── ThreatModelReviewWorkflow.md
-│   └── TraceabilityMatrix.md
+│   └── TraceabilityMatrix-V2.md
 │
 └── SSDLC/
     ├── SSDLC.md
@@ -50,6 +50,7 @@ Documentation/
 - [Threat Identification and Analysis](../ThreatModeling/ThreatIdentificationAndAnalysis/threatIdentificationAndAnalysis.md): Identification and analysis of threats specific to ArcadeHaven, including STRIDE application per DFD element, attack vectors, threat agents, and abuse cases (e.g. unauthorized access to a user's Library, activation key theft).
 - [Attack Trees](../ThreatModeling/AttackTrees/AttackTrees.md): Goal-oriented decomposition of high-priority threats (TH-01, TH-04, TH-08) with OR/AND attack paths mapped to controls, tests, and requirements.
 - [Risk Assessment](../ThreatModeling/RiskAssessment/riskAssessment.md): Complete risk assessment using DREAD methodology — initial scoring for TH-01 to TH-09, risk treatment plan, residual risk analysis, and release acceptance rules.
+- [DREAD Analysis](../SSDLC/DREAD.md): STRIDE category-level DREAD summary plus individual per-threat DREAD scoring for all 76 threats identified by OWASP Threat Dragon, each anchored to CWE, OWASP Top 10 2021, and CVSS 3.1 base score ranges with per-dimension justification.
 - [Mitigations](../Mitigations/Mitigations.md): Proposed mitigations for identified threats, focusing on high-priority risks such as broken access control, insecure file handling, and credential exposure.
 - [Requirements](../Requirements/requirements.md): Justified security requirements for ArcadeHaven, covering authentication and authorization (Admin, Publisher, Buyer roles), data security, secure communication, input validation, third-party components (RAWG.io), logging, and monitoring.
 - [Security Testing](../SecurityTesting/SecurityTesting.md): Security testing methodology for ArcadeHaven, including abuse cases, threat model review process, and ASVS assessment focused on the platform architecture.

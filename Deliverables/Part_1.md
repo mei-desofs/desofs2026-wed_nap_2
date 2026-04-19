@@ -126,6 +126,7 @@ During this phase, the workload was distributed among the group members as follo
  
 
 - 1250491 - Acácio Coutinho
+  - [DREAD Analysis](../Documentation/SSDLC/DREAD.md)
   - [ASVS](../Documentation/SecurityTesting/ASVS)
     - [Encoding and Sanitization](../Documentation/SecurityTesting/ASVS/V1_EncodingAndSanitization/encondingAndSanitization.md)
     - [Validation and Business Logic](../Documentation/SecurityTesting/ASVS/V2_ValidationAndBusinessLogic/validationAndBusinessLogic.md)
@@ -137,6 +138,7 @@ During this phase, the workload was distributed among the group members as follo
 - 1250516 - Gabriel Proença
   - [Abuse Cases](../Documentation/ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md)
   - [Attack Trees](../Documentation/ThreatModeling/AttackTrees/AttackTrees.md)
+  - [DREAD Analysis](../Documentation/SSDLC/DREAD.md)
     - [TH-01 Account Takeover](../Documentation/ThreatModeling/AttackTrees/TH-01-Account-Takeover-Attack-Tree.puml)
     - [TH-04 Input Injection](../Documentation/ThreatModeling/AttackTrees/TH-04-Input-Injection-Attack-Tree.puml)
     - [TH-08 Order Tampering](../Documentation/ThreatModeling/AttackTrees/TH-08-Order-Tampering-Attack-Tree.puml)

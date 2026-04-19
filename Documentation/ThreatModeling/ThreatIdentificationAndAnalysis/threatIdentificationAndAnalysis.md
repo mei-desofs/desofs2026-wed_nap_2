@@ -49,6 +49,8 @@ Threats are identified using STRIDE over the current architecture and trust boun
 | TH-08 | T | Order tampering and ownership bypass | Order integrity, invoice generation | AC-08 | RF-14, RF-20 |
 | TH-09 | R | Missing evidence for privileged actions | Audit logs and accountability | AC-03, AC-09, AC-18 | RNF-07, RNF-23 |
 
+Each group above maps to a set of individual threats catalogued and DREAD-scored in [DREAD Analysis](../../SSDLC/DREAD.md). For the full 76-threat inventory with per-threat CWE, OWASP Top 10 2021, and CVSS 3.1 anchors, see that document.
+
 ## 5. Threat Model Review Process
 
 ### 5.1 Trigger Events
@@ -79,8 +81,8 @@ Each review must produce:
 - Updated security testing traceability links.
 - List of required mitigation actions.
 
-## 6. Current Gaps to Address Next
+## 6. Completed Actions
 
-- Add endpoint-level threat granularity for all modules.
-- Add threat-tree breakdown for high-risk threats.
-- Record threat review decisions with owner and due date.
+- Endpoint-level threat granularity: completed — 76 individual threats catalogued in [DREAD Analysis](../../SSDLC/DREAD.md).
+- Threat-tree breakdown for high-risk threats: completed — attack trees for TH-01, TH-04, and TH-08 in [Attack Trees](../AttackTrees/AttackTrees.md).
+- Threat review decisions with owner and due date: tracked per sprint via the [Threat Model Review Workflow](../../SecurityTesting/ThreatModelReviewWorkflow.md).
