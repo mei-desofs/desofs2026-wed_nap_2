@@ -1,26 +1,36 @@
 # Threat Identification and Analysis
 
 **Project:** ArcadeHaven — DESOFS 2026  
-**Document:** T3 — Threat Modeling  
+**Document:** [ArcadeHaven-DFD](../../Architecture/Dataflow/arcadehaven-dfd.pdf)  
 **Methodology:** STRIDE-per-Element applied to all DFD levels  
-**Date:** April 2026
+
+> **Note:**  
+> This document provides a **summarized view** of the identified threats.  
+> For a **more detailed and enriched version** — including full **descriptions** and **mitigation strategies** — please refer to the **report generated in OWASP Threat Dragon**, where all threats are documented in depth.
 
 ---
 
 ## 1. Introduction
 
-This document presents the complete threat identification and analysis for the ArcadeHaven digital game distribution platform. Threats were identified by applying the **STRIDE-per-Element** methodology to every element present in the Data Flow Diagrams (DFDs) produced in OWASP Threat Dragon, from the system context (Level 0) down to the Game Management sub-processes (Level 2).
+This document presents a **high-level overview** of the threat identification and analysis for the *ArcadeHaven* digital game distribution platform.
 
-For each element, the analysis identifies:
-- Applicable STRIDE threat categories based on element type
-- Specific threat scenarios with concrete attack vectors
+Threats were identified by applying the **STRIDE-per-Element** methodology to every element present in the Data Flow Diagrams (DFDs) produced in OWASP Threat Dragon, from the system context (Level 0) down to the Game Management sub-processes (Level 2).
+
+The goal is to highlight the **most relevant security risks**, while keeping this document concise and easy to navigate.
+
+For each element, the analysis identifies: 
+- Applicable STRIDE threat categories based on element type 
+- Specific threat scenarios with concrete attack vectors 
 - Threat agents and their capabilities
 - Abuse cases illustrating how each threat could be exploited
 - Proposed mitigations and security controls
 
+For full details consult the [Threat Dragon report](../../Architecture/Dataflow/arcadehaven-dfd.pdf) .
+
 ---
 
 ## 2. STRIDE-per-Element Mapping
+
 
 The STRIDE-per-Element methodology assigns applicable threat categories based on the type of each DFD element:
 
@@ -556,6 +566,3 @@ Before presenting threats per element, the following threat agents are reference
 | Low | 26 | 13% |
 | **Total** | **198** | **100%** |
 
----
-
-*End of Threat Identification and Analysis Document*

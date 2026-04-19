@@ -2,7 +2,6 @@
 
 **Project:** ArcadeHaven — DESOFS 2026  
 **Methodology:** OWASP Risk Rating Methodology  
-**Date:** April 2026
 
 ---
 
