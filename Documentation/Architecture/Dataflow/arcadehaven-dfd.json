@@ -4585,7 +4585,7 @@
         "cells": [
           {
             "position": {
-              "x": 40,
+              "x": -10,
               "y": 400
             },
             "size": {
@@ -4597,8 +4597,8 @@
                 "text": "System Users\n(User, Publisher,\nAdministrator)"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -4695,9 +4695,40 @@
               "isTrustBoundary": false,
               "outOfScope": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "providesAuthentication": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "1d577ec5-9051-400b-ba22-377c4f11746a",
+                  "title": "User identity impersonation at system boundary",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Spoofing",
+                  "description": "Attacker uses stolen credentials or a forged session to interact with the system as a different user, bypassing the User/System boundary.",
+                  "mitigation": "Keycloak MFA; strong password policies; short-lived JWTs; session binding to IP/device fingerprint.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 72,
+                  "score": ""
+                },
+                {
+                  "id": "c09ce147-78c3-490c-bb23-45d03329e8df",
+                  "title": "Denial of system-level actions",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "An Admin denies having performed bulk user deletions or a Buyer denies a purchase. No cross-cutting audit log exists at the system boundary.",
+                  "mitigation": "Centralised, immutable audit log capturing all authenticated actions crossing the User/System boundary; non-repudiable receipts for purchases.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 73,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "repudiation": 1
+              }
             }
           },
           {
@@ -4834,8 +4865,8 @@
                 "text": "Auth API"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -4932,18 +4963,53 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "c13b4d90-f708-423c-8aae-71afcc30edb0",
+                  "title": "Rogue Auth API impersonation",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "A misconfigured issuer URL (iss claim) points ArcadeHaven to a malicious OIDC server that issues tokens for any identity. ArcadeHaven trusts them because the signature is valid for that issuer.",
+                  "mitigation": "Hardcode the trusted issuer URL in Spring Security config; validate iss, aud, and exp on every token; never accept tokens from unknown issuers.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 74,
+                  "score": ""
+                },
+                {
+                  "id": "b81f814a-29da-4781-9186-785079a2c02b",
+                  "title": "Auth events not attributed to ArcadeHaven context",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "Keycloak logs authentication events but they are not correlated with ArcadeHaven application-level logs, making it impossible to trace a Keycloak login to a specific ArcadeHaven order.",
+                  "mitigation": "Propagate Keycloak session ID (sid claim) through all ArcadeHaven audit log entries to enable cross-system correlation.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 75,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 0,
+                "repudiation": 1,
+                "informationDisclosure": 0,
+                "denialOfService": 0,
+                "elevationOfPrivilege": 0
+              }
             }
           },
           {
             "position": {
-              "x": 490,
-              "y": 820
+              "x": 480,
+              "y": 860
             },
             "size": {
               "width": 100,
@@ -4954,8 +5020,8 @@
                 "text": "RAWG API"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -5052,12 +5118,47 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "2bf9fcf2-12f3-46f3-9dfe-6815571f4e4b",
+                  "title": "Spoofed RAWG endpoint (DNS/MitM)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "DNS poisoning redirects rawg.io calls to a malicious server returning crafted game metadata containing malicious URLs or scripts.",
+                  "mitigation": "Pin RAWG base URL; enforce TLS certificate validation; treat all RAWG data as untrusted input regardless of source.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 76,
+                  "score": ""
+                },
+                {
+                  "id": "5f8b9f8d-67c4-4804-98af-bf86fb2d8827",
+                  "title": "No record of what external data was consumed",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "A bad game description sourced from RAWG causes a compliance incident. No log exists of what version of the RAWG response was ingested at what time.",
+                  "mitigation": "Log raw RAWG responses with timestamp and request hash before processing; store a digest of consumed metadata in the Game record.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 77,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 0,
+                "repudiation": 1,
+                "informationDisclosure": 0,
+                "denialOfService": 0,
+                "elevationOfPrivilege": 0
+              }
             }
           },
           {
@@ -5074,11 +5175,13 @@
                 "text": "Database"
               },
               "topLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               },
               "bottomLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -5175,13 +5278,72 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isALog": false,
               "isEncrypted": false,
               "isSigned": false,
               "storesCredentials": false,
               "storesInventory": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "98fd3e2b-bc3e-41ea-bdbe-534e16795e86",
+                  "title": "Unauthorised direct DB writes",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A developer with production DB access modifies order prices or activation keys directly in psql, bypassing all application business logic and validation.",
+                  "mitigation": "Restrict direct DB access to break-glass procedures only; all production changes via application layer; DB user has minimal privileges (no DDL in production).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 78,
+                  "score": ""
+                },
+                {
+                  "id": "2f49146f-0b3a-48c6-919d-569d1f4c6774",
+                  "title": "No DB-level change attribution",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "A row in the users table is modified; pgaudit is disabled so there is no record of which DB user made the change or when.",
+                  "mitigation": "Enable pgaudit; separate application DB user from migration/admin user; all schema changes via Flyway with versioned scripts committed to source control.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 79,
+                  "score": ""
+                },
+                {
+                  "id": "276c70fa-4d89-40c9-ab36-c28441d622f2",
+                  "title": "\tUnencrypted sensitive data at rest",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "PostgreSQL data directory on an unencrypted volume. A snapshot or disk image leaks all PII, activation keys, and order history.",
+                  "mitigation": "Encrypted volumes (OS or cloud-level); application-layer encryption for activation keys; bcrypt for passwords (via Keycloak).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 80,
+                  "score": ""
+                },
+                {
+                  "id": "ac49af7d-5fa7-4857-b580-7317b28de1eb",
+                  "title": "DB overload from unbounded queries",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A full-table scan on the games table with no index blocks all other DB operations for minutes.",
+                  "mitigation": "Indices on all filter/sort columns; query timeouts in HikariCP; read replicas for heavy queries; connection pool limits.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 81,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             }
           },
           {
@@ -5198,11 +5360,13 @@
                 "text": "File System"
               },
               "topLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               },
               "bottomLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -5299,13 +5463,72 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isALog": false,
               "isEncrypted": false,
               "isSigned": false,
               "storesCredentials": false,
               "storesInventory": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "53c6ba3d-afe7-40ba-b24b-cf5cbb709c8e",
+                  "title": "Arbitrary file write / path traversal",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Client-supplied filename ../../etc/cron.d/shell writes a malicious cron entry outside the upload directory.",
+                  "mitigation": "UUID filenames generated server-side; canonical path validation before any write; application runs as low-privilege OS user.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 82,
+                  "score": ""
+                },
+                {
+                  "id": "83233a04-3873-40e2-9a97-f43b03e099f6",
+                  "title": "No file access/modification log",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "An invoice PDF is deleted; no OS-level or application-level log records who triggered the deletion.",
+                  "mitigation": "Application-layer file operation logging; OS auditd for sensitive directories; WORM storage for invoices.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 83,
+                  "score": ""
+                },
+                {
+                  "id": "5582fb65-a2ed-44c3-9f31-e4bb1d6f2729",
+                  "title": "Files served without auth check",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Invoices and activation key files in a web-served directory are accessible by guessing UUID filenames.",
+                  "mitigation": "Store sensitive files outside the web root; serve via authenticated endpoints only; time-limited signed URLs for downloads.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 84,
+                  "score": ""
+                },
+                {
+                  "id": "ac90353b-0655-46e9-92d1-2663673bffdd",
+                  "title": "Disk exhaustion via upload abuse",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Attacker uploads hundreds of large files using a stolen Publisher token, filling the disk and blocking invoice generation.",
+                  "mitigation": "Upload quotas per user; disk usage alerts; separate storage partition for uploads vs invoices; object storage (S3-compatible) preferred.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 85,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             }
           },
           {
@@ -5384,40 +5607,6 @@
             "connector": "smooth",
             "data": {
               "type": "tm.Boundary",
-              "name": "Database/User\nBoundary",
-              "description": "",
-              "isTrustBoundary": true,
-              "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
-            },
-            "labels": [
-              "Database/User\nBoundary"
-            ],
-            "id": "f812606e-2296-4524-ad1b-483d7a975be1",
-            "source": {
-              "x": 840,
-              "y": 250
-            },
-            "target": {
-              "x": 870,
-              "y": 430
-            },
-            "vertices": [
-              {
-                "x": 895,
-                "y": 330
-              }
-            ]
-          },
-          {
-            "shape": "trust-boundary-curve",
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Boundary",
               "name": "RAWG API/System\nBoundary",
               "description": "",
               "isTrustBoundary": true,
@@ -5448,7 +5637,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -5469,12 +5659,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "e97b02a1-5f0e-45f0-ab23-51b8ddcf59cd",
+                  "title": "MitM — request body tampering",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "HTTP (non-TLS) order request intercepted and price field modified before reaching the server.",
+                  "mitigation": "\tTLS 1.2+ enforced; HSTS header; HTTP listener disabled in production.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 86,
+                  "score": ""
+                },
+                {
+                  "id": "03c21ee7-59d1-4993-938e-c3ffcc75466b",
+                  "title": "Sensitive data in cleartext responses",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Activation keys and PII returned over unencrypted HTTP, readable by any network observer.",
+                  "mitigation": "TLS everywhere; Cache-Control: no-store on sensitive endpoints; no sensitive data in URLs.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 87,
+                  "score": ""
+                },
+                {
+                  "id": "1e019bbe-f1e6-48c2-95a5-cdca1db5ce49",
+                  "title": "HTTP flood / slow-loris",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Thousands of slow connections exhaust Spring Boot thread pool, blocking legitimate users.",
+                  "mitigation": "Nginx reverse proxy with connection and rate limits; WAF; request timeout configuration.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 88,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -5500,7 +5730,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -5521,13 +5752,58 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "e97b02a1-5f0e-45f0-ab23-51b8ddcf59cd",
+                  "title": "MitM — request body tampering",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "HTTP (non-TLS) order request intercepted and price field modified before reaching the server.",
+                  "mitigation": "\tTLS 1.2+ enforced; HSTS header; HTTP listener disabled in production.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 86,
+                  "score": ""
+                },
+                {
+                  "id": "03c21ee7-59d1-4993-938e-c3ffcc75466b",
+                  "title": "Sensitive data in cleartext responses",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Activation keys and PII returned over unencrypted HTTP, readable by any network observer.",
+                  "mitigation": "TLS everywhere; Cache-Control: no-store on sensitive endpoints; no sensitive data in URLs.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 87,
+                  "score": ""
+                },
+                {
+                  "id": "1e019bbe-f1e6-48c2-95a5-cdca1db5ce49",
+                  "title": "HTTP flood / slow-loris",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Thousands of slow connections exhaust Spring Boot thread pool, blocking legitimate users.",
+                  "mitigation": "Nginx reverse proxy with connection and rate limits; WAF; request timeout configuration.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 88,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "Response"
@@ -5552,7 +5828,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -5573,12 +5850,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "70e28999-437c-41f1-b909-4a76728b92fa",
+                  "title": "JWT payload tampering in transit",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Weak HS256 key allows attacker to re-sign a modified JWT with elevated role claim.",
+                  "mitigation": "\tRS256 asymmetric signing; validate against JWKS endpoint; reject alg:none tokens.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 89,
+                  "score": ""
+                },
+                {
+                  "id": "9851d2a4-34cc-4b80-b16f-e93eba18eb30",
+                  "title": "Token interception / exposure",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Bearer token passed in URL query parameter appears in Nginx access logs and browser history.",
+                  "mitigation": "Tokens only in Authorization header; short expiry; purge from all logs.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 91,
+                  "score": ""
+                },
+                {
+                  "id": "5927d2b5-9c61-48ed-ac3f-2e3f4aac9c1a",
+                  "title": "JWKS endpoint unavailability",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Keycloak outage causes all JWT validation to fail, making the entire API unavailable.",
+                  "mitigation": "Cache JWKS public key locally with TTL; Keycloak HA deployment; circuit breaker.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 92,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -5604,7 +5921,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -5625,13 +5943,58 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "70e28999-437c-41f1-b909-4a76728b92fa",
+                  "title": "JWT payload tampering in transit",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Weak HS256 key allows attacker to re-sign a modified JWT with elevated role claim.",
+                  "mitigation": "\tRS256 asymmetric signing; validate against JWKS endpoint; reject alg:none tokens.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 89,
+                  "score": ""
+                },
+                {
+                  "id": "9851d2a4-34cc-4b80-b16f-e93eba18eb30",
+                  "title": "Token interception / exposure",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Bearer token passed in URL query parameter appears in Nginx access logs and browser history.",
+                  "mitigation": "Tokens only in Authorization header; short expiry; purge from all logs.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 91,
+                  "score": ""
+                },
+                {
+                  "id": "5927d2b5-9c61-48ed-ac3f-2e3f4aac9c1a",
+                  "title": "JWKS endpoint unavailability",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Keycloak outage causes all JWT validation to fail, making the entire API unavailable.",
+                  "mitigation": "Cache JWKS public key locally with TTL; Keycloak HA deployment; circuit breaker.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 92,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "Authentication\nResponse"
@@ -5656,7 +6019,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -5677,7 +6041,7 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
@@ -5748,7 +6112,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -5769,13 +6134,58 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "fa7e875a-628c-46ea-8b4f-7625c1d07a04",
+                  "title": "SQL injection via flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Unsanitised search term interpolated into native query: SELECT * FROM games WHERE title = '${input}' — input ' OR 1=1-- returns all records.",
+                  "mitigation": "JPA parameterised queries exclusively; no string concatenation in native queries; SonarQube SQL injection rules in CI.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 93,
+                  "score": ""
+                },
+                {
+                  "id": "9bd1b0c0-96b7-4232-9177-6253cb518abd",
+                  "title": "DB credentials exposed in config / logs",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "spring.datasource.password committed to GitHub; visible in build logs and SonarQube output.",
+                  "mitigation": "Secrets in environment variables or Vault; .gitignore rules; secret scanning in CI (truffleHog).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 94,
+                  "score": ""
+                },
+                {
+                  "id": "c0a71859-1418-48be-9c47-c6c9d2bbd64c",
+                  "title": "Unbounded result sets exhausting JVM heap",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "SELECT * FROM games with no LIMIT loads entire catalogue into memory, causing OOM.",
+                  "mitigation": "Mandatory Pageable on all repository list methods; max page size enforced; query timeout in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 95,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "Database\nResponse"
@@ -5800,7 +6210,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -5821,13 +6232,58 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "ab78ef81-fbf4-43ae-ba6a-66553fae20a5",
+                  "title": "Path traversal in file read/write path",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Filename ../invoices/other_user.pdf fed to file read operation delivers another user's invoice.",
+                  "mitigation": "Canonical path resolution and whitelisting before any read; UUID filenames; store owner mapping in DB.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 96,
+                  "score": ""
+                },
+                {
+                  "id": "bca3f531-75b3-48e3-b11c-ab271e972b35",
+                  "title": "Unauthenticated file access",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Direct URL to /uploads/invoice-uuid.pdf accessible without auth if files served statically.",
+                  "mitigation": "Authenticated file delivery endpoint; ownership verification before streaming; no static file serving for sensitive files.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 97,
+                  "score": ""
+                },
+                {
+                  "id": "43bd82ae-69ee-49a2-b1ee-a5757d25da46",
+                  "title": "Concurrent large file reads exhausting I/O",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Many simultaneous invoice downloads flood disk I/O, slowing DB writes needed for order processing.",
+                  "mitigation": "\tAsync file streaming; separate I/O thread pool for file delivery; object storage offloads I/O from application host.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 98,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "File Request"
@@ -5852,7 +6308,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -5873,12 +6330,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "ab78ef81-fbf4-43ae-ba6a-66553fae20a5",
+                  "title": "Path traversal in file read/write path",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Filename ../invoices/other_user.pdf fed to file read operation delivers another user's invoice.",
+                  "mitigation": "Canonical path resolution and whitelisting before any read; UUID filenames; store owner mapping in DB.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 96,
+                  "score": ""
+                },
+                {
+                  "id": "bca3f531-75b3-48e3-b11c-ab271e972b35",
+                  "title": "Unauthenticated file access",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Direct URL to /uploads/invoice-uuid.pdf accessible without auth if files served statically.",
+                  "mitigation": "Authenticated file delivery endpoint; ownership verification before streaming; no static file serving for sensitive files.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 97,
+                  "score": ""
+                },
+                {
+                  "id": "43bd82ae-69ee-49a2-b1ee-a5757d25da46",
+                  "title": "Concurrent large file reads exhausting I/O",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Many simultaneous invoice downloads flood disk I/O, slowing DB writes needed for order processing.",
+                  "mitigation": "\tAsync file streaming; separate I/O thread pool for file delivery; object storage offloads I/O from application host.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 98,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -5904,7 +6401,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -5925,12 +6423,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "52ccd5a5-773e-4eb9-ba0e-76c62c784b8a",
+                  "title": "Malicious content in RAWG response persisted to DB",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "RAWG description contains a script tag; stored unsanitised; rendered as XSS to all visiting buyers.",
+                  "mitigation": "Sanitise all external string fields before storage (OWASP Java HTML Sanitizer); output encoding at render time; CSP header.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 99,
+                  "score": ""
+                },
+                {
+                  "id": "4244ab8e-31f8-49b1-b5d4-dd5e855fecf0",
+                  "title": "RAWG API key exposed",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "API key hardcoded in Java constant visible in GitHub commits and SonarQube output.",
+                  "mitigation": "Store in environment variable / secrets manager; rotate regularly; secret scanning in CI.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 100,
+                  "score": ""
+                },
+                {
+                  "id": "1855b8df-4997-464b-a345-0b5237a7ce0e",
+                  "title": "RAWG rate limit exhaustion",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Bulk game import exhausts daily free-tier quota, breaking metadata enrichment for all users.",
+                  "mitigation": "Client-side rate limiting; response caching with TTL; graceful degradation when RAWG unavailable; circuit breaker.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 101,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -5956,7 +6494,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -5977,13 +6516,58 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "52ccd5a5-773e-4eb9-ba0e-76c62c784b8a",
+                  "title": "Malicious content in RAWG response persisted to DB",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "RAWG description contains a script tag; stored unsanitised; rendered as XSS to all visiting buyers.",
+                  "mitigation": "Sanitise all external string fields before storage (OWASP Java HTML Sanitizer); output encoding at render time; CSP header.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 99,
+                  "score": ""
+                },
+                {
+                  "id": "4244ab8e-31f8-49b1-b5d4-dd5e855fecf0",
+                  "title": "RAWG API key exposed",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "API key hardcoded in Java constant visible in GitHub commits and SonarQube output.",
+                  "mitigation": "Store in environment variable / secrets manager; rotate regularly; secret scanning in CI.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 100,
+                  "score": ""
+                },
+                {
+                  "id": "1855b8df-4997-464b-a345-0b5237a7ce0e",
+                  "title": "RAWG rate limit exhaustion",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Bulk game import exhausts daily free-tier quota, breaking metadata enrichment for all users.",
+                  "mitigation": "Client-side rate limiting; response caching with TTL; graceful degradation when RAWG unavailable; circuit breaker.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 101,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "Metadata\nResponse"
@@ -6001,6 +6585,82 @@
               {
                 "x": 590,
                 "y": 650
+              }
+            ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Module/FileSystem\nBoundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "Module/FileSystem\nBoundary"
+            ],
+            "id": "4e353e80-b952-470d-8a58-c0ed4b96a5be",
+            "source": {
+              "x": 860,
+              "y": 470
+            },
+            "target": {
+              "x": 770,
+              "y": 680
+            },
+            "vertices": [
+              {
+                "x": 860,
+                "y": 580
+              },
+              {
+                "x": 810,
+                "y": 660
+              }
+            ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Database/User\nBoundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "Database/User\nBoundary"
+            ],
+            "id": "f812606e-2296-4524-ad1b-483d7a975be1",
+            "source": {
+              "x": 840,
+              "y": 250
+            },
+            "target": {
+              "x": 870,
+              "y": 430
+            },
+            "vertices": [
+              {
+                "x": 870,
+                "y": 280
+              },
+              {
+                "x": 895,
+                "y": 330
               }
             ]
           }
@@ -11005,7 +11665,7 @@
       }
     ],
     "diagramTop": 7,
-    "reviewer": "Diogo Sousa",
-    "threatTop": 71
+    "reviewer": "Diogo Sousa & Diogo Pereira",
+    "threatTop": 101
   }
 }
