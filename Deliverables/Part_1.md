@@ -120,7 +120,9 @@ During this phase, the workload was distributed among the group members as follo
 
 - 1250505 - Diogo José
   - [Requirements](../Documentation/Requirements/requirements.md)
-  - [Abuse Cases](../Documentation/AbuseCases/v2/AbuseCases.md)
+  - [Architecture Views](../Documentation/Architecture/Diagrams/Views/Views.md)
+  - [Abuse Cases](../Documentation/ThreatModeling/AbuseCases/v2/AbuseCases.md)
+  - [Dataflow Diagrams](../Documentation/Architecture/Dataflow/dataflow.md)
  
 
 - 1250491 - Acácio Coutinho
@@ -133,9 +135,6 @@ During this phase, the workload was distributed among the group members as follo
 
 
 - 1250516 - Gabriel Proença
-  - [Architecture Views](../Documentation/Architecture/Diagrams/Views/)
-    - [Logical View](../Documentation/Architecture/Diagrams/Views/logical-view.puml)
-    - [Physical Deployment View (Docker)](../Documentation/Architecture/Diagrams/Views/physical-deployment-docker.puml)
   - [Abuse Cases](../Documentation/ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md)
   - [Attack Trees](../Documentation/ThreatModeling/AttackTrees/AttackTrees.md)
     - [TH-01 Account Takeover](../Documentation/ThreatModeling/AttackTrees/TH-01-Account-Takeover-Attack-Tree.puml)

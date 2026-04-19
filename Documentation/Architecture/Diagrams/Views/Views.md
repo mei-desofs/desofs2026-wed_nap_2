@@ -46,7 +46,7 @@ The documentation of the **System Architecture View** follows the *Software Arch
 
 ---
 
-### **2.2 Level 2 – System**
+### **2.2 Level 2 – Container**
 
 #### **2.1.2 Development View**
 <div style="text-align: center;">
@@ -71,9 +71,9 @@ The documentation of the **System Architecture View** follows the *Software Arch
 
 ---
 
-### **2.3 Level 2 – System**
+### **2.3 Level 3 – Component**
 
-#### **2.1.2 Development View**
+#### **2.1.3 Development View**
 <div style="text-align: center;">
 
 ![Level 3 - Logical View](./Level3/Logic%20View.png)

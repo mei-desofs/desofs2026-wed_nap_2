@@ -1,110 +1,62 @@
-# ArcadeHaven Dataflow and Trust Boundaries
+## **1. Documento Objective**
 
-## 1. Objective
 
-This document defines the initial dataflow model used to support threat identification and security testing design.
+Data Flow Diagrams allow the design team to model the system from a data-centric perspective, focusing on how information is processed, stored, and transferred between different components. The system is represented at multiple levels of abstraction, enabling both a high-level overview and a more detailed decomposition of processes. The levels are defined as follows:
+- **Level 0:** (Context Diagram): Represents the system as a single process and shows its interaction with external actors.
+- **Level 1:** Decomposes the system into its main processes and illustrates the primary data flows between them.
+- **Level 2:** Provides a more detailed breakdown of selected processes, showing internal data transformations and interactions with data stores.
 
-## 2. Dataflow Level 1
+## **2. Dataflow Diagrams**
 
-### 2.1 External Entities
+### **2.1 Level 0**
 
-- Guest user.
-- Authenticated buyer.
-- Authenticated publisher.
-- Authenticated administrator.
-- RAWG external API.
+#### **2.1.1 Context**
+<div style="text-align: center;">
 
-### 2.2 Core Processes
+![Level 0 - Context ](./Level-0/DFD%20-%20Level%200%20-%20Context.png)
 
-- Authentication and token issuance.
-- User and role management.
-- Game management and search.
-- Order and payment workflow.
-- Invoice and activation-key generation.
-- Library management.
-- File upload and file download.
+</div>
 
-### 2.3 Data Stores
+---
 
-- Relational database for users, roles, games, orders, library, reviews.
-- File storage for invoices, activation keys, and uploaded images.
-- Security logs and audit events.
+### **2.2 Level 1**
 
-### 2.4 Trust Boundaries
+#### **2.2.1 ArcadeHaven System**
+<div style="text-align: center;">
 
-- TB-01 Public network boundary between clients and API.
-- TB-02 Authentication boundary between guest and authenticated users.
-- TB-03 Authorization boundary between buyer, publisher, and admin routes.
-- TB-04 Persistence boundary between API and database.
-- TB-05 File-system boundary between API and server storage.
-- TB-06 External integration boundary between API and RAWG API.
+![Level 1 - ArcadeHaven System ](./Level-1/DFD%20-%20Level%201%20-%20ArcadeHaven%20System.png)
 
-## 3. Dataflow Level 2
+</div>
 
-## 3.1 Auth Flow
+#### **2.2.2 Database**
+<div style="text-align: center;">
 
-1. User submits credentials.
-2. API validates credentials against database.
-3. API issues JWT token with expiration.
-4. Protected routes validate token and role claims.
+![Level 1 - Database ](./Level-1/DFD%20-%20Level%201%20-%20Database.png)
 
-Threat focus:
+</div>
 
-- TH-01 Brute-force login.
-- TH-02 Token theft/replay.
-- TH-03 Privilege escalation.
+#### **2.2.3 RAWG API**
+<div style="text-align: center;">
 
-## 3.2 Game Upload Flow
+![Level 1 - RAWG API ](./Level-1/DFDF%20-%20Level%201%20-%20RAWG%20API.png)
 
-1. Publisher submits game metadata and image file.
-2. API validates role and input fields.
-3. API validates file MIME, extension, and size.
-4. API stores file and metadata.
+</div>
 
-Threat focus:
+#### **2.2.4 AUTH API**
+<div style="text-align: center;">
 
-- TH-04 Injection through metadata fields.
-- TH-05 Malicious upload.
-- TH-09 Missing audit evidence for privileged changes.
+![Level 1 - Auth API ](./Level-1/DFD%20-%20Level%201%20-%20Auth%20API.png)
 
-## 3.3 Order and Invoice Flow
+</div>
 
-1. Buyer creates order with selected games.
-2. API validates ownership rules and duplicate purchase constraints.
-3. API persists order state.
-4. API generates invoice and activation keys in file storage.
-5. Buyer downloads invoice through protected endpoint.
 
-Threat focus:
+---
 
-- TH-06 Path traversal in file access.
-- TH-07 Activation key disclosure.
-- TH-08 Order tampering.
+### **2.3 Level 2**
 
-## 3.4 External API Enrichment Flow
+#### **2.3.1 Game Management**
+<div style="text-align: center;">
 
-1. Backend sends request to RAWG API.
-2. Backend receives and normalizes external game data.
-3. Backend persists selected fields in local domain model.
+![Level 2 - Game Management ](./Level-2/DFD%20-%20Level%202%20-%20Game%20Management.png)
 
-Threat focus:
-
-- Data integrity and trust validation on third-party responses.
-- Availability fallback for external dependency failures.
-
-## 4. Dataflow to Threat Mapping
-
-| Dataflow Segment | Trust Boundary | Main Threat IDs | Main Planned Tests |
-| --- | --- | --- | --- |
-| Login and token issuance | TB-01, TB-02 | TH-01, TH-02 | ST-002, ST-003, ST-010 |
-| Role-sensitive routes | TB-03 | TH-03, TH-09 | ST-004, ST-008 |
-| Search and form inputs | TB-01 | TH-04 | ST-006, ST-007 |
-| Upload and file persistence | TB-05 | TH-05 | ST-011, ST-013, ST-014 |
-| Invoice download | TB-05 | TH-06 | ST-012 |
-| Activation key lifecycle | TB-04, TB-05 | TH-07 | ST-009 |
-| Order lifecycle | TB-04 | TH-08 | ST-015 |
-
-## 5. Review Notes
-
-- This dataflow baseline must be reviewed whenever a new endpoint or file operation is added.
-- Diagram versions can be added later as PlantUML and linked to this document.
+</div>
