@@ -12672,8 +12672,8 @@
                 "text": "Game Data\nHandler"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -12770,12 +12770,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "37c6c6e1-ff61-4269-ad74-cebd795f9210",
+                  "title": "\tPublisher ID not bound from JWT on game create",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "POST /games body includes publisherId: 99 (a different publisher); if the handler uses the body value instead of the authenticated JWT sub, the game is created under the wrong publisher's name.",
+                  "mitigation": "Provide remediation for this threat or a reason if status is N/A",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 231,
+                  "score": ""
+                },
+                {
+                  "id": "6bcef655-3dbf-4f3c-a0ea-3da72c8704e8",
+                  "title": "Game price accepts negative or zero values",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "A publisher creates a game with price: -5.00. The DB stores it; buyers who add it to cart receive a credit rather than a charge.",
+                  "mitigation": "Bean Validation @DecimalMin(\"0.01\") on price field in GameDTO; DB CHECK constraint price > 0; handler rejects non-positive prices with 400 Bad Request.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 232,
+                  "score": ""
+                },
+                {
+                  "id": "0846bf00-9853-4d60-85ae-86cb236fea1a",
+                  "title": "No before/after values logged on game update",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "Publisher updates game price from €29.99 to €59.99; only the new value is logged. A buyer who purchased at the old price disputes the current price; the old value cannot be proven.",
+                  "mitigation": "Game update logs old and new value for price, title, status, and description; append to a game_change_log table with actor_id, timestamp, field_name, old_value, new_value.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 233,
+                  "score": ""
+                },
+                {
+                  "id": "5c8e8402-5e26-481c-a442-d8629838ac2c",
+                  "title": "Unpublished game data returned in search results",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "GameDataHandler's findAll() query lacks a WHERE status = 'ACTIVE' filter; PENDING games including unreleased titles are visible to all buyers.",
+                  "mitigation": "All public-facing game queries scoped to status = ACTIVE; separate repository methods for admin (all statuses) vs public (ACTIVE only); integration test verifying PENDING games are invisible to Buyer role.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 234,
+                  "score": ""
+                },
+                {
+                  "id": "52ef1912-46c5-4e7b-ab8f-aa674ec89e12",
+                  "title": "N+1 query on game list with categories",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GameDataHandler fetches a list of 100 games, then fires a separate DB query for each game's category — 101 queries total — causing extreme latency under load.",
+                  "mitigation": "Use JPA @EntityGraph or JOIN FETCH to load associations in a single query; verify with Hibernate statistics in dev/test; integration test asserting query count.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 235,
+                  "score": ""
+                },
+                {
+                  "id": "8c6a81b6-aa13-4d3e-9b8d-dfbbee840a3b",
+                  "title": "Status field writable by Publisher (bypassing approval)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "PUT /games/{id} payload includes status: ACTIVE. If GameDataHandler maps all incoming fields including status, a publisher can self-activate their game.",
+                  "mitigation": "Status field excluded from the Publisher-facing GameUpdateDTO; only AdminGameUpdateDTO includes status; handler uses the correct DTO based on the caller's role.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 236,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 2,
+                "elevationOfPrivilege": 1
+              }
             }
           },
           {
@@ -12792,8 +12879,8 @@
                 "text": "Game\nManagement\nModule"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -12890,12 +12977,91 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "8793f495-d421-4267-ae9a-1d83cc2ded21",
+                  "title": "Publisher identity spoofing",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "Attacker obtains a valid Publisher JWT and submits games on behalf of a legitimate publisher, polluting their catalogue with malicious titles.",
+                  "mitigation": "Validate JWT publisher ID against the game's owning publisher in every write operation; RBAC enforcement at method level; Keycloak MFA for Publisher accounts.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 21,
+                  "score": ""
+                },
+                {
+                  "id": "bb0836e7-35bf-47ce-a6ed-486082f55deb",
+                  "title": "Malicious file upload (images/game files)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A Publisher uploads a .exe disguised as a game screenshot. If the server only validates Content-Type header (spoofable), the file is stored as-is and served to buyers.",
+                  "mitigation": "Server-side file type validation using magic bytes (not just extension or Content-Type); antivirus/malware scanning pipeline on all uploads (e.g. ClamAV); store uploads outside the web root; generate a new UUID filename on save; restrict executable file types.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 22,
+                  "score": ""
+                },
+                {
+                  "id": "84ae29b9-0d8a-4356-932a-21d0f983bffa",
+                  "title": "Unsigned game status changes",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "Admin approves a game (PENDING → ACTIVE) but no log records which admin, when, or from which IP. Admin later denies the approval after a compliance audit.",
+                  "mitigation": "Audit log every game state transition with actor identity, timestamp, and previous/new state; store in append-only table; require admin comment on approval/rejection.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 23,
+                  "score": ""
+                },
+                {
+                  "id": "2ba6d997-d12a-4566-ac51-f09ec804a187",
+                  "title": "RAWG metadata injection into stored fields",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "RAWG API returns a game description containing a script tag. If stored unsanitised and later rendered in HTML, it becomes a stored XSS vector disclosing session tokens of visiting users.",
+                  "mitigation": "Sanitise all RAWG-sourced fields before storage using an HTML sanitiser (e.g. OWASP Java HTML Sanitizer); apply output encoding at the frontend; enforce Content-Security-Policy.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 24,
+                  "score": ""
+                },
+                {
+                  "id": "51bceaa2-fedb-4fdd-a28b-769e4421dad7",
+                  "title": "Large file upload exhausting disk/memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Publisher (or attacker with a stolen Publisher token) uploads a 10 GB file as a \"game screenshot\", consuming all available disk on the file system and blocking invoice generation.",
+                  "mitigation": "Enforce maximum file size limits at the API gateway and in the multipart upload handler; check available disk space before write; implement per-publisher upload quota; alert on disk usage thresholds.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 25,
+                  "score": ""
+                },
+                {
+                  "id": "4b71454d-4927-4b6b-a89c-bdd2f5c4f5ee",
+                  "title": "Publisher self-approving games",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "If the ADMIN role check on the game approval endpoint is missing, a Publisher can call PATCH /games/{id}/approve and set their own game to ACTIVE, bypassing admin review.",
+                  "mitigation": "Strictly separate Publisher and Admin operations in the controller layer; approval endpoint requires ADMIN role; automated integration test verifies Publisher token returns 403 on approval endpoint.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 26,
+                  "score": ""
+                }
+              ]
             }
           },
           {
@@ -12912,8 +13078,8 @@
                 "text": "Game\nMetadata\nHandler"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -13010,12 +13176,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "78e5e71a-61ce-41c8-9013-8178d0cb6c91",
+                  "title": "RAWG API key substitution in handler config",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "An attacker who gains access to application config (e.g. via path traversal or exposed /actuator/env endpoint) reads the RAWG API key and uses it for their own projects or to exhaust quota.",
+                  "mitigation": "Disable /actuator/env in production; store API key in secrets manager; rotate API key; monitor for unexpected RAWG API usage from non-ArcadeHaven IPs.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 237,
+                  "score": ""
+                },
+                {
+                  "id": "d5b9049d-2ad8-465d-8829-08f6ccf1da11",
+                  "title": "Unsafe deserialisation of RAWG JSON response",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "RAWG returns a malformed JSON with unexpected deeply nested structures. The Jackson ObjectMapper follows nested references and causes a stack overflow or allocates excessive memory (billion laughs-style).",
+                  "mitigation": "Configure Jackson with DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES = true; set RAWG response size limit; use strict POJO mapping without wildcards; Jackson's ALLOW_RECURSIVE_TYPES protection.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 238,
+                  "score": ""
+                },
+                {
+                  "id": "6f5c8a13-0ad5-4a50-a6f6-d7a30f6fbc2d",
+                  "title": "\tMetadata fetch failures silently swallowed",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "\tGameMetadataHandler catches all exceptions and returns an empty metadata object; failed RAWG fetches are invisible in logs; data quality issues go undetected for days.",
+                  "mitigation": "Log all RAWG fetch failures with game ID, RAWG game ID, error type, and timestamp; expose a metric (failed_rawg_fetches_total) to monitoring; alert on elevated failure rate.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 239,
+                  "score": ""
+                },
+                {
+                  "id": "f2e94977-c4c7-499e-be08-1684f87d979b",
+                  "title": "RAWG API response cached insecurely",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "RAWG response (including API key in the request URL that was cached as cache key) stored in a shared Redis cache accessible to all application threads; cache key exposes the API key.",
+                  "mitigation": "Cache the RAWG response body only, not the request URL; use the RAWG game ID as the cache key, not the full URL; ensure Redis is not accessible outside the application network.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 240,
+                  "score": ""
+                },
+                {
+                  "id": "f58a4875-82e1-4af2-8fae-d86e351ee016",
+                  "title": "Synchronous RAWG fetch blocking game creation",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Game creation API call blocks waiting for RAWG metadata fetch; if RAWG is slow (>5s), the entire game creation request times out and the transaction is rolled back, preventing publishers from listing games.",
+                  "mitigation": "Decouple RAWG metadata fetch from the synchronous game creation path; create the game record first, then enrich with metadata asynchronously via a background job or Spring @Async; game is created in PENDING_METADATA state.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 241,
+                  "score": ""
+                },
+                {
+                  "id": "2446cb74-e0b9-4c65-bb5c-6f713c291ef4",
+                  "title": "RAWG handler callable without publisher ownership check",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "Any authenticated user can call the metadata refresh endpoint for any game ID, not just games they own, allowing a Buyer to trigger metadata overwrite on a publisher's listing.",
+                  "mitigation": "MetadataHandler methods are called only from GameManagementModule which enforces publisher ownership; handler itself also validates ownership as defence-in-depth.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 242,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1,
+                "elevationOfPrivilege": 1
+              }
             }
           },
           {
@@ -13167,7 +13420,7 @@
           },
           {
             "position": {
-              "x": 90,
+              "x": 85,
               "y": 760
             },
             "size": {
@@ -13179,8 +13432,8 @@
                 "text": "Game Images\nHandler"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -13277,12 +13530,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "956254e1-5fe4-448a-8bb8-9b53af9b8627",
+                  "title": "Image served without verifying game ownership",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "GET /games/images/{imageId} returns the image without verifying that the requester has any relationship to the game; private pre-release screenshots accessible to anyone who guesses the image UUID.",
+                  "mitigation": "For ACTIVE games, images are publicly accessible (by design for a storefront). For PENDING/DRAFT games, images require publisher ownership or ADMIN role. Enforce in the Images Handler.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 243,
+                  "score": ""
+                },
+                {
+                  "id": "75850b35-296c-4218-8ef0-fc2e7c274806",
+                  "title": "\tMalicious file upload bypassing MIME check",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "Publisher uploads a PHP webshell with Content-Type: image/jpeg. Handler validates only the header, not the magic bytes. File is saved with .jpg extension but executable content.",
+                  "mitigation": "\tValidate magic bytes (first N bytes of file) against expected image format (JPEG: FF D8 FF, PNG: 89 50 4E 47); use Apache Tika for robust MIME detection; also validate after saving with a library scan; ClamAV scan on all uploads.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 244,
+                  "score": ""
+                },
+                {
+                  "id": "488ce60a-ac03-4e09-b293-004508afece4",
+                  "title": "\tNo image upload audit trail",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "A publisher uploads a screenshot containing copyrighted material; after a DMCA takedown, there is no log of when the image was uploaded, by whom, or what the original file hash was.",
+                  "mitigation": "Log all image uploads: publisher ID, game ID, original filename, stored UUID filename, file hash (SHA-256), file size, and timestamp; retain even after image deletion.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 245,
+                  "score": ""
+                },
+                {
+                  "id": "1910d7c5-8214-4ff3-a746-8aa2816f8c42",
+                  "title": "Image metadata (EXIF) exposing sensitive data",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "A publisher uploads a screenshot taken on their development machine. EXIF metadata embedded in the JPEG reveals the developer's username, internal hostname, or geolocation.",
+                  "mitigation": "Strip all EXIF/metadata from uploaded images before storage using a library (e.g. metadata-extractor with ImageIO re-encode); store clean copies only.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 246,
+                  "score": ""
+                },
+                {
+                  "id": "ccf55702-d98a-474f-b2a0-e6a3d7e47576",
+                  "title": "Image upload consuming all available memory via decompression bomb",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Attacker uploads a 100x100 pixel PNG that decompresses to 4 GB in memory (decompression bomb / \"zip bomb for images\"). The handler allocates 4 GB of heap, causing OOM crash.",
+                  "mitigation": "Validate compressed file size before decompression; set maximum decompressed image dimensions (e.g. 4096×4096 px); use streaming image processing rather than loading fully into memory; limit multipart upload size at gateway (e.g. 10 MB).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 247,
+                  "score": ""
+                },
+                {
+                  "id": "6986143d-6d58-4b9f-b146-d7fd6ef13a94",
+                  "title": "Publisher replacing another publisher's game images",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "Publisher A calls PUT /games/{gameBId}/images/{imageId} to replace Publisher B's game screenshot, defacing their listing. The handler only checks that the caller is a Publisher, not that they own the specific game.",
+                  "mitigation": "Image write operations verify that games.publisher_id matches the authenticated user's ID from JWT; test with cross-publisher requests in CI; ownership check at the game level, not just the role level.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 248,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1,
+                "elevationOfPrivilege": 1
+              }
             }
           },
           {
@@ -13299,11 +13639,13 @@
                 "text": "Database"
               },
               "topLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               },
               "bottomLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -13400,13 +13742,66 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isALog": false,
               "isEncrypted": false,
               "isSigned": false,
               "storesCredentials": false,
               "storesInventory": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "62ae962a-6984-4fed-92a4-4794388e8121",
+                  "title": "SQL injection / ORM injection",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "A malformed game search query bypasses the JPA parameterisation (e.g. via a native query built with string concatenation) and executes DROP TABLE orders; in the database.",
+                  "mitigation": "Use only parameterised queries and JPA named parameters; never use string concatenation in native queries; apply principle of least privilege to the DB user (no DROP/DDL rights in application account); run Flyway migrations with a separate privileged user.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 39,
+                  "score": ""
+                },
+                {
+                  "id": "dabc3dbb-878f-4671-960b-4fd2192e3720",
+                  "title": "No DB-level audit trail",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "A record in the orders table is modified directly (bypassing the application layer, e.g. by a DBA). Without DB-level change logging, the modification cannot be attributed or detected.",
+                  "mitigation": "Enable PostgreSQL pgaudit extension to log all DDL and DML; configure row-level security where appropriate; use Flyway for all schema changes; restrict direct DB access to emergency procedures with full logging; consider application-level audit tables with insert-only access.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 40,
+                  "score": ""
+                },
+                {
+                  "id": "6aa2b236-f339-400d-8d62-dc6cbf1ff92f",
+                  "title": "Unencrypted PII and activation keys at rest",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The PostgreSQL data directory is stored unencrypted. A cloud storage misconfiguration or disk theft exposes all user PII, hashed passwords, and plaintext activation keys.",
+                  "mitigation": "Enable PostgreSQL Transparent Data Encryption or use encrypted AWS RDS/EBS volumes; encrypt sensitive columns (activation keys, payment references) at the application layer using AES-256 before storing; hash passwords with bcrypt (already handled by Spring Security / Keycloak); restrict network access to DB to application subnet only.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 41,
+                  "score": ""
+                },
+                {
+                  "id": "3a2d3866-b5ea-427d-8ad8-3d6a0541ed5b",
+                  "title": "Connection pool exhaustion / long-running queries",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "An attacker triggers a complex game search with many filters, generating a full-table-scan query that holds DB connections for minutes, starving other requests of connections from HikariCP pool.",
+                  "mitigation": "Set query timeouts in Spring Data / JPA (spring.transaction.default-timeout); add DB indices on search columns (game title, category, publisher_id); configure HikariCP connection pool limits and timeouts; use read replicas for search/reporting queries; implement circuit breaker for DB calls.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 42,
+                  "score": ""
+                }
+              ]
             }
           },
           {
@@ -13423,11 +13818,13 @@
                 "text": "File System"
               },
               "topLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               },
               "bottomLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -13524,13 +13921,66 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isALog": false,
               "isEncrypted": false,
               "isSigned": false,
               "storesCredentials": false,
               "storesInventory": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "99c5f276-0aa1-448e-a63d-f3c33f893587",
+                  "title": "Path traversal / arbitrary file write",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A Publisher submits a filename of ../../etc/cron.d/backdoor as the game image filename. If the application uses the client-supplied filename directly, it writes the file outside the intended upload directory.",
+                  "mitigation": "Always generate a server-side UUID filename; never use client-supplied filenames in file system paths; resolve the canonical path and verify it is within the intended base directory before writing; run the application with minimal OS file-system permissions.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 43,
+                  "score": ""
+                },
+                {
+                  "id": "42b01bf7-be9e-4240-b154-bc5139fab21e",
+                  "title": "No file access/modification audit trail",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "An invoice PDF file is modified or deleted. Without file-system access logging, it is impossible to determine who accessed or changed it, violating financial audit requirements.",
+                  "mitigation": "Log all file read/write/delete operations at the application layer with actor ID and timestamp; use OS-level file integrity monitoring (e.g. auditd on Linux) for the invoices directory; consider WORM (write-once-read-many) storage for invoice PDFs.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 44,
+                  "score": ""
+                },
+                {
+                  "id": "dacf3f68-6c43-4c81-9d46-28896adb9946",
+                  "title": "Direct file access bypassing application auth",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Invoice PDFs and activation key files are stored in a directory served directly by the web server (e.g. Nginx static file serving). Guessing the file path allows unauthenticated download of any invoice.",
+                  "mitigation": "Store sensitive files (invoices, activation key files) outside the web-serving root; serve them only via authenticated application endpoints that verify the requester owns the resource; generate time-limited signed download URLs for file delivery.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 45,
+                  "score": ""
+                },
+                {
+                  "id": "8e83b833-8dfc-4dfe-a0f2-026b7eb86032",
+                  "title": "Disk exhaustion via upload abuse",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "An attacker with a valid Publisher token uploads hundreds of large image files in rapid succession, filling the disk partition and preventing invoice PDF generation, which requires disk writes to complete orders.",
+                  "mitigation": "Enforce per-user and global upload size quotas; monitor disk usage with automated alerts at 70%/85%/95% thresholds; store uploads on a separate partition or object storage (e.g. S3) isolated from application and invoice storage; implement async file processing with backpressure.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 46,
+                  "score": ""
+                }
+              ]
             }
           },
           {
@@ -13685,40 +14135,6 @@
             "connector": "smooth",
             "data": {
               "type": "tm.Boundary",
-              "name": "Module/Game\nImage\nBoundary",
-              "description": "",
-              "isTrustBoundary": true,
-              "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
-            },
-            "labels": [
-              "Module/Game\nImage\nBoundary"
-            ],
-            "id": "fb231d78-bc22-4092-a52c-4a5529330831",
-            "source": {
-              "x": 40,
-              "y": 660
-            },
-            "target": {
-              "x": 240,
-              "y": 690
-            },
-            "vertices": [
-              {
-                "x": 140,
-                "y": 640
-              }
-            ]
-          },
-          {
-            "shape": "trust-boundary-curve",
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Boundary",
               "name": "Image Handler/\nFile System\nBoundary",
               "description": "",
               "isTrustBoundary": true,
@@ -13749,7 +14165,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -13770,7 +14187,7 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
@@ -13841,7 +14258,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -13862,7 +14280,7 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
@@ -13933,7 +14351,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -13954,7 +14373,7 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
@@ -14025,7 +14444,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -14046,7 +14466,7 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
@@ -14117,7 +14537,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -14138,13 +14559,58 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "4bc1cca7-a2fb-4da5-8649-00cbd1970836",
+                  "title": "SSRF via RAWG URL field in game details",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "RAWG game detail response includes a background_image field with a URL. The metadata handler fetches this URL to re-host it. An attacker who controls a RAWG-linked game provides a URL pointing to an internal service (e.g. http://169.254.169.254/metadata).",
+                  "mitigation": "Validate all URLs fetched by the metadata handler against an allowlist of trusted domains (*.rawg.io, *.rawg.io CDN); block RFC1918 and link-local addresses; use an egress proxy that enforces the allowlist.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 249,
+                  "score": ""
+                },
+                {
+                  "id": "5d376bb2-172f-4cc7-94f0-e2bf012f7b7a",
+                  "title": "RAWG response body logged in full",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "A debug logging statement logs the entire RAWG API response including the API key embedded in the request URL or response metadata.",
+                  "mitigation": "Log only the RAWG game ID and status code from responses; never log full response bodies in production; structured logging with explicit field selection.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 250,
+                  "score": ""
+                },
+                {
+                  "id": "61a205c6-5967-4a55-9586-adafb0bdeffe",
+                  "title": "RAWG API timeout causing synchronous request stall",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "RAWG API takes 30 seconds to respond; the Spring RestTemplate call blocks the request thread for the full timeout, starving the thread pool.",
+                  "mitigation": "Set explicit connect and read timeouts on the RAWG HTTP client (e.g. 3s connect, 5s read); use async/non-blocking HTTP client (WebClient); circuit breaker (Resilience4j) wrapping all RAWG calls.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 251,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "Game Metadata\nRequest"
@@ -14169,7 +14635,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -14190,12 +14657,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "4bc1cca7-a2fb-4da5-8649-00cbd1970836",
+                  "title": "SSRF via RAWG URL field in game details",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "RAWG game detail response includes a background_image field with a URL. The metadata handler fetches this URL to re-host it. An attacker who controls a RAWG-linked game provides a URL pointing to an internal service (e.g. http://169.254.169.254/metadata).",
+                  "mitigation": "Validate all URLs fetched by the metadata handler against an allowlist of trusted domains (*.rawg.io, *.rawg.io CDN); block RFC1918 and link-local addresses; use an egress proxy that enforces the allowlist.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 249,
+                  "score": ""
+                },
+                {
+                  "id": "5d376bb2-172f-4cc7-94f0-e2bf012f7b7a",
+                  "title": "RAWG response body logged in full",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "A debug logging statement logs the entire RAWG API response including the API key embedded in the request URL or response metadata.",
+                  "mitigation": "Log only the RAWG game ID and status code from responses; never log full response bodies in production; structured logging with explicit field selection.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 250,
+                  "score": ""
+                },
+                {
+                  "id": "61a205c6-5967-4a55-9586-adafb0bdeffe",
+                  "title": "RAWG API timeout causing synchronous request stall",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "RAWG API takes 30 seconds to respond; the Spring RestTemplate call blocks the request thread for the full timeout, starving the thread pool.",
+                  "mitigation": "Set explicit connect and read timeouts on the RAWG HTTP client (e.g. 3s connect, 5s read); use async/non-blocking HTTP client (WebClient); circuit breaker (Resilience4j) wrapping all RAWG calls.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 251,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -14221,7 +14728,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -14242,12 +14750,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "4bc1cca7-a2fb-4da5-8649-00cbd1970836",
+                  "title": "SSRF via RAWG URL field in game details",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "RAWG game detail response includes a background_image field with a URL. The metadata handler fetches this URL to re-host it. An attacker who controls a RAWG-linked game provides a URL pointing to an internal service (e.g. http://169.254.169.254/metadata).",
+                  "mitigation": "Validate all URLs fetched by the metadata handler against an allowlist of trusted domains (*.rawg.io, *.rawg.io CDN); block RFC1918 and link-local addresses; use an egress proxy that enforces the allowlist.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 249,
+                  "score": ""
+                },
+                {
+                  "id": "5d376bb2-172f-4cc7-94f0-e2bf012f7b7a",
+                  "title": "RAWG response body logged in full",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "A debug logging statement logs the entire RAWG API response including the API key embedded in the request URL or response metadata.",
+                  "mitigation": "Log only the RAWG game ID and status code from responses; never log full response bodies in production; structured logging with explicit field selection.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 250,
+                  "score": ""
+                },
+                {
+                  "id": "61a205c6-5967-4a55-9586-adafb0bdeffe",
+                  "title": "RAWG API timeout causing synchronous request stall",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "RAWG API takes 30 seconds to respond; the Spring RestTemplate call blocks the request thread for the full timeout, starving the thread pool.",
+                  "mitigation": "Set explicit connect and read timeouts on the RAWG HTTP client (e.g. 3s connect, 5s read); use async/non-blocking HTTP client (WebClient); circuit breaker (Resilience4j) wrapping all RAWG calls.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 251,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -14273,7 +14821,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -14294,12 +14843,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "4bc1cca7-a2fb-4da5-8649-00cbd1970836",
+                  "title": "SSRF via RAWG URL field in game details",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "RAWG game detail response includes a background_image field with a URL. The metadata handler fetches this URL to re-host it. An attacker who controls a RAWG-linked game provides a URL pointing to an internal service (e.g. http://169.254.169.254/metadata).",
+                  "mitigation": "Validate all URLs fetched by the metadata handler against an allowlist of trusted domains (*.rawg.io, *.rawg.io CDN); block RFC1918 and link-local addresses; use an egress proxy that enforces the allowlist.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 249,
+                  "score": ""
+                },
+                {
+                  "id": "5d376bb2-172f-4cc7-94f0-e2bf012f7b7a",
+                  "title": "RAWG response body logged in full",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "A debug logging statement logs the entire RAWG API response including the API key embedded in the request URL or response metadata.",
+                  "mitigation": "Log only the RAWG game ID and status code from responses; never log full response bodies in production; structured logging with explicit field selection.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 250,
+                  "score": ""
+                },
+                {
+                  "id": "61a205c6-5967-4a55-9586-adafb0bdeffe",
+                  "title": "RAWG API timeout causing synchronous request stall",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "RAWG API takes 30 seconds to respond; the Spring RestTemplate call blocks the request thread for the full timeout, starving the thread pool.",
+                  "mitigation": "Set explicit connect and read timeouts on the RAWG HTTP client (e.g. 3s connect, 5s read); use async/non-blocking HTTP client (WebClient); circuit breaker (Resilience4j) wrapping all RAWG calls.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 251,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -14325,7 +14914,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -14346,12 +14936,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "d7beb4e5-6c5f-4964-b809-a3eed80ef33b",
+                  "title": "Race condition on image file write",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Two concurrent uploads for the same game ID both compute the same destination path (based on game ID + original filename); the second write corrupts or truncates the first file.",
+                  "mitigation": "Always use UUID-based filenames for stored images (no path collisions possible); atomic file write operations (write to .tmp, then rename); test concurrent uploads in load tests.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 252,
+                  "score": ""
+                },
+                {
+                  "id": "57d48a0f-c0a6-408a-bc59-988600b8c65f",
+                  "title": "\tImage file path traversal on read",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "GET /games/images?path=../../etc/passwd; if the handler uses the path query parameter directly to construct a file read path, the server file is returned to the caller.",
+                  "mitigation": "Never accept file paths from client input; look up image UUID in DB to get the stored filename; construct read path entirely server-side from trusted DB data.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 253,
+                  "score": ""
+                },
+                {
+                  "id": "562db513-aaa7-4805-a426-1fbdfbb39809",
+                  "title": "Many large concurrent image downloads exhausting I/O bandwidth",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A flash sale event causes thousands of simultaneous image requests; disk I/O saturates, slowing DB writes needed to process orders.",
+                  "mitigation": "Serve game images via a CDN or object storage (S3 + CloudFront) to offload static file serving from the application host; set cache headers (Cache-Control: max-age=86400) on public game images; separate disk partition for uploads.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 254,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -14377,7 +15007,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -14398,13 +15029,58 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "d7beb4e5-6c5f-4964-b809-a3eed80ef33b",
+                  "title": "Race condition on image file write",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Two concurrent uploads for the same game ID both compute the same destination path (based on game ID + original filename); the second write corrupts or truncates the first file.",
+                  "mitigation": "Always use UUID-based filenames for stored images (no path collisions possible); atomic file write operations (write to .tmp, then rename); test concurrent uploads in load tests.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 252,
+                  "score": ""
+                },
+                {
+                  "id": "57d48a0f-c0a6-408a-bc59-988600b8c65f",
+                  "title": "\tImage file path traversal on read",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "GET /games/images?path=../../etc/passwd; if the handler uses the path query parameter directly to construct a file read path, the server file is returned to the caller.",
+                  "mitigation": "Never accept file paths from client input; look up image UUID in DB to get the stored filename; construct read path entirely server-side from trusted DB data.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 253,
+                  "score": ""
+                },
+                {
+                  "id": "562db513-aaa7-4805-a426-1fbdfbb39809",
+                  "title": "Many large concurrent image downloads exhausting I/O bandwidth",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A flash sale event causes thousands of simultaneous image requests; disk I/O saturates, slowing DB writes needed to process orders.",
+                  "mitigation": "Serve game images via a CDN or object storage (S3 + CloudFront) to offload static file serving from the application host; set cache headers (Cache-Control: max-age=86400) on public game images; separate disk partition for uploads.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 254,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "Image\nResponse"
@@ -14429,7 +15105,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -14450,12 +15127,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "d7beb4e5-6c5f-4964-b809-a3eed80ef33b",
+                  "title": "Race condition on image file write",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Two concurrent uploads for the same game ID both compute the same destination path (based on game ID + original filename); the second write corrupts or truncates the first file.",
+                  "mitigation": "Always use UUID-based filenames for stored images (no path collisions possible); atomic file write operations (write to .tmp, then rename); test concurrent uploads in load tests.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 252,
+                  "score": ""
+                },
+                {
+                  "id": "57d48a0f-c0a6-408a-bc59-988600b8c65f",
+                  "title": "\tImage file path traversal on read",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "GET /games/images?path=../../etc/passwd; if the handler uses the path query parameter directly to construct a file read path, the server file is returned to the caller.",
+                  "mitigation": "Never accept file paths from client input; look up image UUID in DB to get the stored filename; construct read path entirely server-side from trusted DB data.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 253,
+                  "score": ""
+                },
+                {
+                  "id": "562db513-aaa7-4805-a426-1fbdfbb39809",
+                  "title": "Many large concurrent image downloads exhausting I/O bandwidth",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A flash sale event causes thousands of simultaneous image requests; disk I/O saturates, slowing DB writes needed to process orders.",
+                  "mitigation": "Serve game images via a CDN or object storage (S3 + CloudFront) to offload static file serving from the application host; set cache headers (Cache-Control: max-age=86400) on public game images; separate disk partition for uploads.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 254,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -14481,7 +15198,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -14502,12 +15220,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "d7beb4e5-6c5f-4964-b809-a3eed80ef33b",
+                  "title": "Race condition on image file write",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Two concurrent uploads for the same game ID both compute the same destination path (based on game ID + original filename); the second write corrupts or truncates the first file.",
+                  "mitigation": "Always use UUID-based filenames for stored images (no path collisions possible); atomic file write operations (write to .tmp, then rename); test concurrent uploads in load tests.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 252,
+                  "score": ""
+                },
+                {
+                  "id": "57d48a0f-c0a6-408a-bc59-988600b8c65f",
+                  "title": "\tImage file path traversal on read",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "GET /games/images?path=../../etc/passwd; if the handler uses the path query parameter directly to construct a file read path, the server file is returned to the caller.",
+                  "mitigation": "Never accept file paths from client input; look up image UUID in DB to get the stored filename; construct read path entirely server-side from trusted DB data.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 253,
+                  "score": ""
+                },
+                {
+                  "id": "562db513-aaa7-4805-a426-1fbdfbb39809",
+                  "title": "Many large concurrent image downloads exhausting I/O bandwidth",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A flash sale event causes thousands of simultaneous image requests; disk I/O saturates, slowing DB writes needed to process orders.",
+                  "mitigation": "Serve game images via a CDN or object storage (S3 + CloudFront) to offload static file serving from the application host; set cache headers (Cache-Control: max-age=86400) on public game images; separate disk partition for uploads.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 254,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -14528,6 +15286,44 @@
                 "y": 830
               }
             ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Module/Game\nImage\nBoundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "Module/Game\nImage\nBoundary"
+            ],
+            "id": "fb231d78-bc22-4092-a52c-4a5529330831",
+            "source": {
+              "x": 40,
+              "y": 780
+            },
+            "target": {
+              "x": 280,
+              "y": 750
+            },
+            "vertices": [
+              {
+                "x": 60,
+                "y": 720
+              },
+              {
+                "x": 160,
+                "y": 700
+              }
+            ]
           }
         ],
         "description": "ArcadeHaven DFD - Level 2 - Game Management"
@@ -14535,6 +15331,6 @@
     ],
     "diagramTop": 7,
     "reviewer": "Diogo Sousa & Diogo Pereira",
-    "threatTop": 230
+    "threatTop": 254
   }
 }
