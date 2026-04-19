@@ -23,7 +23,7 @@
         "cells": [
           {
             "position": {
-              "x": 20,
+              "x": -30,
               "y": 520
             },
             "size": {
@@ -586,7 +586,7 @@
           {
             "position": {
               "x": 500,
-              "y": 40
+              "y": -40
             },
             "size": {
               "width": 120,
@@ -1962,7 +1962,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -1983,12 +1984,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "3ee21b8a-1ca0-4f14-bc3f-f6fe539cb94c",
+                  "title": "MitM — request/response body modification",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An attacker on the network path intercepts an HTTP (non-TLS) order creation request and modifies the game_id or quantity before it reaches the server.",
+                  "mitigation": "Enforce HTTPS (TLS 1.2+) for all traffic; HTTP Strict Transport Security (HSTS) header; disable HTTP listener entirely in production; use certificate pinning in the frontend if applicable.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 60,
+                  "score": ""
+                },
+                {
+                  "id": "315a582a-763f-464a-b6c4-527607692d72",
+                  "title": "Sensitive data in HTTP responses over unencrypted channel",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Activation keys, invoice data, and PII returned in API responses are transmitted in cleartext over HTTP, readable by any network observer.",
+                  "mitigation": "TLS everywhere; mark all sensitive response fields as non-cacheable (Cache-Control: no-store, no-cache); use secure, HttpOnly, SameSite cookies for any session identifiers; avoid putting sensitive data in URL query parameters (logged by proxies and servers).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 61,
+                  "score": ""
+                },
+                {
+                  "id": "6a2f2f54-9b9d-4e5b-98ea-58462c9c4183",
+                  "title": "HTTP flood / slow-loris attack",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Attacker opens thousands of slow HTTP connections to the Spring Boot server, holding threads open without completing requests, exhausting the server thread pool and blocking legitimate traffic.",
+                  "mitigation": "Deploy behind a reverse proxy (Nginx) that handles connection timeouts; set maximum request body size and read timeout; use a WAF to detect and block HTTP flood patterns; Nginx's limit_conn and limit_req modules; configure Spring Boot's server.connection-timeout.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 62,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -2014,7 +2055,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -2035,13 +2077,58 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "3ee21b8a-1ca0-4f14-bc3f-f6fe539cb94c",
+                  "title": "MitM — request/response body modification",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An attacker on the network path intercepts an HTTP (non-TLS) order creation request and modifies the game_id or quantity before it reaches the server.",
+                  "mitigation": "Enforce HTTPS (TLS 1.2+) for all traffic; HTTP Strict Transport Security (HSTS) header; disable HTTP listener entirely in production; use certificate pinning in the frontend if applicable.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 60,
+                  "score": ""
+                },
+                {
+                  "id": "315a582a-763f-464a-b6c4-527607692d72",
+                  "title": "Sensitive data in HTTP responses over unencrypted channel",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Activation keys, invoice data, and PII returned in API responses are transmitted in cleartext over HTTP, readable by any network observer.",
+                  "mitigation": "TLS everywhere; mark all sensitive response fields as non-cacheable (Cache-Control: no-store, no-cache); use secure, HttpOnly, SameSite cookies for any session identifiers; avoid putting sensitive data in URL query parameters (logged by proxies and servers).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 61,
+                  "score": ""
+                },
+                {
+                  "id": "6a2f2f54-9b9d-4e5b-98ea-58462c9c4183",
+                  "title": "HTTP flood / slow-loris attack",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Attacker opens thousands of slow HTTP connections to the Spring Boot server, holding threads open without completing requests, exhausting the server thread pool and blocking legitimate traffic.",
+                  "mitigation": "Deploy behind a reverse proxy (Nginx) that handles connection timeouts; set maximum request body size and read timeout; use a WAF to detect and block HTTP flood patterns; Nginx's limit_conn and limit_req modules; configure Spring Boot's server.connection-timeout.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 62,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 2,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "Response"
@@ -2781,7 +2868,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -2802,12 +2890,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "e4c73f47-4f03-4470-bf6d-1c2c23a9c7af",
+                  "title": "Malicious content in RAWG response stored to DB",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "A compromised or spoofed RAWG response contains a game description with JavaScript. The string is stored in the DB and later rendered as raw HTML in the frontend, resulting in stored XSS.",
+                  "mitigation": "Sanitise all RAWG-sourced string fields before persistence; treat all external data as untrusted; apply HTML encoding at render time; enforce Content-Security-Policy with script-src 'self' to prevent XSS execution.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 66,
+                  "score": ""
+                },
+                {
+                  "id": "71801026-ffb7-42bb-ac72-c61997e63b2a",
+                  "title": "RAWG API key exposed in logs or source",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The RAWG API key is hardcoded in a GameMetadataHandler.java constant. It appears in SonarQube scan output, GitHub commits, or application logs, allowing third parties to use the key.",
+                  "mitigation": "Store API keys in environment variables or a secrets manager; exclude from source control; rotate API keys regularly; monitor for unexpected RAWG API usage (rate limit alerts); use application-level secret scanning in CI (truffleHog, GitGuardian).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 67,
+                  "score": ""
+                },
+                {
+                  "id": "7d51b5cd-1808-4b29-b19b-805b6682eebd",
+                  "title": "RAWG rate limiting / external dependency failure",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "The RAWG free tier has a rate limit. A Publisher bulk-imports 500 games in one operation, exhausting the daily API quota and breaking the Game Management module for all subsequent users.",
+                  "mitigation": "Implement client-side rate limiting and request queuing for RAWG calls; cache RAWG responses locally (Redis or DB) with appropriate TTL; degrade gracefully when RAWG is unavailable (show cached data, disable metadata enrichment); circuit breaker pattern with fallback.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 68,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -2833,7 +2961,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -2854,13 +2983,58 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "e4c73f47-4f03-4470-bf6d-1c2c23a9c7af",
+                  "title": "Malicious content in RAWG response stored to DB",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "A compromised or spoofed RAWG response contains a game description with JavaScript. The string is stored in the DB and later rendered as raw HTML in the frontend, resulting in stored XSS.",
+                  "mitigation": "Sanitise all RAWG-sourced string fields before persistence; treat all external data as untrusted; apply HTML encoding at render time; enforce Content-Security-Policy with script-src 'self' to prevent XSS execution.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 66,
+                  "score": ""
+                },
+                {
+                  "id": "71801026-ffb7-42bb-ac72-c61997e63b2a",
+                  "title": "RAWG API key exposed in logs or source",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The RAWG API key is hardcoded in a GameMetadataHandler.java constant. It appears in SonarQube scan output, GitHub commits, or application logs, allowing third parties to use the key.",
+                  "mitigation": "Store API keys in environment variables or a secrets manager; exclude from source control; rotate API keys regularly; monitor for unexpected RAWG API usage (rate limit alerts); use application-level secret scanning in CI (truffleHog, GitGuardian).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 67,
+                  "score": ""
+                },
+                {
+                  "id": "7d51b5cd-1808-4b29-b19b-805b6682eebd",
+                  "title": "RAWG rate limiting / external dependency failure",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "The RAWG free tier has a rate limit. A Publisher bulk-imports 500 games in one operation, exhausting the daily API quota and breaking the Game Management module for all subsequent users.",
+                  "mitigation": "Implement client-side rate limiting and request queuing for RAWG calls; cache RAWG responses locally (Redis or DB) with appropriate TTL; degrade gracefully when RAWG is unavailable (show cached data, disable metadata enrichment); circuit breaker pattern with fallback.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 68,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "Game Data\nResponse"
@@ -2885,7 +3059,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -2906,12 +3081,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "b4c56baa-a953-498e-86d5-7b5aee3c5cf3",
+                  "title": "Invoice PDF content manipulation in transit",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "On an unencrypted internal network, an attacker on the same host intercepts the byte stream between the PDF generation library and the file-write operation, replacing invoice amount fields.",
+                  "mitigation": "Generate and write invoice PDFs atomically within the application process (no separate file service); use TLS even for internal service communication; verify PDF integrity with a hash stored in the DB after generation.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 69,
+                  "score": ""
+                },
+                {
+                  "id": "30082019-8512-4ceb-91c3-1a28b32ae83e",
+                  "title": "Game image/invoice served without access control",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Invoice PDFs are served from GET /files/invoices/{filename}. Without auth checks on this endpoint, any user can enumerate filenames and download invoices belonging to other users.",
+                  "mitigation": "Authenticate and authorise all file delivery endpoints; verify that the requesting user's ID matches the invoice owner before streaming the file; use random UUID filenames (not predictable sequences); consider pre-signed, time-limited URLs for download links.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 70,
+                  "score": ""
+                },
+                {
+                  "id": "30bf8036-dcf2-45fe-8ed3-26c502a7b59b",
+                  "title": "Concurrent invoice PDF generation overloading CPU/memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Attacker or bot places and completes 100 orders simultaneously. Each triggers synchronous PDF invoice generation (CPU and memory intensive), causing a Java heap OOM or CPU spike that degrades the entire application.",
+                  "mitigation": "Move PDF generation to an asynchronous background worker (message queue, e.g. RabbitMQ or Spring @Async); limit concurrent PDF generation tasks; apply per-user order rate limiting; set JVM heap limits appropriately in Docker container resource constraints.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 71,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -2937,7 +3152,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -2958,13 +3174,58 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "b4c56baa-a953-498e-86d5-7b5aee3c5cf3",
+                  "title": "Invoice PDF content manipulation in transit",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "On an unencrypted internal network, an attacker on the same host intercepts the byte stream between the PDF generation library and the file-write operation, replacing invoice amount fields.",
+                  "mitigation": "Generate and write invoice PDFs atomically within the application process (no separate file service); use TLS even for internal service communication; verify PDF integrity with a hash stored in the DB after generation.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 69,
+                  "score": ""
+                },
+                {
+                  "id": "30082019-8512-4ceb-91c3-1a28b32ae83e",
+                  "title": "Game image/invoice served without access control",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Invoice PDFs are served from GET /files/invoices/{filename}. Without auth checks on this endpoint, any user can enumerate filenames and download invoices belonging to other users.",
+                  "mitigation": "Authenticate and authorise all file delivery endpoints; verify that the requesting user's ID matches the invoice owner before streaming the file; use random UUID filenames (not predictable sequences); consider pre-signed, time-limited URLs for download links.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 70,
+                  "score": ""
+                },
+                {
+                  "id": "30bf8036-dcf2-45fe-8ed3-26c502a7b59b",
+                  "title": "Concurrent invoice PDF generation overloading CPU/memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Attacker or bot places and completes 100 orders simultaneously. Each triggers synchronous PDF invoice generation (CPU and memory intensive), causing a Java heap OOM or CPU spike that degrades the entire application.",
+                  "mitigation": "Move PDF generation to an asynchronous background worker (message queue, e.g. RabbitMQ or Spring @Async); limit concurrent PDF generation tasks; apply per-user order rate limiting; set JVM heap limits appropriately in Docker container resource constraints.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 71,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "Game Image\nResponse"
@@ -3015,7 +3276,47 @@
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "b4c56baa-a953-498e-86d5-7b5aee3c5cf3",
+                  "title": "Invoice PDF content manipulation in transit",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "On an unencrypted internal network, an attacker on the same host intercepts the byte stream between the PDF generation library and the file-write operation, replacing invoice amount fields.",
+                  "mitigation": "Generate and write invoice PDFs atomically within the application process (no separate file service); use TLS even for internal service communication; verify PDF integrity with a hash stored in the DB after generation.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 69,
+                  "score": ""
+                },
+                {
+                  "id": "30082019-8512-4ceb-91c3-1a28b32ae83e",
+                  "title": "Game image/invoice served without access control",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Invoice PDFs are served from GET /files/invoices/{filename}. Without auth checks on this endpoint, any user can enumerate filenames and download invoices belonging to other users.",
+                  "mitigation": "Authenticate and authorise all file delivery endpoints; verify that the requesting user's ID matches the invoice owner before streaming the file; use random UUID filenames (not predictable sequences); consider pre-signed, time-limited URLs for download links.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 70,
+                  "score": ""
+                },
+                {
+                  "id": "30bf8036-dcf2-45fe-8ed3-26c502a7b59b",
+                  "title": "Concurrent invoice PDF generation overloading CPU/memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Attacker or bot places and completes 100 orders simultaneously. Each triggers synchronous PDF invoice generation (CPU and memory intensive), causing a Java heap OOM or CPU spike that degrades the entire application.",
+                  "mitigation": "Move PDF generation to an asynchronous background worker (message queue, e.g. RabbitMQ or Spring @Async); limit concurrent PDF generation tasks; apply per-user order rate limiting; set JVM heap limits appropriately in Docker container resource constraints.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 71,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -3067,7 +3368,47 @@
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "b4c56baa-a953-498e-86d5-7b5aee3c5cf3",
+                  "title": "Invoice PDF content manipulation in transit",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "On an unencrypted internal network, an attacker on the same host intercepts the byte stream between the PDF generation library and the file-write operation, replacing invoice amount fields.",
+                  "mitigation": "Generate and write invoice PDFs atomically within the application process (no separate file service); use TLS even for internal service communication; verify PDF integrity with a hash stored in the DB after generation.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 69,
+                  "score": ""
+                },
+                {
+                  "id": "30082019-8512-4ceb-91c3-1a28b32ae83e",
+                  "title": "Game image/invoice served without access control",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Invoice PDFs are served from GET /files/invoices/{filename}. Without auth checks on this endpoint, any user can enumerate filenames and download invoices belonging to other users.",
+                  "mitigation": "Authenticate and authorise all file delivery endpoints; verify that the requesting user's ID matches the invoice owner before streaming the file; use random UUID filenames (not predictable sequences); consider pre-signed, time-limited URLs for download links.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 70,
+                  "score": ""
+                },
+                {
+                  "id": "30bf8036-dcf2-45fe-8ed3-26c502a7b59b",
+                  "title": "Concurrent invoice PDF generation overloading CPU/memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Attacker or bot places and completes 100 orders simultaneously. Each triggers synchronous PDF invoice generation (CPU and memory intensive), causing a Java heap OOM or CPU spike that degrades the entire application.",
+                  "mitigation": "Move PDF generation to an asynchronous background worker (message queue, e.g. RabbitMQ or Spring @Async); limit concurrent PDF generation tasks; apply per-user order rate limiting; set JVM heap limits appropriately in Docker container resource constraints.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 71,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -3093,7 +3434,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -3114,12 +3456,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
+                  "title": "SQL injection via unsanitised flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
+                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": ""
+                },
+                {
+                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
+                  "title": "Credentials in DB connection string exposed",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
+                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": ""
+                },
+                {
+                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
+                  "title": "Unbounded query results exhausting memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
+                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -3145,7 +3527,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -3166,12 +3549,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
+                  "title": "SQL injection via unsanitised flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
+                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": ""
+                },
+                {
+                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
+                  "title": "Credentials in DB connection string exposed",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
+                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": ""
+                },
+                {
+                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
+                  "title": "Unbounded query results exhausting memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
+                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -3197,7 +3620,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -3218,12 +3642,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
+                  "title": "SQL injection via unsanitised flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
+                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": ""
+                },
+                {
+                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
+                  "title": "Credentials in DB connection string exposed",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
+                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": ""
+                },
+                {
+                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
+                  "title": "Unbounded query results exhausting memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
+                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -3249,7 +3713,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -3270,12 +3735,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
+                  "title": "SQL injection via unsanitised flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
+                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": ""
+                },
+                {
+                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
+                  "title": "Credentials in DB connection string exposed",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
+                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": ""
+                },
+                {
+                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
+                  "title": "Unbounded query results exhausting memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
+                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -3301,7 +3806,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -3322,12 +3828,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
+                  "title": "SQL injection via unsanitised flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
+                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": ""
+                },
+                {
+                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
+                  "title": "Credentials in DB connection string exposed",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
+                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": ""
+                },
+                {
+                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
+                  "title": "Unbounded query results exhausting memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
+                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -3353,7 +3899,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -3374,13 +3921,58 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
+                  "title": "SQL injection via unsanitised flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
+                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": ""
+                },
+                {
+                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
+                  "title": "Credentials in DB connection string exposed",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
+                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": ""
+                },
+                {
+                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
+                  "title": "Unbounded query results exhausting memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
+                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "Database Response"
@@ -3405,7 +3997,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -3426,12 +4019,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
+                  "title": "SQL injection via unsanitised flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
+                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": ""
+                },
+                {
+                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
+                  "title": "Credentials in DB connection string exposed",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
+                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": ""
+                },
+                {
+                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
+                  "title": "Unbounded query results exhausting memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
+                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -3457,7 +4090,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -3478,12 +4112,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
+                  "title": "SQL injection via unsanitised flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
+                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": ""
+                },
+                {
+                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
+                  "title": "Credentials in DB connection string exposed",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
+                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": ""
+                },
+                {
+                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
+                  "title": "Unbounded query results exhausting memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
+                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -3754,7 +4428,7 @@
             "vertices": [
               {
                 "x": 560,
-                "y": 100
+                "y": 110
               }
             ]
           },
@@ -3821,8 +4495,8 @@
             },
             "vertices": [
               {
-                "x": 1040,
-                "y": 160
+                "x": 990,
+                "y": 170
               }
             ]
           },
@@ -3850,10 +4524,14 @@
               "y": 260
             },
             "target": {
-              "x": 1150,
-              "y": 940
+              "x": 1130,
+              "y": 600
             },
             "vertices": [
+              {
+                "x": 1130,
+                "y": 380
+              },
               {
                 "x": 1150,
                 "y": 520
@@ -5004,7 +5682,47 @@
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
+                  "title": "SQL injection via unsanitised flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
+                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": ""
+                },
+                {
+                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
+                  "title": "Credentials in DB connection string exposed",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
+                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": ""
+                },
+                {
+                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
+                  "title": "Unbounded query results exhausting memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
+                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -9528,7 +10246,47 @@
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "e4c73f47-4f03-4470-bf6d-1c2c23a9c7af",
+                  "title": "Malicious content in RAWG response stored to DB",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "A compromised or spoofed RAWG response contains a game description with JavaScript. The string is stored in the DB and later rendered as raw HTML in the frontend, resulting in stored XSS.",
+                  "mitigation": "Sanitise all RAWG-sourced string fields before persistence; treat all external data as untrusted; apply HTML encoding at render time; enforce Content-Security-Policy with script-src 'self' to prevent XSS execution.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 66,
+                  "score": ""
+                },
+                {
+                  "id": "71801026-ffb7-42bb-ac72-c61997e63b2a",
+                  "title": "RAWG API key exposed in logs or source",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The RAWG API key is hardcoded in a GameMetadataHandler.java constant. It appears in SonarQube scan output, GitHub commits, or application logs, allowing third parties to use the key.",
+                  "mitigation": "Store API keys in environment variables or a secrets manager; exclude from source control; rotate API keys regularly; monitor for unexpected RAWG API usage (rate limit alerts); use application-level secret scanning in CI (truffleHog, GitGuardian).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 67,
+                  "score": ""
+                },
+                {
+                  "id": "7d51b5cd-1808-4b29-b19b-805b6682eebd",
+                  "title": "RAWG rate limiting / external dependency failure",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "The RAWG free tier has a rate limit. A Publisher bulk-imports 500 games in one operation, exhausting the daily API quota and breaking the Game Management module for all subsequent users.",
+                  "mitigation": "Implement client-side rate limiting and request queuing for RAWG calls; cache RAWG responses locally (Redis or DB) with appropriate TTL; degrade gracefully when RAWG is unavailable (show cached data, disable metadata enrichment); circuit breaker pattern with fallback.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 68,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -9580,7 +10338,47 @@
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "e4c73f47-4f03-4470-bf6d-1c2c23a9c7af",
+                  "title": "Malicious content in RAWG response stored to DB",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "A compromised or spoofed RAWG response contains a game description with JavaScript. The string is stored in the DB and later rendered as raw HTML in the frontend, resulting in stored XSS.",
+                  "mitigation": "Sanitise all RAWG-sourced string fields before persistence; treat all external data as untrusted; apply HTML encoding at render time; enforce Content-Security-Policy with script-src 'self' to prevent XSS execution.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 66,
+                  "score": ""
+                },
+                {
+                  "id": "71801026-ffb7-42bb-ac72-c61997e63b2a",
+                  "title": "RAWG API key exposed in logs or source",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The RAWG API key is hardcoded in a GameMetadataHandler.java constant. It appears in SonarQube scan output, GitHub commits, or application logs, allowing third parties to use the key.",
+                  "mitigation": "Store API keys in environment variables or a secrets manager; exclude from source control; rotate API keys regularly; monitor for unexpected RAWG API usage (rate limit alerts); use application-level secret scanning in CI (truffleHog, GitGuardian).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 67,
+                  "score": ""
+                },
+                {
+                  "id": "7d51b5cd-1808-4b29-b19b-805b6682eebd",
+                  "title": "RAWG rate limiting / external dependency failure",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "The RAWG free tier has a rate limit. A Publisher bulk-imports 500 games in one operation, exhausting the daily API quota and breaking the Game Management module for all subsequent users.",
+                  "mitigation": "Implement client-side rate limiting and request queuing for RAWG calls; cache RAWG responses locally (Redis or DB) with appropriate TTL; degrade gracefully when RAWG is unavailable (show cached data, disable metadata enrichment); circuit breaker pattern with fallback.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 68,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -9632,7 +10430,47 @@
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
+                  "title": "SQL injection via unsanitised flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
+                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": ""
+                },
+                {
+                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
+                  "title": "Credentials in DB connection string exposed",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
+                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": ""
+                },
+                {
+                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
+                  "title": "Unbounded query results exhausting memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
+                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -9684,7 +10522,47 @@
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "e4c73f47-4f03-4470-bf6d-1c2c23a9c7af",
+                  "title": "Malicious content in RAWG response stored to DB",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "A compromised or spoofed RAWG response contains a game description with JavaScript. The string is stored in the DB and later rendered as raw HTML in the frontend, resulting in stored XSS.",
+                  "mitigation": "Sanitise all RAWG-sourced string fields before persistence; treat all external data as untrusted; apply HTML encoding at render time; enforce Content-Security-Policy with script-src 'self' to prevent XSS execution.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 66,
+                  "score": ""
+                },
+                {
+                  "id": "71801026-ffb7-42bb-ac72-c61997e63b2a",
+                  "title": "RAWG API key exposed in logs or source",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The RAWG API key is hardcoded in a GameMetadataHandler.java constant. It appears in SonarQube scan output, GitHub commits, or application logs, allowing third parties to use the key.",
+                  "mitigation": "Store API keys in environment variables or a secrets manager; exclude from source control; rotate API keys regularly; monitor for unexpected RAWG API usage (rate limit alerts); use application-level secret scanning in CI (truffleHog, GitGuardian).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 67,
+                  "score": ""
+                },
+                {
+                  "id": "7d51b5cd-1808-4b29-b19b-805b6682eebd",
+                  "title": "RAWG rate limiting / external dependency failure",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "The RAWG free tier has a rate limit. A Publisher bulk-imports 500 games in one operation, exhausting the daily API quota and breaking the Game Management module for all subsequent users.",
+                  "mitigation": "Implement client-side rate limiting and request queuing for RAWG calls; cache RAWG responses locally (Redis or DB) with appropriate TTL; degrade gracefully when RAWG is unavailable (show cached data, disable metadata enrichment); circuit breaker pattern with fallback.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 68,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -10128,6 +11006,6 @@
     ],
     "diagramTop": 7,
     "reviewer": "Diogo Sousa",
-    "threatTop": 59
+    "threatTop": 71
   }
 }
