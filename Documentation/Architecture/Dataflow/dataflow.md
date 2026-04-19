@@ -13,7 +13,7 @@ Data Flow Diagrams allow the design team to model the system from a data-centric
 #### **2.1.1 Context**
 <div style="text-align: center;">
 
-![Level 0 - Context ](./Level-0/DFD%20-%20Level%200%20-%20Context.png)
+![Level 0 - Context ](Level-0/DFD_Level0_Context.png)
 
 </div>
 
@@ -24,28 +24,28 @@ Data Flow Diagrams allow the design team to model the system from a data-centric
 #### **2.2.1 ArcadeHaven System**
 <div style="text-align: center;">
 
-![Level 1 - ArcadeHaven System ](./Level-1/DFD%20-%20Level%201%20-%20ArcadeHaven%20System.png)
+![Level 1 - ArcadeHaven System ](Level-1/DFD_Level1_ArcadeHavenSystem.png)
 
 </div>
 
 #### **2.2.2 Database**
 <div style="text-align: center;">
 
-![Level 1 - Database ](./Level-1/DFD%20-%20Level%201%20-%20Database.png)
+![Level 1 - Database ](Level-1/DFD_Level1_Database.png)
 
 </div>
 
 #### **2.2.3 RAWG API**
 <div style="text-align: center;">
 
-![Level 1 - RAWG API ](./Level-1/DFDF%20-%20Level%201%20-%20RAWG%20API.png)
+![Level 1 - RAWG API ](Level-1/DFD_Level1_RAWGAPI.png)
 
 </div>
 
 #### **2.2.4 AUTH API**
 <div style="text-align: center;">
 
-![Level 1 - Auth API ](./Level-1/DFD%20-%20Level%201%20-%20Auth%20API.png)
+![Level 1 - Auth API ](Level-1/DFD_Level1_AuthAPI.png)
 
 </div>
 
@@ -57,6 +57,6 @@ Data Flow Diagrams allow the design team to model the system from a data-centric
 #### **2.3.1 Game Management**
 <div style="text-align: center;">
 
-![Level 2 - Game Management ](./Level-2/DFD%20-%20Level%202%20-%20Game%20Management.png)
+![Level 2 - Game Management ](Level-2/DFD_Level2_GameManagement.png)
 
 </div>

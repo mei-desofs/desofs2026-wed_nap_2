@@ -67,10 +67,7 @@ Together, these stages ensure that security is considered from the early stages 
       - [RiskAssessment](../Documentation/ThreatModeling/RiskAssessment/)
         - [riskAssessment.md](../Documentation/ThreatModeling/RiskAssessment/riskAssessment.md)
       - [AbuseCases](../Documentation/ThreatModeling/AbuseCases/)
-        - [v1](../Documentation/ThreatModeling/AbuseCases/v1/)
-          - [AbuseCasesExpanded.md](../Documentation/ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md)
-        - [v2](../Documentation/ThreatModeling/AbuseCases/v2/)
-          - [AbuseCases.md](../Documentation/ThreatModeling/AbuseCases/v2/AbuseCases.md)
+          - [AbuseCases.md](../Documentation/ThreatModeling/AbuseCases/AbuseCases.md)
       - [AttackTrees](../Documentation/ThreatModeling/AttackTrees/)
         - [AttackTrees.md](../Documentation/ThreatModeling/AttackTrees/AttackTrees.md)
         - [TH-01-Account-Takeover-Attack-Tree.puml](../Documentation/ThreatModeling/AttackTrees/TH-01-Account-Takeover-Attack-Tree.puml)
@@ -121,7 +118,7 @@ During this phase, the workload was distributed among the group members as follo
 - 1250505 - Diogo José
   - [Requirements](../Documentation/Requirements/requirements.md)
   - [Architecture Views](../Documentation/Architecture/Diagrams/Views/Views.md)
-  - [Abuse Cases](../Documentation/ThreatModeling/AbuseCases/v2/AbuseCases.md)
+  - [Abuse Cases](../Documentation/ThreatModeling/AbuseCases/AbuseCases.md)
   - [Dataflow Diagrams](../Documentation/Architecture/Dataflow/dataflow.md)
  
 
