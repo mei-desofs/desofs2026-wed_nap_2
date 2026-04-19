@@ -28,6 +28,7 @@ The table below aggregates DREAD scores per STRIDE category, reflecting the over
     - Number 231: Publisher ID not bound from JWT on game create
     - Number 237: RAWG API key substitution in handler config.
 
+
 2. **Tampering:** Malicious modification of data, code or configuration
     - Number 8: Request body manipulation/mass assignment
     - Number 78: Unauthorised direct DB writes
@@ -51,6 +52,7 @@ The table below aggregates DREAD scores per STRIDE category, reflecting the over
     - Number 185: Price written to order from client-supplied value
     - Number 232: Game price accepts negative or zero values.
 
+
 3. **Repudiation:** User denies performing an action
     - Number 73: Denial of system-level actions
     - Number 10: Insufficient request logging
@@ -65,6 +67,7 @@ The table below aggregates DREAD scores per STRIDE category, reflecting the over
     - Number 50: No accountability for bad external data
     - Number 202: No version history of metadata updates
     - Number 233: No before/after values logged on game update.
+
 
 4. **Information Disclosure:** Unauthorized access to sensitive data
     - Number 12: Verbose error messages expose internals
@@ -85,6 +88,7 @@ The table below aggregates DREAD scores per STRIDE category, reflecting the over
     - Number 177: Activation keys returned in plaintext in datastore response
     - Number 229: Game Details Response cached insecurely.
 
+
 5. **Denial of Service:** Disrupting or degrading service availability
     - Number 13: No rate limiting on public endpoints
     - Number 81: DB overload from unbounded queries
@@ -98,10 +102,12 @@ The table below aggregates DREAD scores per STRIDE category, reflecting the over
     - Number 203: Metadata refresh loop causing repeated RAWG calls
     - Number 254: Many large concurrent image downloads exhausting I/O bandwidth.
 
+
 6. **Elevation of Privilege:** Attacker gains higher-level access than intended
     - Number 14: Missing role checks on admin routes
     - Number 26: Publisher self approving games 
     - Number 204: Publisher overwriting admin-curated metadata fields.
+
 
 ---
 

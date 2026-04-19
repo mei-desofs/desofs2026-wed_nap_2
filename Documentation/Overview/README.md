@@ -42,7 +42,7 @@ Documentation/
     └── DREAD.md
 ```
 
-- [Architecture](../Architecture/analysis.md): System overview, architecture, and domain model of the ArcadeHaven platform, covering the four core DDD aggregates: **User**, **Game**, **Order**, and **Library**.
+- [Architecture](../Architecture/architecture.md): System overview, architecture, and domain model of the ArcadeHaven platform, covering the four core DDD aggregates: **User**, **Game**, **Order**, and **Library**.
 - [Architecture Views](../Architecture/Diagrams/Views/README.md): Logical and physical architecture views, including Docker deployment view for API and database.
 - [Logical View Diagram](../Architecture/Diagrams/Views/logical-view.puml): Minimal logical responsibilities view used as stable architecture contract.
 - [Physical Deployment Diagram (Docker)](../Architecture/Diagrams/Views/physical-deployment-docker.puml): Physical deployment view with API and database in separate Docker containers.
@@ -60,20 +60,26 @@ Documentation/
 
 ## Abuse-Case Diagrams
 
-- [Expanded Abuse Cases Catalog](../ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md)
-- [Auth Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/authorization-abuse-case.puml)
-- [Game Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/game-management-abuse-case.puml)
-- [Orders and Library Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/orders-library-abuse-case.puml)
-- [File Operations Abuse Cases Diagram](../ThreatModeling/AbuseCases/v1/file-operations-abuse-case.puml)
-- [Legacy Authorization Abuse Cases Diagram](../ThreatModeling/AbuseCases/v2/authorization-abuse-case.puml)
+### Diagrams
 
-## ASVS Extensions
+- [Authorization Abuse Case](AbuseCases/authorization-abuse-case.png)
+- [Download Invoice Abuse Case](AbuseCases/download-invoice-abuse-case.png)
+- [Game Management Abuse Case](AbuseCases/game-management-abuse-case.png)
+- [Game Submission Abuse Case](AbuseCases/game-submission-abuse-case.png)
+- [Role Management Abuse Case](AbuseCases/role-management-abuse-case.png)
 
-- [V6 Authentication ASVS Detail](../SecurityTesting/ASVS/V6_Authentication/authentication.md): Detailed authentication requirements and traceability based on ASVS V6 controls.
+### Source Files (PlantUML)
 
-- [V16 Logging and Error Handling](../SecurityTesting/ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md): ASVS V16 applicability assessment covering 17 requirements with item-by-item evaluation. Maps to RNF-07 (Logging), RNF-06 (Input Validation), and RNF-23 (Secrets Management). Primary testing via ST-008 (structured logging verification) and ST-016 (configuration review).
+- [Authorization Abuse Case](AbuseCases/authorization-abuse-case.puml)
+- [Download Invoice Abuse Case](AbuseCases/download-invoice-abuse-case.puml)
+- [Game Management Abuse Case](AbuseCases/game-management-abuse-case.puml)
+- [Game Submission Abuse Case](AbuseCases/game-submission-abuse-case.puml)
+- [Role Management Abuse Case](AbuseCases/role-management-abuse-case.puml)
 
-- [V17 Communications](../SecurityTesting/ASVS/V17_Communications/V17-Communications.md): ASVS V17 applicability assessment covering 12 requirements. **Determined 100% Not Applicable** due to REST API architecture with no real-time media, WebRTC, TURN, DTLS, or signaling infrastructure. Formal evidence provided from requirements analysis, data flow analysis, and project scope documentation.
+### Project File
+
+- [Visual Paradigm Project](AbuseCases/DESOFS%20-%20Abuse%20Cases.vpp)
+
 
 ## Evaluation Criteria
 

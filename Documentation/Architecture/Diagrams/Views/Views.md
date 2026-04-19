@@ -26,21 +26,21 @@ The documentation of the **System Architecture View** follows the *Software Arch
 #### **2.1.1 Logical View**
 <div style="text-align: center;">
 
-![Level 1 - Logical View](./Level1/Logic%20View.png)
+![Level 1 - Logical View](Level1/LogicView.png)
 
 </div>
 
 #### **2.1.2 Development View**
 <div style="text-align: center;">
 
-![Level 1 - Development View](./Level1/Development%20View.png)  
+![Level 1 - Development View](Level1/DevelopmentView.png)
 
 </div>
 
 #### **2.1.3 Physical View** 
 <div style="text-align: center;">
 
-![Level 1 - Physical View](./Level1/Physical%20View.png) 
+![Level 1 - Physical View](Level1/PhysicalView.png)
 
 </div>
 
@@ -51,21 +51,21 @@ The documentation of the **System Architecture View** follows the *Software Arch
 #### **2.1.2 Development View**
 <div style="text-align: center;">
 
-![Level 2 - Logical View](./Level2/Logic%20View.png)
+![Level 2 - Logical View](Level2/LogicView.png)
 
 </div>
 
 #### **2.2.2 Development View**
 <div style="text-align: center;">
 
-![Level 2 - Development View](./Level2/Development%20View.png)  
+![Level 2 - Development View](Level2/DevelopmentView.png)
 
 </div>
 
 #### **2.1.3 Physical View** 
 <div style="text-align: center;">
 
-![Level 2 - Physical View](./Level2/Physical.png) 
+![Level 2 - Physical View](Level2/Physical.png)
 
 </div>
 
@@ -76,6 +76,6 @@ The documentation of the **System Architecture View** follows the *Software Arch
 #### **2.1.3 Development View**
 <div style="text-align: center;">
 
-![Level 3 - Logical View](./Level3/Logic%20View.png)
+![Level 3 - Logical View](./Level3/LogicView.png)
 
 </div>

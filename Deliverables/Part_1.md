@@ -42,7 +42,7 @@ Together, these stages ensure that security is considered from the early stages 
     - [Overview](../Documentation/Overview/)
       - [README.md](../Documentation/Overview/README.md)
     - [Architecture](../Documentation/Architecture/)
-      - [analysis.md](../Documentation/Architecture/analysis.md)
+      - [analysis.md](../Documentation/Architecture/architecture.md)
       - [Dataflow](../Documentation/Architecture/Dataflow/)
         - [dataflow.md](../Documentation/Architecture/Dataflow/dataflow.md)
         - [arcadehaven-dfd.json](../Documentation/Architecture/Dataflow/arcadehaven-dfd.json)
@@ -70,9 +70,9 @@ Together, these stages ensure that security is considered from the early stages 
           - [AbuseCases.md](../Documentation/ThreatModeling/AbuseCases/AbuseCases.md)
       - [AttackTrees](../Documentation/ThreatModeling/AttackTrees/)
         - [AttackTrees.md](../Documentation/ThreatModeling/AttackTrees/AttackTrees.md)
-        - [TH-01-Account-Takeover-Attack-Tree.puml](../Documentation/ThreatModeling/AttackTrees/TH-01-Account-Takeover-Attack-Tree.puml)
-        - [TH-04-Input-Injection-Attack-Tree.puml](../Documentation/ThreatModeling/AttackTrees/TH-04-Input-Injection-Attack-Tree.puml)
-        - [TH-08-Order-Tampering-Attack-Tree.puml](../Documentation/ThreatModeling/AttackTrees/TH-08-Order-Tampering-Attack-Tree.puml)
+        - [TH-01-Account-Takeover-Attack-Tree.puml](../Documentation/ThreatModeling/AttackTrees/Account-Takeover-Attack-Tree.puml)
+        - [TH-04-Input-Injection-Attack-Tree.puml](../Documentation/ThreatModeling/AttackTrees/Input-Injection-Attack-Tree.puml)
+        - [TH-08-Order-Tampering-Attack-Tree.puml](../Documentation/ThreatModeling/AttackTrees/Order-Tampering-Attack-Tree.puml)
     - [SecurityTesting](../Documentation/SecurityTesting/)
       - [MasterObjectivePlan.md](../Documentation/SecurityTesting/MasterObjectivePlan.md)
       - [SecurityTesting.md](../Documentation/SecurityTesting/SecurityTesting.md)
@@ -110,16 +110,19 @@ During this phase, the workload was distributed among the group members as follo
     - [Self-contained Tokens](../Documentation/SecurityTesting/ASVS/V9_Self-contained%20Tokens/self_containedTokens.md)
     - [OAuth and OIDC](../Documentation/SecurityTesting/ASVS/V10_OAuthOIDC/oauthOidc.md)
     - [Secure Communication](../Documentation/SecurityTesting/ASVS/V12_SecureCommunication/secureCommunication.md)
-    - [WebRTC]()
     - [Data Protection](../Documentation/SecurityTesting/ASVS/V14_DataProtection/dataProtection.md)
     - [File Handling](../Documentation/SecurityTesting/ASVS/V5_FileHandling/fileHandling.md)
-  - 
+    - [WebRTC]()
+  - [STRIDE](../Documentation/Architecture/Dataflow/arcadehaven-dfd.pdf)
+  - [Mitigations](../Documentation/Mitigations/mitigations.md)
 
 - 1250505 - Diogo José
   - [Requirements](../Documentation/Requirements/requirements.md)
   - [Architecture Views](../Documentation/Architecture/Diagrams/Views/Views.md)
   - [Abuse Cases](../Documentation/ThreatModeling/AbuseCases/AbuseCases.md)
   - [Dataflow Diagrams](../Documentation/Architecture/Dataflow/dataflow.md)
+  - [Mitigations](../Documentation/Mitigations/mitigations.md)
+
  
 
 - 1250491 - Acácio Coutinho
@@ -133,12 +136,11 @@ During this phase, the workload was distributed among the group members as follo
 
 
 - 1250516 - Gabriel Proença
-  - [Abuse Cases](../Documentation/ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md)
   - [Attack Trees](../Documentation/ThreatModeling/AttackTrees/AttackTrees.md)
+    - [Account Takeover](../Documentation/ThreatModeling/AttackTrees/Account-Takeover-Attack-Tree.puml)
+    - [Input Injection](../Documentation/ThreatModeling/AttackTrees/Input-Injection-Attack-Tree.puml)
+    - [Order Tampering](../Documentation/ThreatModeling/AttackTrees/Order-Tampering-Attack-Tree.puml)
   - [DREAD Analysis](../Documentation/SSDLC/DREAD.md)
-    - [TH-01 Account Takeover](../Documentation/ThreatModeling/AttackTrees/TH-01-Account-Takeover-Attack-Tree.puml)
-    - [TH-04 Input Injection](../Documentation/ThreatModeling/AttackTrees/TH-04-Input-Injection-Attack-Tree.puml)
-    - [TH-08 Order Tampering](../Documentation/ThreatModeling/AttackTrees/TH-08-Order-Tampering-Attack-Tree.puml)
   - [ASVS](../Documentation/SecurityTesting/ASVS)
     - [Cryptography](../Documentation/SecurityTesting/ASVS/V11_Cryptography/V11-Cryptography.md)
     - [Secure Coding and Architecture](../Documentation/SecurityTesting/ASVS/V15_Secure_Coding_and_Archite/V15-SecureCoding.md)

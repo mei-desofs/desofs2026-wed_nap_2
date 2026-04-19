@@ -92,9 +92,9 @@ Why this threat is prioritized:
 
 ## 5. Attack Tree UML Artefacts
 
-- [TH-01 Attack Tree (PlantUML)](TH-01-Account-Takeover-Attack-Tree.puml)
-- [TH-04 Attack Tree (PlantUML)](TH-04-Input-Injection-Attack-Tree.puml)
-- [TH-08 Attack Tree (PlantUML)](TH-08-Order-Tampering-Attack-Tree.puml)
+- [TH-01 Attack Tree (PlantUML)](Account-Takeover-Attack-Tree.puml)
+- [TH-04 Attack Tree (PlantUML)](Input-Injection-Attack-Tree.puml)
+- [TH-08 Attack Tree (PlantUML)](Order-Tampering-Attack-Tree.puml)
 
 ## 6. Relationship to existing project artifacts
 
