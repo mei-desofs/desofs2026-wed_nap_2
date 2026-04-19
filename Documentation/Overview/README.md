@@ -54,7 +54,8 @@ Documentation/
 - [Mitigations](../Mitigations/Mitigations.md): Proposed mitigations for identified threats, focusing on high-priority risks such as broken access control, insecure file handling, and credential exposure.
 - [Requirements](../Requirements/requirements.md): Justified security requirements for ArcadeHaven, covering authentication and authorization (Admin, Publisher, Buyer roles), data security, secure communication, input validation, third-party components (RAWG.io), logging, and monitoring.
 - [Security Testing](../SecurityTesting/SecurityTesting.md): Security testing methodology for ArcadeHaven, including abuse cases, threat model review process, and ASVS assessment focused on the platform architecture.
-- [Security Traceability Matrix v2](../SecurityTesting/TraceabilityMatrix-V2.md): Requirement-to-threat-to-test mapping with owner and sprint planning.
+
+[//]: # (- [Security Traceability Matrix v2]&#40;../SecurityTesting/TraceabilityMatrix-V2.md&#41;: Requirement-to-threat-to-test mapping with owner and sprint planning.)
 
 
 

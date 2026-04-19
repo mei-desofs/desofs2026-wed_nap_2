@@ -167,7 +167,8 @@ Threat model review is mandatory when any of the following occurs:
 
 ## 5. Security Requirement to Planned Test Traceability Matrix
 
-For the expanded matrix with ASVS references, owner roles, and sprint allocation, see [TraceabilityMatrix-V2.md](TraceabilityMatrix-V2.md). For ASVS-specific assessments see [ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md](ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md) and [ASVS/V17_Communications/V17-Communications.md](ASVS/V17_Communications/V17-Communications.md).
+For the expanded matrix with ASVS references, owner roles, and sprint allocation
+. For ASVS-specific assessments see [ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md](ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md) and [ASVS/V17_Communications/V17-Communications.md](ASVS/V17_Communications/V17-Communications.md).
 
 | Requirement ID | Security Requirement | Abuse Case | Planned Test ID | ASVS Req | Test Focus | Planned Evidence | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
