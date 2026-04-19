@@ -114,6 +114,9 @@ During this phase, the workload was distributed among the group members as follo
     - [WebRTC]()
   - [STRIDE](../Documentation/Architecture/Dataflow/arcadehaven-dfd.pdf)
   - [Mitigations](../Documentation/Mitigations/mitigations.md)
+  - [Risk Assessment](../Documentation/ThreatModeling/RiskAssessment/riskAssessment.md)
+  - [Threat Identification and Analysis](../Documentation/ThreatModeling/ThreatIdentificationAndAnalysis/threatIdentificationAndAnalysis.md)
+ 
 
 - 1250505 - Diogo José
   - [Requirements](../Documentation/Requirements/requirements.md)
