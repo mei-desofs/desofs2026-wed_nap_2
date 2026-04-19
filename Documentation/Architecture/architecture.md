@@ -9,23 +9,27 @@ This section consolidates the architecture artefacts used in Phase 1 analysis an
 - [Domain Model ](Diagrams/DomainModel/ArcadeHaven_Domain_Model.svg)
 - [Domain Model (PlantUML)](Diagrams/DomainModel/domain_model.puml)
 
-### Level 1
+#### Level 1
 
 - [Development View](Diagrams/Views/Level1/DevelopmentView.png)
 - [Logical View](Diagrams/Views/Level1/LogicView.png)
 - [Physical View](Diagrams/Views/Level1/PhysicalView.png)
 
-### Level 2
+#### Level 2
 
 - [Development View](Diagrams/Views/Level2/DevelopmentView.png)
 - [Logical View](Diagrams/Views/Level2/LogicView.png)
 - [Physical View](Diagrams/Views/Level2/Physical.png)
 
-### Level 3
+#### Level 3
 
 - [Logical View](Diagrams/Views/Level3/LogicView.png)
 
-### Source Files
+#### Use Case
+
+- [Use Case](Diagrams/Views/UseCase/UseCase.png)
+
+#### Source Files
 
 - [Visual Paradigm Project](Diagrams/Views/DESOFS%20-%20Views.vpp)
 

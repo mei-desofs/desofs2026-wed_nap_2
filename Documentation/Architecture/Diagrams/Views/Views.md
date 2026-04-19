@@ -12,7 +12,7 @@ The 4+1 view model allows the system to be analyzed from multiple complementary 
 - Physical View: focuses on mapping software components to hardware.
 - Scenarios View: focuses on the business processes and how they will be executed by the users.
 
-Taking into account that the implementation of this system is out of scope for the current phase, neither the process, scenarios views or views of level 4 will be represented in the following diagrams.
+Taking into account that the implementation of this system is out of scope for the current phase, neither the process or views of level 4 will be represented in the following diagrams.
 
 ### **1.2 Reference**
 
@@ -77,5 +77,12 @@ The documentation of the **System Architecture View** follows the *Software Arch
 <div style="text-align: center;">
 
 ![Level 3 - Logical View](./Level3/LogicView.png)
+
+</div>
+
+### **2.4 ArcadeHaven - Use Case**
+<div style="text-align: center;">
+
+![ArcadeHaven - Use Case](./UseCase/UseCase.png)
 
 </div>
