@@ -4745,8 +4745,8 @@
                 "text": "ArcadeHaven\nSystem"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -4843,12 +4843,91 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "a51a5368-b710-47ba-8163-cbcc0f8d7f82",
+                  "title": "Request body manipulation / mass assignment",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Buyer sends a POST /orders with a modified price field, paying less for a game if the API trusts client-submitted prices instead of looking up the canonical price from the DB.",
+                  "mitigation": "Never trust client-submitted prices; resolve price server-side from the Games datastore; use strict DTO validation with @Valid; disable mass assignment via explicit @JsonProperty mapping.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 8,
+                  "score": ""
+                },
+                {
+                  "id": "cdd0cebd-79f5-44d1-b9e1-1b7e8d872101",
+                  "title": "JWT not validated on every route",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Spoofing",
+                  "description": "Attacker crafts a request with an unsigned or expired token to a Spring endpoint that lacks @PreAuthorize; gains access as any user.",
+                  "mitigation": "Global JWT validation filter in Spring Security; no endpoint bypasses; token expiry enforced; alg:none attack prevention (reject tokens with no algorithm).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 9,
+                  "score": ""
+                },
+                {
+                  "id": "3e278681-1436-4bd1-a310-ef602c65ce46",
+                  "title": "Insufficient request logging",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "An admin deletes a user account. No structured log exists with the admin's identity, timestamp, and target. They later deny the action.",
+                  "mitigation": "Structured access log for all mutating operations (POST/PUT/PATCH/DELETE) including authenticated user ID, resource path, body hash, and timestamp; send logs to a tamper-evident SIEM.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 10,
+                  "score": ""
+                },
+                {
+                  "id": "228d1b6a-0151-4d61-a75b-f8627e3b003b",
+                  "title": "Verbose error messages expose internals",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "A 500 error leaks a stack trace containing table names, ORM query structure, or DB credentials to the caller.",
+                  "mitigation": "Global exception handler returning generic error responses; suppress stack traces in production; use structured error codes; never include DB exception messages in HTTP responses.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 12,
+                  "score": ""
+                },
+                {
+                  "id": "0f67202d-8cce-4c35-aea5-e83a55f73225",
+                  "title": "No rate limiting on public endpoints",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Attacker floods POST /orders or GET /games with thousands of requests/second, exhausting the Spring Boot thread pool and making the API unavailable to legitimate users.",
+                  "mitigation": "API gateway or Spring rate-limiting filter (e.g. Bucket4j); limit per IP and per authenticated user; return 429 with Retry-After; circuit breaker pattern for downstream DB calls.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 13,
+                  "score": ""
+                },
+                {
+                  "id": "7de2cef2-e6df-4df6-8862-3f584ee9773b",
+                  "title": "Missing role checks on admin routes",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Elevation of privilege",
+                  "description": "A Buyer calls DELETE /admin/games/{id} and it succeeds because the endpoint validates only authentication (valid JWT) but not the required ADMIN role in the Keycloak token claims.",
+                  "mitigation": "Role-based access control enforced at the method level via @PreAuthorize(\"hasRole('ADMIN')\"); integration tests for every protected endpoint verifying that Buyer/Publisher tokens are rejected; automated security scanning in CI pipeline with SonarQube.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 14,
+                  "score": ""
+                }
+              ]
             }
           },
           {
@@ -5280,7 +5359,7 @@
               "reasonOutOfScope": "",
               "hasOpenThreats": true,
               "isALog": false,
-              "isEncrypted": false,
+              "isEncrypted": true,
               "isSigned": false,
               "storesCredentials": false,
               "storesInventory": false,
@@ -5344,6 +5423,13 @@
                 "informationDisclosure": 1,
                 "denialOfService": 1
               }
+            },
+            "tools": {
+              "items": [
+                "boundary",
+                "button-remove"
+              ],
+              "name": null
             }
           },
           {
@@ -6689,8 +6775,8 @@
                 "text": "User\nManagement"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -6787,12 +6873,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "ae4f8a1f-a2e7-4e49-83cb-62aa41086026",
+                  "title": "Keycloak admin console exposed publicly",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Spoofing",
+                  "description": "Attacker reaches /auth/admin/arcadehaven/console from the internet and brute-forces the admin password, gaining control of the entire user realm.",
+                  "mitigation": "Restrict admin console to internal network / VPN; change default credentials; enable MFA on Keycloak admin account; fail2ban on admin login endpoint.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 103,
+                  "score": ""
+                },
+                {
+                  "id": "b68eda99-5358-4558-a8c2-a6027d6b409d",
+                  "title": "Unauthorised user record modification",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An attacker with Keycloak manage-users role (but not full admin) modifies another admin's email address, enabling account takeover via password reset.",
+                  "mitigation": "Apply principle of least privilege on Keycloak service account roles; ArcadeHaven application uses only view-users scope; admin operations require dedicated admin account with MFA.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 104,
+                  "score": ""
+                },
+                {
+                  "id": "937a64de-f2f7-488b-a3c4-b59320d60897",
+                  "title": "No Keycloak admin event logging",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "Admin creates a new PUBLISHER user with elevated realm roles; no Keycloak admin event log entry is kept; action cannot be audited.",
+                  "mitigation": "Enable Keycloak Admin Events logging in realm settings; forward events to SIEM; retain for 90+ days; alert on role assignment events.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 105,
+                  "score": ""
+                },
+                {
+                  "id": "cfcba1df-28e0-47bb-b30a-4dc7aebd52ff",
+                  "title": "User PII exposed via Keycloak admin API",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "ArcadeHaven back-end service account has manage-users scope; a vulnerability in the application allows an attacker to proxy calls to /auth/admin/users and enumerate all user emails and profile data.",
+                  "mitigation": "Grant ArcadeHaven service account only the minimum Keycloak scopes needed (e.g. view-profile); never manage-users in the application service account; separate admin automation account.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 106,
+                  "score": ""
+                },
+                {
+                  "id": "fa8bd06d-a2c1-478b-b7c2-797ad1ded411",
+                  "title": "Mass user creation flooding Keycloak DB",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Attacker exploits an open registration endpoint to create millions of accounts, filling Keycloak's internal DB and slowing authentication for all users.",
+                  "mitigation": "CAPTCHA and rate limiting on user registration; email verification before account activation; monitor registration rate; Keycloak registration event alerts.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 107,
+                  "score": ""
+                },
+                {
+                  "id": "8b9e9885-6a61-4779-98c8-c72127698ba7",
+                  "title": "Service account with excessive Keycloak roles",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "ArcadeHaven's Spring Boot service account is granted realm-admin role in Keycloak. If the application is compromised, the attacker inherits full realm control.",
+                  "mitigation": "Service account uses only the minimum scopes needed; never realm-admin; rotate service account credentials; audit service account permissions regularly.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 108,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1,
+                "elevationOfPrivilege": 1
+              }
             }
           },
           {
@@ -6809,8 +6982,8 @@
                 "text": "Credential\nValidation"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -6907,12 +7080,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "bf89cdda-d62d-425f-9c92-199610e179d1",
+                  "title": "Credential stuffing / brute-force",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Spoofing",
+                  "description": "Attacker uses leaked credential list from another breach to log in to ArcadeHaven accounts at scale.",
+                  "mitigation": "Keycloak brute-force protection (account lockout after N failures); MFA requirement; breached-password check via HaveIBeenPwned API at registration and login.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 109,
+                  "score": ""
+                },
+                {
+                  "id": "f5f7abea-2899-4c74-ac4c-2470b2a8a074",
+                  "title": "\tPassword hash algorithm downgrade",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Keycloak is misconfigured to store passwords using MD5 instead of bcrypt/Argon2; a DB leak leads to rapid hash crackin",
+                  "mitigation": "Verify Keycloak password hashing algorithm is set to bcrypt or Argon2 in realm settings; never use MD5/SHA1 for passwords; audit Keycloak configuration as part of deployment checklist.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 110,
+                  "score": ""
+                },
+                {
+                  "id": "17a696f3-3f9e-4c26-8823-ce9bd71459d6",
+                  "title": "No failed-login event record",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "Attacker runs credential stuffing attack for hours; no failed login events are stored, so the attack is invisible to incident response.",
+                  "mitigation": "Enable Keycloak login event persistence; alert on N failed logins per account per hour; forward to SIEM for anomaly detection.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 111,
+                  "score": ""
+                },
+                {
+                  "id": "4826101f-c6ca-4830-9a98-657750cba446",
+                  "title": "User enumeration via differential responses",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Credential validation returns \"user not found\" for unknown email vs \"wrong password\" for known email, allowing attacker to enumerate registered users.",
+                  "mitigation": "Keycloak returns generic \"invalid credentials\" for all failures by default — verify this is not overridden; constant-time comparison prevents timing-based enumeration.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 112,
+                  "score": ""
+                },
+                {
+                  "id": "c08a7382-cad4-4df0-af2e-62d144f52440",
+                  "title": "Flood of validation requests causing Keycloak DB lock contention",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "High-volume brute-force attack creates heavy DB write load (failed attempt counters) causing lock contention and slowing legitimate logins.",
+                  "mitigation": "Rate-limit at reverse proxy before requests reach Keycloak; Keycloak HA with dedicated DB; failed attempt counter update can be async/eventual.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 113,
+                  "score": ""
+                },
+                {
+                  "id": "f537d63a-a383-47a8-afa9-248c32ddbcf4",
+                  "title": "Bypass of MFA via account recovery flow",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Elevation of privilege",
+                  "description": "Attacker uses \"forgot password\" flow to reset a victim's password without triggering MFA, effectively bypassing the second factor.",
+                  "mitigation": "Ensure account recovery requires email verification to a trusted address; do not bypass MFA via recovery flows; alert on password reset events for accounts with MFA enabled.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 114,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 2,
+                "denialOfService": 1,
+                "elevationOfPrivilege": 1
+              }
             }
           },
           {
@@ -6929,8 +7189,8 @@
                 "text": "Issue Token"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -7027,12 +7287,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "10ee5dcf-6c86-45e7-8fdc-3aa09443ead3",
+                  "title": "Token issued to wrong client (audience confusion)",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Spoofing",
+                  "description": "Token issued for Keycloak client arcadehaven-frontend is accepted by arcadehaven-backend even though the aud claim should restrict it. Attacker replays a token obtained from a different client.",
+                  "mitigation": "Validate aud claim strictly in Spring Security; each client (frontend, backend) has its own client ID; backend resource server only accepts tokens with its own client ID as audience.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 115,
+                  "score": ""
+                },
+                {
+                  "id": "bc7bfd4a-4032-4d7c-9f82-532f7c64f162",
+                  "title": "Weak signing key allows token forgery",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Keycloak configured with HS256 and a short, guessable secret. Attacker brute-forces the key offline and forges tokens with arbitrary claims.",
+                  "mitigation": "Use RS256 or ES256 (asymmetric) exclusively; minimum 2048-bit RSA keys; rotate signing keys annually or on suspected compromise; backend never holds the private key.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 116,
+                  "score": ""
+                },
+                {
+                  "id": "078cfb5f-ba86-403c-85b3-20fed2a6302c",
+                  "title": "No record of token issuance events",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "A token is issued to a compromised device; no Keycloak token issuance event is logged, making it impossible to trace when the compromise began.",
+                  "mitigation": "Enable Keycloak token event logging; log client ID, user ID, IP, and timestamp for every issued token; retain logs for at least 30 days.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 117,
+                  "score": ""
+                },
+                {
+                  "id": "39152df2-0881-4095-93cd-855b275b159a",
+                  "title": "\tExcessive claims in token payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Keycloak token mapper includes user's email, phone number, and home address in the JWT payload. Any service receiving the token can read this PII from the decoded payload.",
+                  "mitigation": "Minimise claims in token payload to only what consuming services need (sub, roles, email); use userinfo endpoint for additional attributes rather than embedding in the token.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 118,
+                  "score": ""
+                },
+                {
+                  "id": "5bc9a696-8eae-4c25-b6af-89c1a4a9a85f",
+                  "title": "Token endpoint flooded",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Attacker hammers POST /token with invalid grant_type values; each request hits the DB to look up the client configuration, exhausting DB connections.",
+                  "mitigation": "Rate-limit the token endpoint at the reverse proxy / WAF; CAPTCHA for public clients; Keycloak cluster with dedicated DB pool.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 119,
+                  "score": ""
+                },
+                {
+                  "id": "5d028ed9-1945-4d0d-be10-12e93efe0bf6",
+                  "title": "Long-lived access tokens granting stale privileges",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "User's role is revoked by admin but their 8-hour access token remains valid, granting the revoked privilege until expiry.",
+                  "mitigation": "Short access token TTL (5–15 min); implement token revocation list or Keycloak logout events pushed to Spring Security; use refresh token rotation so revocation is effective at next refresh.\n",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 120,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1,
+                "elevationOfPrivilege": 2
+              }
             }
           },
           {
@@ -7049,8 +7396,8 @@
                 "text": "Token\nValidation"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -7147,12 +7494,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "ee8ef8b1-7138-4800-b48a-dae4675a732a",
+                  "title": "Algorithm confusion attack",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "Attacker submits JWT with alg: none in the header. A naive validator skips signature verification and accepts any payload.",
+                  "mitigation": "Explicitly whitelist allowed algorithms (RS256 only); reject tokens with alg:none or unexpected algorithms; use well-maintained JOSE library (e.g. Nimbus JOSE+JWT).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 121,
+                  "score": ""
+                },
+                {
+                  "id": "fc0f3d70-6eca-4ba6-ae28-2132a67b5b89",
+                  "title": "Expired token accepted due to clock skew misconfiguration",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Validator allows 1-hour clock skew \"to be safe\"; attacker replays a token expired 45 minutes ago.",
+                  "mitigation": "Max allowed clock skew ≤ 30 seconds; synchronise all server clocks with NTP; log and alert on tokens with exp in the past beyond the skew window.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 122,
+                  "score": ""
+                },
+                {
+                  "id": "abe699d4-2ba6-46b9-b1a2-395b8db3da81",
+                  "title": "Validation failures not logged",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "A flood of invalid tokens is sent to probe the system; no validation failure log is kept, making intrusion detection impossible.",
+                  "mitigation": "Log all token validation failures with reason (expired, bad signature, wrong issuer), source IP, and timestamp; alert on anomalous failure rates.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 124,
+                  "score": ""
+                },
+                {
+                  "id": "bded221e-6d22-4b8b-b52d-880ac9a87681",
+                  "title": "\tToken validation errors reveal internal config",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "Validation error message \"Expected issuer: https://keycloak.internal:8080/realms/arcadehaven\" exposes internal Keycloak hostname and realm name to the caller.",
+                  "mitigation": "Return generic 401 Unauthorized with no detail on validation failure reason; log details internally only.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 125,
+                  "score": ""
+                },
+                {
+                  "id": "6436920e-35d8-4b06-8007-9adc0fbed510",
+                  "title": "Validation process overloaded by malformed tokens",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Attacker sends thousands of malformed JWTs requiring complex parsing; CPU exhaustion from repeated crypto operations.",
+                  "mitigation": "Pre-validate token structure (header + payload + signature format) before attempting cryptographic verification; rate-limit per IP before validation; circuit breaker.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 126,
+                  "score": ""
+                },
+                {
+                  "id": "e1d53e64-d99c-4a39-bc9a-59db4473e622",
+                  "title": "JWKS key confusion — accepting keys from attacker-controlled URL",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "JWT header contains jku (JWK Set URL) pointing to attacker's server with their own public key; validator fetches and trusts it, accepting attacker's forged token",
+                  "mitigation": "Never follow jku or x5u headers in tokens; only use pre-configured JWKS endpoint; ignore any key-URL hints in token headers.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 127,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1,
+                "elevationOfPrivilege": 1
+              }
             }
           },
           {
@@ -7169,8 +7603,8 @@
                 "text": "Claim Role"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -7267,12 +7701,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "5f45d98a-e1fb-4947-9a19-d4a0723af101",
+                  "title": "Role claim from wrong JWT path trusted",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "Spring Security reads roles from a custom claim path the attacker controls rather than the canonical realm_access.roles path, allowing role injection.",
+                  "mitigation": "Explicitly configure the single authoritative JWT claim path for role extraction; discard all other potential role claims.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 128,
+                  "score": ""
+                },
+                {
+                  "id": "108f0b91-f707-4ba9-8f02-1d76fe6f27c3",
+                  "title": "Role claim modified post-issuance",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "If the application caches decoded role claims beyond token expiry, an attacker who obtains a cached session can retain a revoked role.\t",
+                  "mitigation": "Re-extract roles from the JWT on every request (no caching of role claims beyond the request scope); rely on Spring Security's SecurityContext which is per-request.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 129,
+                  "score": ""
+                },
+                {
+                  "id": "64a4e6a0-1c6c-4a1b-b2e5-cfe7b6b27cb8",
+                  "title": "Role-based access decisions not logged",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Repudiation",
+                  "description": "An ADMIN-role operation is performed; the audit log records the user ID but not the role that authorised the operation, making privilege reviews impossible.",
+                  "mitigation": "Include the effective role(s) from the JWT in every audit log entry for privileged operations.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 130,
+                  "score": ""
+                },
+                {
+                  "id": "3bda3b13-8f65-466f-a8f1-275d3d6fce38",
+                  "title": "Role information leaked in API error responses",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "403 response body states \"requires role ADMIN\"; an attacker learns the exact role name needed, aiding privilege escalation attempts.",
+                  "mitigation": "Return generic 403 Forbidden with no role-specific detail; internal logs contain the detailed reason.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 131,
+                  "score": ""
+                },
+                {
+                  "id": "a20f9d81-a873-4254-a73d-f6af26aab018",
+                  "title": "Complex role hierarchy causing authorisation latency",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A deeply nested Keycloak composite role structure requires many lookups to resolve effective permissions; under load, authorisation latency spikes and timeouts occur.",
+                  "mitigation": "Keep Keycloak role hierarchy flat (3 simple roles: ADMIN, PUBLISHER, BUYER); avoid composite roles; role resolution should be O(1) from JWT claims.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 132,
+                  "score": ""
+                },
+                {
+                  "id": "9b248c5d-25b5-46ec-9295-226be919fe3f",
+                  "title": "Default role assigned to all new users is too permissive",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Elevation of privilege",
+                  "description": "Keycloak realm's default role is PUBLISHER; every newly registered user automatically has Publisher capabilities without explicit assignment.",
+                  "mitigation": "Set default realm role to BUYER (least privilege); PUBLISHER and ADMIN roles must be explicitly assigned by an admin; verify default role assignment in Keycloak realm configuration.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 133,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 1,
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1,
+                "elevationOfPrivilege": 1
+              }
             }
           },
           {
@@ -7415,7 +7936,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -7436,13 +7958,58 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "d538ae1f-a43e-461d-b904-6e0c39e7d056",
+                  "title": "Credential interception and modification in transit",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "If Keycloak sub-components communicate over an unencrypted internal network (e.g. within a Docker bridge network without TLS), an attacker who has compromised any host on that network can intercept the credential flow and substitute a different username, authenticating as a victim without knowing their password.",
+                  "mitigation": "Enforce TLS on all Keycloak internal component communication; use Docker network isolation so only the application container can reach Keycloak; mutual TLS for any service-to-service authentication calls; deploy Keycloak behind a private network segment not reachable from the public internet.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 134,
+                  "score": ""
+                },
+                {
+                  "id": "f4b2085b-4e7b-41c9-9833-2c1816c9dfc8",
+                  "title": "Plaintext credentials exposed in Keycloak request logs",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "Keycloak DEBUG or TRACE logging is enabled in a production environment. The full POST /token request body — including username and password fields — is written to the application log. A developer, log aggregator, or SIEM system now holds plaintext credentials for every user who has logged in.",
+                  "mitigation": "Strictly disable DEBUG/TRACE logging in production Keycloak; configure log sanitisation to mask password and client_secret fields at the log formatter level; audit logging configuration as part of every deployment; use structured logging with an explicit field allowlist that excludes credential fields.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 135,
+                  "score": ""
+                },
+                {
+                  "id": "2f09c93b-f4d2-4a1f-bbba-cfd48a890855",
+                  "title": "Authentication request flood causing DB lock contention",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "An attacker sends thousands of authentication requests per second targeting the credential validation flow. Each request triggers a DB read (user lookup) and a bcrypt comparison (CPU-intensive). Keycloak's DB connection pool is exhausted and the bcrypt thread pool is saturated, causing login failures for all legitimate users platform-wide.",
+                  "mitigation": "Rate-limit the authentication endpoint at the reverse proxy (Nginx limit_req) before requests reach Keycloak; CAPTCHA on the login form for public clients; Keycloak cluster with a dedicated DB; async bcrypt comparison to avoid blocking request threads; alert on authentication request rate spikes.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 136,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "Authentication\nRequest"
@@ -7467,7 +8034,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -7488,12 +8056,52 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "d538ae1f-a43e-461d-b904-6e0c39e7d056",
+                  "title": "Credential interception and modification in transit",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "If Keycloak sub-components communicate over an unencrypted internal network (e.g. within a Docker bridge network without TLS), an attacker who has compromised any host on that network can intercept the credential flow and substitute a different username, authenticating as a victim without knowing their password.",
+                  "mitigation": "Enforce TLS on all Keycloak internal component communication; use Docker network isolation so only the application container can reach Keycloak; mutual TLS for any service-to-service authentication calls; deploy Keycloak behind a private network segment not reachable from the public internet.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 134,
+                  "score": ""
+                },
+                {
+                  "id": "f4b2085b-4e7b-41c9-9833-2c1816c9dfc8",
+                  "title": "Plaintext credentials exposed in Keycloak request logs",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "Keycloak DEBUG or TRACE logging is enabled in a production environment. The full POST /token request body — including username and password fields — is written to the application log. A developer, log aggregator, or SIEM system now holds plaintext credentials for every user who has logged in.",
+                  "mitigation": "Strictly disable DEBUG/TRACE logging in production Keycloak; configure log sanitisation to mask password and client_secret fields at the log formatter level; audit logging configuration as part of every deployment; use structured logging with an explicit field allowlist that excludes credential fields.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 135,
+                  "score": ""
+                },
+                {
+                  "id": "2f09c93b-f4d2-4a1f-bbba-cfd48a890855",
+                  "title": "Authentication request flood causing DB lock contention",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "An attacker sends thousands of authentication requests per second targeting the credential validation flow. Each request triggers a DB read (user lookup) and a bcrypt comparison (CPU-intensive). Keycloak's DB connection pool is exhausted and the bcrypt thread pool is saturated, causing login failures for all legitimate users platform-wide.",
+                  "mitigation": "Rate-limit the authentication endpoint at the reverse proxy (Nginx limit_req) before requests reach Keycloak; CAPTCHA on the login form for public clients; Keycloak cluster with a dedicated DB; async bcrypt comparison to avoid blocking request threads; alert on authentication request rate spikes.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 136,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -7519,7 +8127,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -7540,13 +8149,71 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "d1c110da-1a68-4699-9a04-91c846409bb5",
+                  "title": "Token payload tampered before signing — role claim injection",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The Token Request flow carries the user's identity and role claims from Credential Validation to Issue Token. If this internal flow is interceptable (e.g. over an unencrypted message bus or shared memory), an attacker could inject an ADMIN role claim into the request payload before the token is signed, resulting in a legitimately signed token with fraudulent privileges.",
+                  "mitigation": "For a standard Keycloak deployment this flow is in-process and not network-exposed — verify this is the case; if custom Keycloak SPIs or external mappers are used, ensure they communicate over secured channels; audit all custom Keycloak token mappers in the codebase for claim injection vulnerabilities.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 137,
+                  "score": ""
+                },
+                {
+                  "id": "85acddaa-b4f6-4853-b43b-31948f26588c",
+                  "title": "Issued token intercepted before delivery to client (token theft)",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The Token Response carries the signed JWT back to the client. If delivered over HTTP (no TLS), an on-path attacker captures the access token and refresh token. They can now authenticate as the victim indefinitely (until the refresh token expires or is revoked).",
+                  "mitigation": "Enforce HTTPS for all token delivery endpoints; HSTS header; refresh token delivered only in HttpOnly + Secure + SameSite=Strict cookie; access token in response body (short TTL ≤15 min); implement refresh token rotation so any interception is detectable via reuse detection",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 138,
+                  "score": ""
+                },
+                {
+                  "id": "1cc1c2ea-19ed-44a5-8758-7ca3ee0272b1",
+                  "title": "Token response cached by intermediate proxy — token leakage",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "A misconfigured reverse proxy or CDN caches the token endpoint response (missing Cache-Control: no-store). A subsequent request from a different user receives another user's JWT and refresh token from cache.",
+                  "mitigation": "Set Cache-Control: no-store, no-cache on all token endpoint responses; verify Nginx/proxy configuration does not cache /token responses; add Pragma: no-cache and Expires: 0 as additional defence; test caching behaviour in integration tests.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 139,
+                  "score": ""
+                },
+                {
+                  "id": "643f2cc7-b6de-4a87-8c3e-3ffdfb05a7f0",
+                  "title": "Token signing key rotation causing mass token invalidation",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "An uncoordinated signing key rotation in Keycloak immediately invalidates all currently issued tokens. All active users across ArcadeHaven are simultaneously logged out. If ArcadeHaven's Spring Security has a cached JWKS with the old key, it rejects all new tokens for the duration of the cache TTL as well.",
+                  "mitigation": "Keycloak supports graceful key rotation with an overlap period — configure a key retirement delay (e.g. 1 hour) so old tokens remain valid during rollover; Spring Security JWKS cache TTL should be short enough to pick up the new key quickly (e.g. 15 min); test key rotation procedure in staging.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 140,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 2,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             },
             "labels": [
               "Token\nRequest"
@@ -7571,7 +8238,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -7592,12 +8260,65 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "d1c110da-1a68-4699-9a04-91c846409bb5",
+                  "title": "Token payload tampered before signing — role claim injection",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The Token Request flow carries the user's identity and role claims from Credential Validation to Issue Token. If this internal flow is interceptable (e.g. over an unencrypted message bus or shared memory), an attacker could inject an ADMIN role claim into the request payload before the token is signed, resulting in a legitimately signed token with fraudulent privileges.",
+                  "mitigation": "For a standard Keycloak deployment this flow is in-process and not network-exposed — verify this is the case; if custom Keycloak SPIs or external mappers are used, ensure they communicate over secured channels; audit all custom Keycloak token mappers in the codebase for claim injection vulnerabilities.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 137,
+                  "score": ""
+                },
+                {
+                  "id": "85acddaa-b4f6-4853-b43b-31948f26588c",
+                  "title": "Issued token intercepted before delivery to client (token theft)",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The Token Response carries the signed JWT back to the client. If delivered over HTTP (no TLS), an on-path attacker captures the access token and refresh token. They can now authenticate as the victim indefinitely (until the refresh token expires or is revoked).",
+                  "mitigation": "Enforce HTTPS for all token delivery endpoints; HSTS header; refresh token delivered only in HttpOnly + Secure + SameSite=Strict cookie; access token in response body (short TTL ≤15 min); implement refresh token rotation so any interception is detectable via reuse detection",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 138,
+                  "score": ""
+                },
+                {
+                  "id": "1cc1c2ea-19ed-44a5-8758-7ca3ee0272b1",
+                  "title": "Token response cached by intermediate proxy — token leakage",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "A misconfigured reverse proxy or CDN caches the token endpoint response (missing Cache-Control: no-store). A subsequent request from a different user receives another user's JWT and refresh token from cache.",
+                  "mitigation": "Set Cache-Control: no-store, no-cache on all token endpoint responses; verify Nginx/proxy configuration does not cache /token responses; add Pragma: no-cache and Expires: 0 as additional defence; test caching behaviour in integration tests.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 139,
+                  "score": ""
+                },
+                {
+                  "id": "643f2cc7-b6de-4a87-8c3e-3ffdfb05a7f0",
+                  "title": "Token signing key rotation causing mass token invalidation",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "An uncoordinated signing key rotation in Keycloak immediately invalidates all currently issued tokens. All active users across ArcadeHaven are simultaneously logged out. If ArcadeHaven's Spring Security has a cached JWKS with the old key, it rejects all new tokens for the duration of the cache TTL as well.",
+                  "mitigation": "Keycloak supports graceful key rotation with an overlap period — configure a key retirement delay (e.g. 1 hour) so old tokens remain valid during rollover; Spring Security JWKS cache TTL should be short enough to pick up the new key quickly (e.g. 15 min); test key rotation procedure in staging.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 140,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -7623,7 +8344,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -7644,12 +8366,91 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "1ad84d44-b100-4fdc-bed6-c52d363abf3f",
+                  "title": "Token validation response tampered — invalid token accepted",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The Token Validation Response carries a boolean valid: true/false decision back to User Management. If this internal flow is interceptable (e.g. a custom introspection implementation over an unprotected internal HTTP call), an attacker on the same network could flip valid: false to valid: true, causing an expired or revoked token to be accepted as legitimate, granting access to a compromised or logged-out session.",
+                  "mitigation": "If using Keycloak's built-in local JWT validation (preferred), this flow is in-process and not network-exposed — use this approach; if using token introspection over HTTP, enforce mutual TLS on the introspection endpoint; never trust an external validation response without also independently verifying the JWT signature locally.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 142,
+                  "score": ""
+                },
+                {
+                  "id": "8a900847-313d-488f-8c29-b7c43a4b5782",
+                  "title": "Token contents disclosed in validation error response",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The Token Validation Response returns an error that includes the decoded token payload (e.g. \"Token for user admin@arcadehaven.com expired at 14:32:00\") to aid debugging. This leaks the victim's identity, email, and expiry details to anyone who can observe the validation response, including other application threads or log sinks.",
+                  "mitigation": "Validation responses return only a result code (valid/invalid/expired) and never include decoded token contents; detailed failure reasons logged internally only with the token's jti (JWT ID), never the full payload; structured logging with explicit field allowlist.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 143,
+                  "score": ""
+                },
+                {
+                  "id": "ad287990-c90b-4e30-930c-a5876bfd0c58",
+                  "title": "Token validation flow flooded — all API requests blocked",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Every API request to ArcadeHaven triggers a Token Validation Request. An attacker submits thousands of requests per second with malformed JWTs. Even if each request is rejected quickly, the volume of validation flow requests saturates the processing capacity of the Token Validation process, causing all legitimate API requests to queue and time out.",
+                  "mitigation": "Implement pre-validation at the network edge (e.g. Nginx rate-limiting) before the JWT reaches the validation flow; cache valid token results for short periods (e.g. 30 seconds per jti) to reduce repeated validations of the same token; circuit breaker around the validation process.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 144,
+                  "score": ""
+                },
+                {
+                  "id": "cb7e43e5-198e-4bc3-9c92-10d41a9fd97e",
+                  "title": "Token replay — revoked token re-submitted for validation",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A user logs out; their token is supposed to be revoked. An attacker who captured the token before logout re-submits it through the Token Validation Request flow. If the validation process relies only on the JWT signature and expiry (stateless validation) and does not check a revocation list, the revoked token is accepted as valid.",
+                  "mitigation": "Maintain a token revocation list (or use Keycloak's logout event propagation to Spring Security); for high-sensitivity operations, use token introspection rather than stateless validation; keep access token TTL very short (≤5 min) to limit the window for replay; implement Keycloak back-channel logout notifications.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 145,
+                  "score": ""
+                },
+                {
+                  "id": "c990ab30-2cc5-4c8f-be85-776c18ddd9f2",
+                  "title": "Token submitted for validation logged in full",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The Token Validation Request is logged at DEBUG level including the raw JWT string. Any developer or system with access to the log store can extract the token and use it to impersonate the user for the remaining token lifetime.",
+                  "mitigation": "Never log raw JWT strings; log only the jti claim (unique token ID) for correlation purposes; apply log sanitisation rules that mask Authorization header values and bearer tokens in all log outputs; rotate logs with restricted access.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 146,
+                  "score": ""
+                },
+                {
+                  "id": "fcaaedae-88a1-46e6-b20a-7458c77a765b",
+                  "title": "Slow introspection response causing ArcadeHaven API timeout cascade",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "If token validation uses the Keycloak introspection endpoint over HTTP, a Keycloak slowdown causes the Token Validation Request flow to hang. Without a timeout, every ArcadeHaven API thread blocks waiting for a validation response, exhausting the thread pool and making the entire API unavailable — a Keycloak performance issue cascades into a full ArcadeHaven outage.",
+                  "mitigation": "Set explicit timeouts on all calls in the validation flow (e.g. 500ms); prefer local JWT signature validation (no network call) over introspection for standard requests; use introspection only for logout/revocation checks; circuit breaker (Resilience4j) wrapping introspection calls with fallback to local validation.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 147,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -7675,7 +8476,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -7696,13 +8498,97 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "1ad84d44-b100-4fdc-bed6-c52d363abf3f",
+                  "title": "Token validation response tampered — invalid token accepted",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The Token Validation Response carries a boolean valid: true/false decision back to User Management. If this internal flow is interceptable (e.g. a custom introspection implementation over an unprotected internal HTTP call), an attacker on the same network could flip valid: false to valid: true, causing an expired or revoked token to be accepted as legitimate, granting access to a compromised or logged-out session.",
+                  "mitigation": "If using Keycloak's built-in local JWT validation (preferred), this flow is in-process and not network-exposed — use this approach; if using token introspection over HTTP, enforce mutual TLS on the introspection endpoint; never trust an external validation response without also independently verifying the JWT signature locally.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 142,
+                  "score": ""
+                },
+                {
+                  "id": "8a900847-313d-488f-8c29-b7c43a4b5782",
+                  "title": "Token contents disclosed in validation error response",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The Token Validation Response returns an error that includes the decoded token payload (e.g. \"Token for user admin@arcadehaven.com expired at 14:32:00\") to aid debugging. This leaks the victim's identity, email, and expiry details to anyone who can observe the validation response, including other application threads or log sinks.",
+                  "mitigation": "Validation responses return only a result code (valid/invalid/expired) and never include decoded token contents; detailed failure reasons logged internally only with the token's jti (JWT ID), never the full payload; structured logging with explicit field allowlist.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 143,
+                  "score": ""
+                },
+                {
+                  "id": "ad287990-c90b-4e30-930c-a5876bfd0c58",
+                  "title": "Token validation flow flooded — all API requests blocked",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Every API request to ArcadeHaven triggers a Token Validation Request. An attacker submits thousands of requests per second with malformed JWTs. Even if each request is rejected quickly, the volume of validation flow requests saturates the processing capacity of the Token Validation process, causing all legitimate API requests to queue and time out.",
+                  "mitigation": "Implement pre-validation at the network edge (e.g. Nginx rate-limiting) before the JWT reaches the validation flow; cache valid token results for short periods (e.g. 30 seconds per jti) to reduce repeated validations of the same token; circuit breaker around the validation process.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 144,
+                  "score": ""
+                },
+                {
+                  "id": "cb7e43e5-198e-4bc3-9c92-10d41a9fd97e",
+                  "title": "Token replay — revoked token re-submitted for validation",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A user logs out; their token is supposed to be revoked. An attacker who captured the token before logout re-submits it through the Token Validation Request flow. If the validation process relies only on the JWT signature and expiry (stateless validation) and does not check a revocation list, the revoked token is accepted as valid.",
+                  "mitigation": "Maintain a token revocation list (or use Keycloak's logout event propagation to Spring Security); for high-sensitivity operations, use token introspection rather than stateless validation; keep access token TTL very short (≤5 min) to limit the window for replay; implement Keycloak back-channel logout notifications.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 145,
+                  "score": ""
+                },
+                {
+                  "id": "c990ab30-2cc5-4c8f-be85-776c18ddd9f2",
+                  "title": "Token submitted for validation logged in full",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The Token Validation Request is logged at DEBUG level including the raw JWT string. Any developer or system with access to the log store can extract the token and use it to impersonate the user for the remaining token lifetime.",
+                  "mitigation": "Never log raw JWT strings; log only the jti claim (unique token ID) for correlation purposes; apply log sanitisation rules that mask Authorization header values and bearer tokens in all log outputs; rotate logs with restricted access.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 146,
+                  "score": ""
+                },
+                {
+                  "id": "fcaaedae-88a1-46e6-b20a-7458c77a765b",
+                  "title": "Slow introspection response causing ArcadeHaven API timeout cascade",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "If token validation uses the Keycloak introspection endpoint over HTTP, a Keycloak slowdown causes the Token Validation Request flow to hang. Without a timeout, every ArcadeHaven API thread blocks waiting for a validation response, exhausting the thread pool and making the entire API unavailable — a Keycloak performance issue cascades into a full ArcadeHaven outage.",
+                  "mitigation": "Set explicit timeouts on all calls in the validation flow (e.g. 500ms); prefer local JWT signature validation (no network call) over introspection for standard requests; use introspection only for logout/revocation checks; circuit breaker (Resilience4j) wrapping introspection calls with fallback to local validation.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 147,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 2,
+                "informationDisclosure": 2,
+                "denialOfService": 2
+              }
             },
             "labels": [
               "Token Validation\nResponse"
@@ -7727,7 +8613,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -7748,13 +8635,97 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "836a455e-d447-4d3d-bddc-6141fcb2c4fa",
+                  "title": "Role Response tampered — privilege escalation via role injection",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The Role Response carries the resolved role set (e.g. [BUYER]) back to Token Validation. If this flow is interceptable, an attacker modifies the response to inject [BUYER, ADMIN] before it is consumed by the access control decision logic. The result is a legitimate user transparently escalated to ADMIN without any Keycloak change. This is the single highest-impact threat in the entire Auth API data flow layer.",
+                  "mitigation": "For a standard Keycloak deployment, role resolution is in-process — never externalise it over a network call; if a custom role resolver is used (e.g. a separate microservice), enforce mutual TLS and message signing on that service; in Spring Security, always extract roles directly from the cryptographically verified JWT claims, not from a separate service call whose response could be tampered with.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 148,
+                  "score": ""
+                },
+                {
+                  "id": "26cdfa35-a330-4ba9-82c4-5842082cfbd6",
+                  "title": "Role Response discloses full role hierarchy to unintended consumers",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The Role Response includes not just the user's effective roles but also the full Keycloak composite role structure and internal role IDs. If this response is logged or returned to the ArcadeHaven application in full, it exposes Keycloak's internal role configuration to developers and log monitoring systems — providing an attacker who gains log access with a complete map of the privilege hierarchy to target.",
+                  "mitigation": "Role Response should contain only the flat list of effective role names needed by the application (ADMIN, PUBLISHER, BUYER) — no internal Keycloak role IDs, composite structures, or metadata; never log the full role response; Spring Security's authority mapping should extract only the required claim paths.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 149,
+                  "score": ""
+                },
+                {
+                  "id": "37ce4ff7-c674-4f6e-ba9b-d96c6fb40ef5",
+                  "title": "Complex composite role resolution causing authorisation latency spikes",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "The Role Request triggers resolution of a deeply nested Keycloak composite role structure (e.g. ADMIN inherits from MANAGER which inherits from PUBLISHER which inherits from BUYER). Under load, each Role Request requires multiple recursive DB lookups to flatten the role hierarchy, causing authorisation latency spikes that degrade the entire API response time.",
+                  "mitigation": "Keep the ArcadeHaven role hierarchy flat — 3 standalone roles (ADMIN, PUBLISHER, BUYER) with no composite inheritance; role resolution should be a single O(1) lookup from the JWT claim; test role resolution latency under load; cache resolved role sets per jti with a short TTL if composite roles cannot be avoided.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 150,
+                  "score": ""
+                },
+                {
+                  "id": "42e3de56-4bee-494f-b6bb-6cb636100428",
+                  "title": "Role Request carries stale identity after token reuse",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A Role Request is made using an old token jti whose associated user has since had their role downgraded from PUBLISHER to BUYER in Keycloak. The Claim Role process resolves roles from the token payload (which still says PUBLISHER) rather than re-querying Keycloak's current role assignments, returning the outdated PUBLISHER role in the Role Response.",
+                  "mitigation": "Claim Role process must resolve roles from the live JWT claims (which encode the role at issuance time) — to get real-time role changes, keep token TTL very short (≤5 min) so re-authentication forces a fresh token with updated claims; for immediate revocation, use Keycloak back-channel logout or a role-change event that invalidates existing tokens.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 151,
+                  "score": ""
+                },
+                {
+                  "id": "78f1f2bb-cc0c-4460-81c5-cecd28fde4c3",
+                  "title": "\tRole denial reason leaks role names in 403 response",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "When Claim Role determines a user lacks a required role, the Role Response includes the required role name (e.g. \"required: ADMIN, present: BUYER\"). This propagates through Token Validation back to the API response as a 403 body containing \"requires role ADMIN\", confirming the exact role name an attacker needs to target for privilege escalation.",
+                  "mitigation": "403 responses return only \"Forbidden\" with no role detail; the required role and present roles are logged internally (with the request jti for correlation) but never sent to the client; test that all 403 responses in integration tests contain no role information.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 152,
+                  "score": ""
+                },
+                {
+                  "id": "3452ef60-1136-4ef4-bea2-8693eb94cbbe",
+                  "title": "Role Request flow disrupted by Keycloak realm misconfiguration",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Denial of service",
+                  "description": "A Keycloak admin accidentally deletes the ArcadeHaven realm's role definitions. All Role Requests return empty role sets. The Claim Role process returns no roles for every user, causing all authenticated users to be treated as having no permissions — effectively a complete authorisation outage.",
+                  "mitigation": "Keycloak realm configuration (roles, clients, mappers) version-controlled as Infrastructure-as-Code (e.g. Keycloak realm export in the Git repository); automated deployment pipeline re-applies configuration; smoke test after any Keycloak configuration change that verifies role claims are present in issued tokens.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 153,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [],
+              "threatFrequency": {
+                "tampering": 2,
+                "informationDisclosure": 2,
+                "denialOfService": 2
+              }
             },
             "labels": [
               "Role\nRequest"
@@ -7779,7 +8750,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -7800,12 +8772,91 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
+              "threats": [
+                {
+                  "id": "836a455e-d447-4d3d-bddc-6141fcb2c4fa",
+                  "title": "Role Response tampered — privilege escalation via role injection",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The Role Response carries the resolved role set (e.g. [BUYER]) back to Token Validation. If this flow is interceptable, an attacker modifies the response to inject [BUYER, ADMIN] before it is consumed by the access control decision logic. The result is a legitimate user transparently escalated to ADMIN without any Keycloak change. This is the single highest-impact threat in the entire Auth API data flow layer.",
+                  "mitigation": "For a standard Keycloak deployment, role resolution is in-process — never externalise it over a network call; if a custom role resolver is used (e.g. a separate microservice), enforce mutual TLS and message signing on that service; in Spring Security, always extract roles directly from the cryptographically verified JWT claims, not from a separate service call whose response could be tampered with.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 148,
+                  "score": ""
+                },
+                {
+                  "id": "26cdfa35-a330-4ba9-82c4-5842082cfbd6",
+                  "title": "Role Response discloses full role hierarchy to unintended consumers",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The Role Response includes not just the user's effective roles but also the full Keycloak composite role structure and internal role IDs. If this response is logged or returned to the ArcadeHaven application in full, it exposes Keycloak's internal role configuration to developers and log monitoring systems — providing an attacker who gains log access with a complete map of the privilege hierarchy to target.",
+                  "mitigation": "Role Response should contain only the flat list of effective role names needed by the application (ADMIN, PUBLISHER, BUYER) — no internal Keycloak role IDs, composite structures, or metadata; never log the full role response; Spring Security's authority mapping should extract only the required claim paths.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 149,
+                  "score": ""
+                },
+                {
+                  "id": "37ce4ff7-c674-4f6e-ba9b-d96c6fb40ef5",
+                  "title": "Complex composite role resolution causing authorisation latency spikes",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "The Role Request triggers resolution of a deeply nested Keycloak composite role structure (e.g. ADMIN inherits from MANAGER which inherits from PUBLISHER which inherits from BUYER). Under load, each Role Request requires multiple recursive DB lookups to flatten the role hierarchy, causing authorisation latency spikes that degrade the entire API response time.",
+                  "mitigation": "Keep the ArcadeHaven role hierarchy flat — 3 standalone roles (ADMIN, PUBLISHER, BUYER) with no composite inheritance; role resolution should be a single O(1) lookup from the JWT claim; test role resolution latency under load; cache resolved role sets per jti with a short TTL if composite roles cannot be avoided.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 150,
+                  "score": ""
+                },
+                {
+                  "id": "42e3de56-4bee-494f-b6bb-6cb636100428",
+                  "title": "Role Request carries stale identity after token reuse",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A Role Request is made using an old token jti whose associated user has since had their role downgraded from PUBLISHER to BUYER in Keycloak. The Claim Role process resolves roles from the token payload (which still says PUBLISHER) rather than re-querying Keycloak's current role assignments, returning the outdated PUBLISHER role in the Role Response.",
+                  "mitigation": "Claim Role process must resolve roles from the live JWT claims (which encode the role at issuance time) — to get real-time role changes, keep token TTL very short (≤5 min) so re-authentication forces a fresh token with updated claims; for immediate revocation, use Keycloak back-channel logout or a role-change event that invalidates existing tokens.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 151,
+                  "score": ""
+                },
+                {
+                  "id": "78f1f2bb-cc0c-4460-81c5-cecd28fde4c3",
+                  "title": "\tRole denial reason leaks role names in 403 response",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "When Claim Role determines a user lacks a required role, the Role Response includes the required role name (e.g. \"required: ADMIN, present: BUYER\"). This propagates through Token Validation back to the API response as a 403 body containing \"requires role ADMIN\", confirming the exact role name an attacker needs to target for privilege escalation.",
+                  "mitigation": "403 responses return only \"Forbidden\" with no role detail; the required role and present roles are logged internally (with the request jti for correlation) but never sent to the client; test that all 403 responses in integration tests contain no role information.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 152,
+                  "score": ""
+                },
+                {
+                  "id": "3452ef60-1136-4ef4-bea2-8693eb94cbbe",
+                  "title": "Role Request flow disrupted by Keycloak realm misconfiguration",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Denial of service",
+                  "description": "A Keycloak admin accidentally deletes the ArcadeHaven realm's role definitions. All Role Requests return empty role sets. The Claim Role process returns no roles for every user, causing all authenticated users to be treated as having no permissions — effectively a complete authorisation outage.",
+                  "mitigation": "Keycloak realm configuration (roles, clients, mappers) version-controlled as Infrastructure-as-Code (e.g. Keycloak realm export in the Git repository); automated deployment pipeline re-applies configuration; smoke test after any Keycloak configuration change that verifies role claims are present in issued tokens.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 153,
+                  "score": ""
+                }
+              ],
               "trustBoundaryIds": []
             },
             "labels": [
@@ -7840,6 +8891,45 @@
         "cells": [
           {
             "position": {
+              "x": 315,
+              "y": 300.00000000000034
+            },
+            "size": {
+              "width": 270,
+              "height": 220
+            },
+            "attrs": {
+              "label": {
+                "text": "System/Datastore Boundary"
+              }
+            },
+            "visible": true,
+            "shape": "trust-boundary-box",
+            "zIndex": -1,
+            "id": "3dcb33ae-0ed9-4f04-b3eb-55a1b2113edb",
+            "data": {
+              "type": "tm.BoundaryBox",
+              "name": "System/Datastore Boundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [
+                "3e980181-d9b1-44cc-a748-5724abbfae2d",
+                "8b178c65-1685-4e35-a1c3-919c57986c85",
+                "cc1cdfe1-549a-41ff-961b-5e69fa291e11",
+                "c60f2fdd-84b1-4d78-a488-6c92c44c45de",
+                "9bbe25f4-596c-421a-87dd-582bbcd54f25",
+                "ee32135b-97d4-4353-9cab-915a5768e3ed",
+                "53915929-cc14-4906-8229-6254bc214b98",
+                "39c349f0-9d6e-4e7e-8f6d-39ba685cfcdb"
+              ],
+              "containedElements": [
+                "6fd776c8-e7be-4a65-8784-0d760e5cd1f6"
+              ]
+            }
+          },
+          {
+            "position": {
               "x": 390,
               "y": 340
             },
@@ -7852,8 +8942,8 @@
                 "text": "ArcadeHaven\nSystem"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -7950,12 +9040,91 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "a51a5368-b710-47ba-8163-cbcc0f8d7f82",
+                  "title": "Request body manipulation / mass assignment",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Buyer sends a POST /orders with a modified price field, paying less for a game if the API trusts client-submitted prices instead of looking up the canonical price from the DB.",
+                  "mitigation": "Never trust client-submitted prices; resolve price server-side from the Games datastore; use strict DTO validation with @Valid; disable mass assignment via explicit @JsonProperty mapping.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 8,
+                  "score": ""
+                },
+                {
+                  "id": "cdd0cebd-79f5-44d1-b9e1-1b7e8d872101",
+                  "title": "JWT not validated on every route",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Spoofing",
+                  "description": "Attacker crafts a request with an unsigned or expired token to a Spring endpoint that lacks @PreAuthorize; gains access as any user.",
+                  "mitigation": "Global JWT validation filter in Spring Security; no endpoint bypasses; token expiry enforced; alg:none attack prevention (reject tokens with no algorithm).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 9,
+                  "score": ""
+                },
+                {
+                  "id": "3e278681-1436-4bd1-a310-ef602c65ce46",
+                  "title": "Insufficient request logging",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "An admin deletes a user account. No structured log exists with the admin's identity, timestamp, and target. They later deny the action.",
+                  "mitigation": "Structured access log for all mutating operations (POST/PUT/PATCH/DELETE) including authenticated user ID, resource path, body hash, and timestamp; send logs to a tamper-evident SIEM.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 10,
+                  "score": ""
+                },
+                {
+                  "id": "228d1b6a-0151-4d61-a75b-f8627e3b003b",
+                  "title": "Verbose error messages expose internals",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "A 500 error leaks a stack trace containing table names, ORM query structure, or DB credentials to the caller.",
+                  "mitigation": "Global exception handler returning generic error responses; suppress stack traces in production; use structured error codes; never include DB exception messages in HTTP responses.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 12,
+                  "score": ""
+                },
+                {
+                  "id": "0f67202d-8cce-4c35-aea5-e83a55f73225",
+                  "title": "No rate limiting on public endpoints",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Attacker floods POST /orders or GET /games with thousands of requests/second, exhausting the Spring Boot thread pool and making the API unavailable to legitimate users.",
+                  "mitigation": "API gateway or Spring rate-limiting filter (e.g. Bucket4j); limit per IP and per authenticated user; return 429 with Retry-After; circuit breaker pattern for downstream DB calls.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 13,
+                  "score": ""
+                },
+                {
+                  "id": "7de2cef2-e6df-4df6-8862-3f584ee9773b",
+                  "title": "Missing role checks on admin routes",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Elevation of privilege",
+                  "description": "A Buyer calls DELETE /admin/games/{id} and it succeeds because the endpoint validates only authentication (valid JWT) but not the required ADMIN role in the Keycloak token claims.",
+                  "mitigation": "Role-based access control enforced at the method level via @PreAuthorize(\"hasRole('ADMIN')\"); integration tests for every protected endpoint verifying that Buyer/Publisher tokens are rejected; automated security scanning in CI pipeline with SonarQube.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 14,
+                  "score": ""
+                }
+              ]
             }
           },
           {
@@ -7972,11 +9141,13 @@
                 "text": "Game\nDatastore"
               },
               "topLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               },
               "bottomLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -8073,13 +9244,72 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isALog": false,
               "isEncrypted": false,
               "isSigned": false,
               "storesCredentials": false,
               "storesInventory": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "58593a56-e3d5-4d9c-994d-3b94fcd66a9a",
+                  "title": "Direct price/status modification in DB",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "A malicious DBA or compromised DB account sets price = 0 for all games or sets status = ACTIVE for all PENDING games, bypassing the admin approval workflow.",
+                  "mitigation": "Application DB user has INSERT/UPDATE/SELECT only on games table; no direct UPDATE on price/status columns (use stored procedures with audit); Flyway-managed schema prevents ad-hoc DDL.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 154,
+                  "score": ""
+                },
+                {
+                  "id": "dd5c7d16-4ee0-4249-9776-0cbdb4f6e54b",
+                  "title": "No audit trail for game record changes",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "A game's price is changed in the DB; no before/after record exists, making it impossible to prove what the price was at the time of a disputed purchase.",
+                  "mitigation": "Trigger-based or application-level audit table (game_audit) capturing old/new values on UPDATE; append-only; include DB user and timestamp.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 155,
+                  "score": ""
+                },
+                {
+                  "id": "e5d77ab1-7ca2-4504-9aa3-26c0fac2fc1c",
+                  "title": "Internal game metadata exposed (e.g. unpublished games)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Internal game metadata exposed (e.g. unpublished games)",
+                  "mitigation": "A query with missing WHERE status = 'ACTIVE' returns PENDING and DRAFT games including unreleased titles and internal notes to an unauthenticated caller.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 156,
+                  "score": ""
+                },
+                {
+                  "id": "8afcde8f-0f56-4f4d-a929-597b17f7fabb",
+                  "title": "Full-table scan on game catalogue",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A search query with no index on title or category columns causes a sequential scan across all games, holding locks and blocking concurrent writes from publishers.",
+                  "mitigation": "Indices on games(title), games(category_id), games(status), games(publisher_id); EXPLAIN ANALYZE on all catalogue queries; pg_stat_statements monitoring for slow queries.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 157,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             }
           },
           {
@@ -8096,11 +9326,13 @@
                 "text": "Library\nDatastore"
               },
               "topLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               },
               "bottomLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -8197,13 +9429,72 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isALog": false,
               "isEncrypted": false,
               "isSigned": false,
               "storesCredentials": false,
               "storesInventory": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "a1ed812d-3336-4c2e-8c6e-142a01de0aa2",
+                  "title": "Inserting library entries without a corresponding order",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Direct INSERT into library_entries for a user_id / game_id pair without a corresponding completed order record; user gets a game for free.",
+                  "mitigation": "\tForeign key constraint: library_entries.order_id REFERENCES orders(id); application enforces entry creation only via order completion event; DB user cannot INSERT without a valid order FK.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 158,
+                  "score": ""
+                },
+                {
+                  "id": "b2e7004f-fbc9-409e-9526-8d9975a50350",
+                  "title": "No record of activation key usage",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "An activation key is marked as used (activated = true) in the DB; no log shows when, from which IP, or by which session it was activated. Disputed activations cannot be investigated.",
+                  "mitigation": "Append-only activation_events table recording key ID, user ID, timestamp, and IP address on each activation attempt; never UPDATE without inserting an event row.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 159,
+                  "score": ""
+                },
+                {
+                  "id": "0f4d90a6-48f1-4208-9d6a-cc738f83f480",
+                  "title": "Activation keys stored in plaintext",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "DB dump or a SQL injection attack exposes all activation keys in plaintext; attacker activates games without purchasing them.",
+                  "mitigation": "Encrypt activation keys at application layer (AES-256) before storing; only decrypt when delivering to the authenticated owner; key management via environment secrets.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 160,
+                  "score": ""
+                },
+                {
+                  "id": "7b28884b-da20-42e2-ad13-cf7a9fa256fe",
+                  "title": "Library entry table growth degrading queries",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Over time, library_entries grows to millions of rows with no archival strategy; per-user library queries slow significantly.",
+                  "mitigation": "Index on library_entries(user_id, game_id); partition table by user_id range if needed at scale; consider archiving entries for deactivated accounts.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 161,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             }
           },
           {
@@ -8220,11 +9511,13 @@
                 "text": "Order\nDatastore"
               },
               "topLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               },
               "bottomLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -8321,13 +9614,72 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isALog": false,
               "isEncrypted": false,
               "isSigned": false,
               "storesCredentials": false,
               "storesInventory": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "554b9990-fe8b-4a7f-ad79-9fe234d3fd99",
+                  "title": "Order record retroactive modification",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "A DBA modifies order.total_price to 0.01 post-purchase; the stored invoice PDF and the DB record now disagree, creating a fraudulent audit trail.",
+                  "mitigation": "Orders table is insert-only after completion; no UPDATE permitted on completed order records; use CHECK constraints or triggers to prevent status regression; invoice PDF hash stored in DB and verified on retrieval.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 162,
+                  "score": ""
+                },
+                {
+                  "id": "ac3c46e2-b6fb-41cc-9593-be999d1abae7",
+                  "title": "No payment/transaction audit trail",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "An order's payment status changes from PENDING to COMPLETED; no event record exists with timestamp, amount, and payment reference, making financial reconciliation impossible.",
+                  "mitigation": "Immutable order_events / payment_events table; every state transition appends a new row; never UPDATE status directly; financial data retained per compliance requirements (typically 7 years).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 163,
+                  "score": ""
+                },
+                {
+                  "id": "d7246ea1-e5d6-40e8-baa9-a34a3eacafb5",
+                  "title": "Order history cross-user exposure via missing WHERE clause",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "ORM query SELECT * FROM orders JOIN order_items ON ... missing WHERE buyer_id = :userId returns all users' order history to the first caller.",
+                  "mitigation": "All order queries parameterised with buyer_id from JWT sub; JPA repository method signatures enforce the filter; integration tests verifying cross-user isolation.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 164,
+                  "score": ""
+                },
+                {
+                  "id": "e68eca96-7c1a-43bd-a002-cd74fd9dd5d6",
+                  "title": "Large order history queries degrading performance",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "GET /orders with no date range filter loads all historical orders for a user or (worse) all users into memory.",
+                  "mitigation": "Index on orders(buyer_id, created_at); mandatory date range or pagination on order history queries; max result window enforced.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 165,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
+              }
             }
           },
           {
@@ -8344,11 +9696,13 @@
                 "text": "User\nInformation\nDatastore"
               },
               "topLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               },
               "bottomLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -8445,58 +9799,80 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isALog": false,
               "isEncrypted": false,
               "isSigned": false,
               "storesCredentials": false,
               "storesInventory": false,
-              "threats": []
-            }
-          },
-          {
-            "shape": "trust-boundary-curve",
-            "width": 200,
-            "height": 100,
-            "zIndex": 6,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Boundary",
-              "name": "System/Datastore Boundary",
-              "description": "",
-              "isTrustBoundary": true,
-              "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
-            },
-            "labels": [
-              "System/Datastore Boundary"
-            ],
-            "id": "a5d8170d-fa4c-4594-8956-10fdc3ec5de2",
-            "source": {
-              "x": 310,
-              "y": 270
-            },
-            "target": {
-              "x": 600,
-              "y": 610
-            },
-            "vertices": [
-              {
-                "x": 300,
-                "y": 500
-              },
-              {
-                "x": 610,
-                "y": 500
+              "threats": [
+                {
+                  "id": "b16ea58f-b29e-43af-a6f4-c37c121d2a22",
+                  "title": "Direct role/status manipulation in users table",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "A compromised DB account executes UPDATE users SET role = 'ADMIN' WHERE id = 42, granting admin access outside of Keycloak, if a local roles cache table is used.",
+                  "mitigation": "If a local user table exists, the role column should be read-only to the application DB user; roles are always the authoritative source from the Keycloak JWT, never from a local DB cache.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 166,
+                  "score": ""
+                },
+                {
+                  "id": "cf3ada16-a253-4b3b-9dd4-1e5c45ddf2a4",
+                  "title": "No history of PII changes",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "A user changes their email address; the users table UPDATE overwrites the old value with no history. A GDPR data subject request or fraud investigation cannot show what email was on file at a given date.",
+                  "mitigation": "Separate user_profile_history table capturing old/new values on UPDATE with timestamp; or use event sourcing for the User aggregate; required for GDPR compliance (data accuracy and audit).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 167,
+                  "score": ""
+                },
+                {
+                  "id": "b6a346c8-02d9-4b0b-a7a5-20ee3790db84",
+                  "title": "PII exposed via unencrypted DB dump",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "A DB backup exported in plaintext to an S3 bucket with misconfigured public access exposes all user emails, names, and addresses.",
+                  "mitigation": "Encrypt DB backups at rest; restrict backup bucket access to infrastructure-only IAM roles; encrypt PII columns (email, address) at application layer; audit S3 bucket policies regularly.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 168,
+                  "score": ""
+                },
+                {
+                  "id": "29a2fe7c-47ba-4ed3-b34e-70f08c4f411b",
+                  "title": "User table lock contention during bulk operations",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A bulk user import or admin report query holds a table-level lock on users, blocking login queries that need to read user status.",
+                  "mitigation": "Use SELECT ... FOR SHARE (row-level) rather than table locks; run bulk operations in off-peak windows; index on users(email) and users(keycloak_sub) for fast lookup.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 169,
+                  "score": ""
+                }
+              ],
+              "threatFrequency": {
+                "tampering": 1,
+                "repudiation": 1,
+                "informationDisclosure": 1,
+                "denialOfService": 1
               }
-            ]
+            }
           },
           {
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -8517,13 +9893,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "e79f5f2d-d59f-405e-ab5c-dc2ebb54d795",
+                  "title": "SQL injection via game search / filter parameters",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "A publisher submits a game title containing a SQL fragment: Action' OR 1=1; DROP TABLE games;--. If the Read/Write Game Data flow uses a native query with string concatenation, the injected SQL executes, potentially destroying the entire games table or exfiltrating all records including unpublished, internal-notes, and pricing data.",
+                  "mitigation": "Exclusively use JPA parameterised queries or Spring Data repository methods for all game data operations; ban native query string concatenation via SonarQube rule; enforce parameterisation in code review checklist; automated SQL injection tests in CI pipeline.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 170,
+                  "score": ""
+                },
+                {
+                  "id": "182ccbe4-484c-47d3-b08a-d8499ccc5550",
+                  "title": "\tRead flow returns PENDING / DRAFT games to public callers",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The Read Game Data flow executes a query without a WHERE status = 'ACTIVE' filter. The datastore response includes PENDING and DRAFT game records — containing unreleased titles, internal notes, cost prices, and publisher strategy data — which are then returned to unauthenticated or Buyer-role callers.",
+                  "mitigation": "All public-facing read queries hardcode the status = 'ACTIVE' filter at the repository layer; separate repository methods for admin (all statuses) and public (ACTIVE only); integration test verifying PENDING/DRAFT games are never present in Buyer-role responses.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 171,
+                  "score": ""
+                },
+                {
+                  "id": "eda49381-78b2-4c8b-8654-4490604b4379",
+                  "title": "Full-table scan on game catalogue blocking concurrent writes",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "A read query with no index on the title or category_id column triggers a sequential scan across the entire games table. The scan acquires a shared lock that blocks concurrent INSERT/UPDATE operations from publishers, causing write timeouts and failed game submissions during peak traffic.",
+                  "mitigation": "Indices on games(title), games(category_id), games(status), games(publisher_id); EXPLAIN ANALYZE on all catalogue queries during development; pg_stat_statements monitoring for slow queries in production; read replica for heavy catalogue scans.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 172,
+                  "score": ""
+                },
+                {
+                  "id": "04aa84a7-114d-4147-9713-8d28a467ca4f",
+                  "title": "Game status field written directly to ACTIVE without approval",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "The write flow for game data accepts a status field from the application layer without verifying that the caller holds the ADMIN role. A Publisher-triggered update writes status = ACTIVE directly to the datastore, bypassing the PENDING → admin approval → ACTIVE workflow entirely.",
+                  "mitigation": "The write flow must enforce role-based field filtering: the status field is excluded from all Publisher-facing write DTOs; only AdminGameUpdateDTO includes status; the query is constructed from the DTO, making it structurally impossible to write status from a Publisher request.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 173,
+                  "score": ""
+                },
+                {
+                  "id": "e16f9396-df80-44cc-b654-c8b44f79b7d8",
+                  "title": "Read response includes internal-only fields (cost price, admin flags)",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The datastore response returns a full entity object including cost_price, internal_notes, and admin_review_flag columns. These are serialised by the ORM into the application response DTO because SELECT * is used instead of a column projection, leaking internal business data to the API caller.",
+                  "mitigation": "Use Spring Data projection interfaces or explicit column lists in queries — never SELECT *; separate public and admin response DTOs; @JsonIgnore on internal-only entity fields; integration test asserting internal fields are absent from public API responses.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 174,
+                  "score": ""
+                },
+                {
+                  "id": "72755275-c586-477d-bfc4-f97cf6138c68",
+                  "title": "Unbounded catalogue read exhausting JVM heap",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A read request with no pagination causes the datastore to return all game records in a single response. The ORM loads every record into memory simultaneously. As the catalogue grows to thousands of titles, this causes a JVM OutOfMemoryError that crashes the application.",
+                  "mitigation": "Mandatory Pageable parameter on all game list repository methods; server-side maximum page size enforced (e.g. max 100 results); query timeout configured in HikariCP; never use findAll() without pagination on the games table.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 175,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [
+                "3dcb33ae-0ed9-4f04-b3eb-55a1b2113edb"
+              ],
+              "threatFrequency": {
+                "tampering": 2,
+                "informationDisclosure": 2,
+                "denialOfService": 2
+              }
             },
             "labels": [
               "Read/Write\nGame Data"
@@ -8548,7 +10010,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -8569,13 +10032,94 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "e79f5f2d-d59f-405e-ab5c-dc2ebb54d795",
+                  "title": "SQL injection via game search / filter parameters",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "A publisher submits a game title containing a SQL fragment: Action' OR 1=1; DROP TABLE games;--. If the Read/Write Game Data flow uses a native query with string concatenation, the injected SQL executes, potentially destroying the entire games table or exfiltrating all records including unpublished, internal-notes, and pricing data.",
+                  "mitigation": "Exclusively use JPA parameterised queries or Spring Data repository methods for all game data operations; ban native query string concatenation via SonarQube rule; enforce parameterisation in code review checklist; automated SQL injection tests in CI pipeline.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 170,
+                  "score": ""
+                },
+                {
+                  "id": "182ccbe4-484c-47d3-b08a-d8499ccc5550",
+                  "title": "\tRead flow returns PENDING / DRAFT games to public callers",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The Read Game Data flow executes a query without a WHERE status = 'ACTIVE' filter. The datastore response includes PENDING and DRAFT game records — containing unreleased titles, internal notes, cost prices, and publisher strategy data — which are then returned to unauthenticated or Buyer-role callers.",
+                  "mitigation": "All public-facing read queries hardcode the status = 'ACTIVE' filter at the repository layer; separate repository methods for admin (all statuses) and public (ACTIVE only); integration test verifying PENDING/DRAFT games are never present in Buyer-role responses.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 171,
+                  "score": ""
+                },
+                {
+                  "id": "eda49381-78b2-4c8b-8654-4490604b4379",
+                  "title": "Full-table scan on game catalogue blocking concurrent writes",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "A read query with no index on the title or category_id column triggers a sequential scan across the entire games table. The scan acquires a shared lock that blocks concurrent INSERT/UPDATE operations from publishers, causing write timeouts and failed game submissions during peak traffic.",
+                  "mitigation": "Indices on games(title), games(category_id), games(status), games(publisher_id); EXPLAIN ANALYZE on all catalogue queries during development; pg_stat_statements monitoring for slow queries in production; read replica for heavy catalogue scans.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 172,
+                  "score": ""
+                },
+                {
+                  "id": "04aa84a7-114d-4147-9713-8d28a467ca4f",
+                  "title": "Game status field written directly to ACTIVE without approval",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "The write flow for game data accepts a status field from the application layer without verifying that the caller holds the ADMIN role. A Publisher-triggered update writes status = ACTIVE directly to the datastore, bypassing the PENDING → admin approval → ACTIVE workflow entirely.",
+                  "mitigation": "The write flow must enforce role-based field filtering: the status field is excluded from all Publisher-facing write DTOs; only AdminGameUpdateDTO includes status; the query is constructed from the DTO, making it structurally impossible to write status from a Publisher request.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 173,
+                  "score": ""
+                },
+                {
+                  "id": "e16f9396-df80-44cc-b654-c8b44f79b7d8",
+                  "title": "Read response includes internal-only fields (cost price, admin flags)",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "The datastore response returns a full entity object including cost_price, internal_notes, and admin_review_flag columns. These are serialised by the ORM into the application response DTO because SELECT * is used instead of a column projection, leaking internal business data to the API caller.",
+                  "mitigation": "Use Spring Data projection interfaces or explicit column lists in queries — never SELECT *; separate public and admin response DTOs; @JsonIgnore on internal-only entity fields; integration test asserting internal fields are absent from public API responses.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 174,
+                  "score": ""
+                },
+                {
+                  "id": "72755275-c586-477d-bfc4-f97cf6138c68",
+                  "title": "Unbounded catalogue read exhausting JVM heap",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A read request with no pagination causes the datastore to return all game records in a single response. The ORM loads every record into memory simultaneously. As the catalogue grows to thousands of titles, this causes a JVM OutOfMemoryError that crashes the application.",
+                  "mitigation": "Mandatory Pageable parameter on all game list repository methods; server-side maximum page size enforced (e.g. max 100 results); query timeout configured in HikariCP; never use findAll() without pagination on the games table.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 175,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [
+                "3dcb33ae-0ed9-4f04-b3eb-55a1b2113edb"
+              ]
             },
             "labels": [
               "Datastore\nResponse"
@@ -8600,7 +10144,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -8621,13 +10166,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "4592fab5-17db-40f3-86a2-665c5f0097d4",
+                  "title": "Library entry written without a corresponding completed order",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The write flow to the Library Datastore does not enforce a foreign key relationship to a completed order. An attacker (or a bug) issues a direct INSERT into library_entries for any user_id / game_id pair. The user gains access to any game in the catalogue without payment — the entire monetisation model is bypassed.",
+                  "mitigation": "Foreign key constraint: library_entries.order_id REFERENCES orders(id) NOT NULL; the DB enforces that no library entry can exist without a completed order; application-layer rule: library write flow is only ever triggered by an order-completion event, never by a direct API call; integration test attempting direct library write without an order must be rejected at DB level.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 176,
+                  "score": ""
+                },
+                {
+                  "id": "f9afc9ef-4ac6-4cff-af13-fe60ea938411",
+                  "title": "Activation keys returned in plaintext in datastore response",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The read flow retrieves library entries including the activation_key column in plaintext. If this response is logged at DEBUG level, cached by an intermediate layer, or returned to an API caller without ownership verification, the activation key — which has real monetary value and can be used by anyone on a gaming platform — is exposed to unintended parties.",
+                  "mitigation": "Activation keys encrypted at application layer (AES-256) before writing to the datastore; read flow decrypts only when delivering to the verified owner; keys never included in list responses — only in a dedicated single-record endpoint with ownership check and rate limiting; keys never logged in any format.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 177,
+                  "score": ""
+                },
+                {
+                  "id": "9eed5142-7abd-4221-bb55-19ef6a738c48",
+                  "title": "Library table growth causing per-user query degradation",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "As the platform scales, library_entries grows to tens of millions of rows. A user with a large game collection triggers a read flow that, despite the user_id filter, still scans a large portion of the table due to a missing composite index on (user_id, game_id), causing slow query times that degrade the library browsing experience platform-wide.",
+                  "mitigation": "Composite index on library_entries(user_id, game_id); covering index including activated and created_at for common sort/filter operations; EXPLAIN ANALYZE on library queries at realistic data volumes; consider table partitioning by user_id range at scale.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 178,
+                  "score": ""
+                },
+                {
+                  "id": "6e44476e-4512-45b9-9042-69956a68d775",
+                  "title": "\tActivation key marked as used without actual activation",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "The write flow updates library_entries.activated = true for a key that has not been legitimately activated. If an attacker can trigger this write (e.g. via a race condition or a missing ownership check), the real owner's key is burned — they lose the ability to activate their purchased game even though they never used the key themselves.",
+                  "mitigation": "Activation write flow requires re-authentication confirmation before marking a key as used; activation is a one-time, irreversible operation — add a DB CHECK constraint preventing reactivation (activated can only transition false → true, never back); append an activation_events record with timestamp and IP on every activation attempt.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 179,
+                  "score": ""
+                },
+                {
+                  "id": "40fb5985-bfb0-4078-bb10-479727b6781c",
+                  "title": "Library read flow missing user_id scope — cross-user data exposure",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The read flow for library data executes SELECT * FROM library_entries WHERE game_id = :gameId without scoping to the authenticated user's ID. A Buyer who knows any game_id can retrieve the library entries (and activation keys) of every user who owns that game.",
+                  "mitigation": "All library read queries must include AND user_id = :authenticatedUserId sourced from the JWT sub; Spring Data repository method signatures enforce the user_id parameter — it cannot be omitted; automated test with two different user JWTs verifying each sees only their own entries.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 180,
+                  "score": ""
+                },
+                {
+                  "id": "e7ba479d-b575-4b7b-9fb2-af39d11f9480",
+                  "title": "Concurrent activation writes causing DB lock contention",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Denial of service",
+                  "description": " causing DB lock contention\tMultiple simultaneous activation requests for the same library entry (e.g. a user double-clicking the activate button) create concurrent UPDATE statements on the same row, causing lock contention and potential duplicate activation event records.",
+                  "mitigation": "Optimistic locking on library_entries using a @Version field; the second concurrent write fails with an OptimisticLockException and returns a 409 Conflict; idempotency check: if activated = true already, return success without a second write.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 181,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [
+                "3dcb33ae-0ed9-4f04-b3eb-55a1b2113edb"
+              ],
+              "threatFrequency": {
+                "tampering": 2,
+                "informationDisclosure": 2,
+                "denialOfService": 2
+              }
             },
             "labels": [
               "Read/Write\nLibrary Data"
@@ -8652,7 +10283,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -8673,13 +10305,94 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "4592fab5-17db-40f3-86a2-665c5f0097d4",
+                  "title": "Library entry written without a corresponding completed order",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The write flow to the Library Datastore does not enforce a foreign key relationship to a completed order. An attacker (or a bug) issues a direct INSERT into library_entries for any user_id / game_id pair. The user gains access to any game in the catalogue without payment — the entire monetisation model is bypassed.",
+                  "mitigation": "Foreign key constraint: library_entries.order_id REFERENCES orders(id) NOT NULL; the DB enforces that no library entry can exist without a completed order; application-layer rule: library write flow is only ever triggered by an order-completion event, never by a direct API call; integration test attempting direct library write without an order must be rejected at DB level.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 176,
+                  "score": ""
+                },
+                {
+                  "id": "f9afc9ef-4ac6-4cff-af13-fe60ea938411",
+                  "title": "Activation keys returned in plaintext in datastore response",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The read flow retrieves library entries including the activation_key column in plaintext. If this response is logged at DEBUG level, cached by an intermediate layer, or returned to an API caller without ownership verification, the activation key — which has real monetary value and can be used by anyone on a gaming platform — is exposed to unintended parties.",
+                  "mitigation": "Activation keys encrypted at application layer (AES-256) before writing to the datastore; read flow decrypts only when delivering to the verified owner; keys never included in list responses — only in a dedicated single-record endpoint with ownership check and rate limiting; keys never logged in any format.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 177,
+                  "score": ""
+                },
+                {
+                  "id": "9eed5142-7abd-4221-bb55-19ef6a738c48",
+                  "title": "Library table growth causing per-user query degradation",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "As the platform scales, library_entries grows to tens of millions of rows. A user with a large game collection triggers a read flow that, despite the user_id filter, still scans a large portion of the table due to a missing composite index on (user_id, game_id), causing slow query times that degrade the library browsing experience platform-wide.",
+                  "mitigation": "Composite index on library_entries(user_id, game_id); covering index including activated and created_at for common sort/filter operations; EXPLAIN ANALYZE on library queries at realistic data volumes; consider table partitioning by user_id range at scale.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 178,
+                  "score": ""
+                },
+                {
+                  "id": "6e44476e-4512-45b9-9042-69956a68d775",
+                  "title": "\tActivation key marked as used without actual activation",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "The write flow updates library_entries.activated = true for a key that has not been legitimately activated. If an attacker can trigger this write (e.g. via a race condition or a missing ownership check), the real owner's key is burned — they lose the ability to activate their purchased game even though they never used the key themselves.",
+                  "mitigation": "Activation write flow requires re-authentication confirmation before marking a key as used; activation is a one-time, irreversible operation — add a DB CHECK constraint preventing reactivation (activated can only transition false → true, never back); append an activation_events record with timestamp and IP on every activation attempt.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 179,
+                  "score": ""
+                },
+                {
+                  "id": "40fb5985-bfb0-4078-bb10-479727b6781c",
+                  "title": "Library read flow missing user_id scope — cross-user data exposure",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The read flow for library data executes SELECT * FROM library_entries WHERE game_id = :gameId without scoping to the authenticated user's ID. A Buyer who knows any game_id can retrieve the library entries (and activation keys) of every user who owns that game.",
+                  "mitigation": "All library read queries must include AND user_id = :authenticatedUserId sourced from the JWT sub; Spring Data repository method signatures enforce the user_id parameter — it cannot be omitted; automated test with two different user JWTs verifying each sees only their own entries.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 180,
+                  "score": ""
+                },
+                {
+                  "id": "e7ba479d-b575-4b7b-9fb2-af39d11f9480",
+                  "title": "Concurrent activation writes causing DB lock contention",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Denial of service",
+                  "description": " causing DB lock contention\tMultiple simultaneous activation requests for the same library entry (e.g. a user double-clicking the activate button) create concurrent UPDATE statements on the same row, causing lock contention and potential duplicate activation event records.",
+                  "mitigation": "Optimistic locking on library_entries using a @Version field; the second concurrent write fails with an OptimisticLockException and returns a 409 Conflict; idempotency check: if activated = true already, return success without a second write.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 181,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [
+                "3dcb33ae-0ed9-4f04-b3eb-55a1b2113edb"
+              ]
             },
             "labels": [
               "Datastore\nResponse"
@@ -8704,7 +10417,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -8725,13 +10439,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "243e32fe-5b8f-4819-af52-edcebbd6f34e",
+                  "title": "Completed order record modified retroactively",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "A write flow updates an existing completed order record — changing total_price from €59.99 to €0.01 or setting status back to PENDING. The stored invoice PDF and the DB record now disagree. This constitutes financial fraud, violates accounting integrity, and makes the system's financial records untrustworthy for tax and compliance audits.",
+                  "mitigation": "Orders table is effectively insert-only after completion: no UPDATE permitted on completed order records; DB-level trigger raises an exception on any UPDATE to orders WHERE status = 'COMPLETED'; CHECK constraint preventing status regression (COMPLETED cannot revert to PENDING); invoice PDF SHA-256 hash stored alongside the order record and verified on every retrieval.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 182,
+                  "score": ""
+                },
+                {
+                  "id": "8930cef1-a686-4916-8d0f-2738afab152e",
+                  "title": "Order datastore response exposes other users' financial records",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The read flow for order data executes a query scoped only to order_id (e.g. SELECT * FROM orders WHERE id = :orderId) without including AND buyer_id = :jwtUserId. Any authenticated user who knows or can guess an order ID receives the complete financial record — including payment method reference, total paid, invoice, and activation key — of another user's purchase.",
+                  "mitigation": "Every order read query mandatorily scopes to the authenticated user's buyer_id from the JWT sub; no order can be retrieved by ID alone without the ownership check; ADMIN-role queries use a separate repository method; automated IDOR test: user A's JWT must not retrieve user B's order ID.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 183,
+                  "score": ""
+                },
+                {
+                  "id": "42e68a08-e553-4265-8fb0-86e164d9245c",
+                  "title": "Order write flow flooded — DB connection pool exhausted",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "An attacker or bot creates hundreds of orders per second using a valid Buyer JWT. Each order creation triggers a DB write transaction (order + order_items + library_entry + activation_key generation). The volume exhausts HikariCP's connection pool, blocking all other DB operations including game catalogue reads and authentication lookups.",
+                  "mitigation": "Rate-limit order creation per authenticated user (e.g. max 5 orders per minute); per-user circuit breaker on the order write flow; async activation key generation decoupled from the synchronous order write; alert on anomalous order creation rates; HikariCP pool sized with headroom and per-subsystem connection limits.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 184,
+                  "score": ""
+                },
+                {
+                  "id": "a4ea7cbd-c6f4-4cb2-acd8-01985967dcab",
+                  "title": "\tPrice written to order from client-supplied value instead of DB lookup",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The write flow for order creation accepts a total_price field from the application layer that originated from the client request body (€0.01 for a €59.99 game). The flow writes this attacker-supplied price directly to the Order Datastore without re-validating it against the Games Datastore's canonical price at the time of purchase.",
+                  "mitigation": "Order write flow always reads the authoritative price from the Game Datastore immediately before writing the order record — the price is never sourced from anywhere else; the order DTO accepted from the API layer contains no price field; price is resolved server-side and included only in the DB write, never round-tripped through the client.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 185,
+                  "score": ""
+                },
+                {
+                  "id": "06ff29f1-7c05-4058-9c55-628c20a9efd7",
+                  "title": "Payment reference / financial data logged from datastore response",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The application logs the full order object returned by the datastore response at INFO level for debugging. The log entry includes the payment gateway reference number, total amount paid, and buyer email — violating PCI-DSS and GDPR requirements and creating a high-value target for anyone with log access.",
+                  "mitigation": "Never log full order objects; log only order_id and status for operational tracking; payment reference numbers and financial amounts are excluded from all log output via a custom Jackson serialiser with @JsonIgnore on sensitive fields used in logging contexts; structured logging with an explicit field allowlist.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 186,
+                  "score": ""
+                },
+                {
+                  "id": "6a737cb0-765b-4906-84f5-986f5e6095a4",
+                  "title": "\tLarge order history read causing memory pressure",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A user with years of purchase history calls GET /orders with no date range filter. The read flow returns all historical orders with their order_items in a single response, loading thousands of records (and their JPA associations) into heap memory simultaneously.",
+                  "mitigation": "Mandatory date range or pagination on all order history read queries; max page size enforced at repository level; index on orders(buyer_id, created_at DESC) for efficient paginated retrieval; lazy-load order_items association by default.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 187,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [
+                "3dcb33ae-0ed9-4f04-b3eb-55a1b2113edb"
+              ],
+              "threatFrequency": {
+                "tampering": 2,
+                "informationDisclosure": 2,
+                "denialOfService": 2
+              }
             },
             "labels": [
               "Read/Write\nOrder Data"
@@ -8756,7 +10556,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -8777,13 +10578,94 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "243e32fe-5b8f-4819-af52-edcebbd6f34e",
+                  "title": "Completed order record modified retroactively",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "A write flow updates an existing completed order record — changing total_price from €59.99 to €0.01 or setting status back to PENDING. The stored invoice PDF and the DB record now disagree. This constitutes financial fraud, violates accounting integrity, and makes the system's financial records untrustworthy for tax and compliance audits.",
+                  "mitigation": "Orders table is effectively insert-only after completion: no UPDATE permitted on completed order records; DB-level trigger raises an exception on any UPDATE to orders WHERE status = 'COMPLETED'; CHECK constraint preventing status regression (COMPLETED cannot revert to PENDING); invoice PDF SHA-256 hash stored alongside the order record and verified on every retrieval.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 182,
+                  "score": ""
+                },
+                {
+                  "id": "8930cef1-a686-4916-8d0f-2738afab152e",
+                  "title": "Order datastore response exposes other users' financial records",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The read flow for order data executes a query scoped only to order_id (e.g. SELECT * FROM orders WHERE id = :orderId) without including AND buyer_id = :jwtUserId. Any authenticated user who knows or can guess an order ID receives the complete financial record — including payment method reference, total paid, invoice, and activation key — of another user's purchase.",
+                  "mitigation": "Every order read query mandatorily scopes to the authenticated user's buyer_id from the JWT sub; no order can be retrieved by ID alone without the ownership check; ADMIN-role queries use a separate repository method; automated IDOR test: user A's JWT must not retrieve user B's order ID.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 183,
+                  "score": ""
+                },
+                {
+                  "id": "42e68a08-e553-4265-8fb0-86e164d9245c",
+                  "title": "Order write flow flooded — DB connection pool exhausted",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "An attacker or bot creates hundreds of orders per second using a valid Buyer JWT. Each order creation triggers a DB write transaction (order + order_items + library_entry + activation_key generation). The volume exhausts HikariCP's connection pool, blocking all other DB operations including game catalogue reads and authentication lookups.",
+                  "mitigation": "Rate-limit order creation per authenticated user (e.g. max 5 orders per minute); per-user circuit breaker on the order write flow; async activation key generation decoupled from the synchronous order write; alert on anomalous order creation rates; HikariCP pool sized with headroom and per-subsystem connection limits.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 184,
+                  "score": ""
+                },
+                {
+                  "id": "a4ea7cbd-c6f4-4cb2-acd8-01985967dcab",
+                  "title": "\tPrice written to order from client-supplied value instead of DB lookup",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The write flow for order creation accepts a total_price field from the application layer that originated from the client request body (€0.01 for a €59.99 game). The flow writes this attacker-supplied price directly to the Order Datastore without re-validating it against the Games Datastore's canonical price at the time of purchase.",
+                  "mitigation": "Order write flow always reads the authoritative price from the Game Datastore immediately before writing the order record — the price is never sourced from anywhere else; the order DTO accepted from the API layer contains no price field; price is resolved server-side and included only in the DB write, never round-tripped through the client.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 185,
+                  "score": ""
+                },
+                {
+                  "id": "06ff29f1-7c05-4058-9c55-628c20a9efd7",
+                  "title": "Payment reference / financial data logged from datastore response",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "The application logs the full order object returned by the datastore response at INFO level for debugging. The log entry includes the payment gateway reference number, total amount paid, and buyer email — violating PCI-DSS and GDPR requirements and creating a high-value target for anyone with log access.",
+                  "mitigation": "Never log full order objects; log only order_id and status for operational tracking; payment reference numbers and financial amounts are excluded from all log output via a custom Jackson serialiser with @JsonIgnore on sensitive fields used in logging contexts; structured logging with an explicit field allowlist.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 186,
+                  "score": ""
+                },
+                {
+                  "id": "6a737cb0-765b-4906-84f5-986f5e6095a4",
+                  "title": "\tLarge order history read causing memory pressure",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "A user with years of purchase history calls GET /orders with no date range filter. The read flow returns all historical orders with their order_items in a single response, loading thousands of records (and their JPA associations) into heap memory simultaneously.",
+                  "mitigation": "Mandatory date range or pagination on all order history read queries; max page size enforced at repository level; index on orders(buyer_id, created_at DESC) for efficient paginated retrieval; lazy-load order_items association by default.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 187,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [
+                "3dcb33ae-0ed9-4f04-b3eb-55a1b2113edb"
+              ]
             },
             "labels": [
               "Datastore\nResponse"
@@ -8808,7 +10690,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -8829,13 +10712,94 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "848b8941-28bb-4321-9e0c-f7c0d163e611",
+                  "title": "Email address written without ownership verification — account takeover enablement",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The write flow for user data accepts an email update and writes it directly to the User Information Datastore without verifying that the new email belongs to the authenticated user. An attacker changes their email to an admin's address. The password reset flow now sends a reset link to the attacker's inbox, granting full account takeover of the admin account.",
+                  "mitigation": "Email change write flow requires: (1) re-authentication with current password, (2) sending a verification link to the NEW email address that must be clicked before the write is committed, (3) notification to the OLD email address that a change was requested; only after step 2 completes does the write flow update the datastore; old email stored in history table.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 188,
+                  "score": ""
+                },
+                {
+                  "id": "e8c3c331-296b-446e-b359-46704eb9b5bd",
+                  "title": "User datastore response returns full PII to non-owner callers",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The read flow returns the full User entity from the datastore including name, email, address, date of birth, Keycloak subject ID, and account_status to any authenticated caller who supplies a valid user_id — even if that user_id belongs to a different user. A Buyer enumerates user IDs sequentially and harvests the PII of every registered user, constituting a GDPR data breach.",
+                  "mitigation": "Read flow must enforce: authenticated user can only read their own record (JWT sub = target user_id) OR caller holds ADMIN role; admin responses use a separate DTO that still excludes Keycloak internal fields; Buyer-facing responses use a minimal DTO containing only display name and email; automated IDOR test with two different user JWTs is mandatory in CI.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 189,
+                  "score": ""
+                },
+                {
+                  "id": "92fc39fd-64b4-4ed9-bb69-024eb163dc42",
+                  "title": "\tUser table lock contention during bulk admin operations",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "An admin report or bulk user export triggers a long-running read across the entire users table (SELECT * FROM users with no pagination). The query holds a shared lock that blocks concurrent write flows — specifically login-time user status updates and profile writes — causing login failures and profile update timeouts for all active users during the operation.",
+                  "mitigation": "Bulk admin read operations run on a read replica, never the primary DB; LIMIT/OFFSET or cursor-based pagination on all admin user list queries; index on users(email) and users(keycloak_sub) for point lookups; schedule heavy report queries during off-peak hours; query timeout on all admin queries (e.g. 30 seconds maximum).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 190,
+                  "score": ""
+                },
+                {
+                  "id": "b26dbcaa-42e3-4f05-965b-72130a26bb30",
+                  "title": "SQL injection via user profile search or filter — full user table exfiltration",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "An admin search for users by email uses a native query with string concatenation: SELECT * FROM users WHERE email LIKE '%' + :input + '%'. An injected payload UNION SELECT username, password_hash, keycloak_sub FROM users-- returns the entire user table including all Keycloak subject IDs and any locally cached sensitive fields to the admin UI.",
+                  "mitigation": "All user data queries use JPA parameterised queries; LIKE patterns use CONCAT(:param, '%') with a bound parameter, never string concatenation; even admin-facing queries follow the same parameterisation rules — privilege does not exempt from SQL injection protection.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 191,
+                  "score": ""
+                },
+                {
+                  "id": "c42faaca-1390-4ebc-8641-33e8427d888e",
+                  "title": "\tUser datastore response logged — PII written to application logs (GDPR violation)",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application logs the User entity object returned by the datastore response at INFO level for audit purposes. The log entry contains name, email, address, and Keycloak subject ID for every user whose profile is accessed. Log aggregation tools (ELK, Splunk) now hold a full copy of all user PII — a separate, uncontrolled data store that violates GDPR's data minimisation and purpose limitation principles.",
+                  "mitigation": "User entity must implement toString() returning only user_id and account_status — never PII fields; @JsonIgnore on all PII fields in the entity; structured logging records only user_id for operational tracking; PII fields are explicitly excluded from all log formatters; GDPR data mapping must include the logging pipeline as a data processing activity.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 192,
+                  "score": ""
+                },
+                {
+                  "id": "49137375-3feb-4bda-90bd-0a68abad950a",
+                  "title": "User enumeration via sequential ID read flood exhausting DB connections",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "An attacker sends thousands of GET /users/{id} requests with sequential integer IDs. Even though each request is rejected (IDOR check fails), the read flow still executes a DB query per request to perform the lookup before applying the ownership check. The volume of queries exhausts DB connections and degrades response times for all other flows.",
+                  "mitigation": "Apply the ownership check before the DB query where possible (e.g. compare JWT sub to URL parameter before hitting the DB — if they don't match, return 403 immediately without a DB round-trip); rate-limit user profile reads per authenticated user; IP-level rate limiting at the reverse proxy for unauthenticated enumeration attempts.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 193,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [
+                "3dcb33ae-0ed9-4f04-b3eb-55a1b2113edb"
+              ]
             },
             "labels": [
               "Read/Write\nUser Data"
@@ -8860,7 +10824,8 @@
             "shape": "flow",
             "attrs": {
               "line": {
-                "stroke": "#333333",
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "targetMarker": {
                   "name": "block"
                 },
@@ -8881,13 +10846,99 @@
               "outOfScope": false,
               "isTrustBoundary": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isBidirectional": false,
               "isEncrypted": false,
               "isPublicNetwork": false,
               "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
+              "threats": [
+                {
+                  "id": "848b8941-28bb-4321-9e0c-f7c0d163e611",
+                  "title": "Email address written without ownership verification — account takeover enablement",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "The write flow for user data accepts an email update and writes it directly to the User Information Datastore without verifying that the new email belongs to the authenticated user. An attacker changes their email to an admin's address. The password reset flow now sends a reset link to the attacker's inbox, granting full account takeover of the admin account.",
+                  "mitigation": "Email change write flow requires: (1) re-authentication with current password, (2) sending a verification link to the NEW email address that must be clicked before the write is committed, (3) notification to the OLD email address that a change was requested; only after step 2 completes does the write flow update the datastore; old email stored in history table.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 188,
+                  "score": ""
+                },
+                {
+                  "id": "e8c3c331-296b-446e-b359-46704eb9b5bd",
+                  "title": "User datastore response returns full PII to non-owner callers",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The read flow returns the full User entity from the datastore including name, email, address, date of birth, Keycloak subject ID, and account_status to any authenticated caller who supplies a valid user_id — even if that user_id belongs to a different user. A Buyer enumerates user IDs sequentially and harvests the PII of every registered user, constituting a GDPR data breach.",
+                  "mitigation": "Read flow must enforce: authenticated user can only read their own record (JWT sub = target user_id) OR caller holds ADMIN role; admin responses use a separate DTO that still excludes Keycloak internal fields; Buyer-facing responses use a minimal DTO containing only display name and email; automated IDOR test with two different user JWTs is mandatory in CI.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 189,
+                  "score": ""
+                },
+                {
+                  "id": "92fc39fd-64b4-4ed9-bb69-024eb163dc42",
+                  "title": "\tUser table lock contention during bulk admin operations",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "An admin report or bulk user export triggers a long-running read across the entire users table (SELECT * FROM users with no pagination). The query holds a shared lock that blocks concurrent write flows — specifically login-time user status updates and profile writes — causing login failures and profile update timeouts for all active users during the operation.",
+                  "mitigation": "Bulk admin read operations run on a read replica, never the primary DB; LIMIT/OFFSET or cursor-based pagination on all admin user list queries; index on users(email) and users(keycloak_sub) for point lookups; schedule heavy report queries during off-peak hours; query timeout on all admin queries (e.g. 30 seconds maximum).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 190,
+                  "score": ""
+                },
+                {
+                  "id": "b26dbcaa-42e3-4f05-965b-72130a26bb30",
+                  "title": "SQL injection via user profile search or filter — full user table exfiltration",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Tampering",
+                  "description": "An admin search for users by email uses a native query with string concatenation: SELECT * FROM users WHERE email LIKE '%' + :input + '%'. An injected payload UNION SELECT username, password_hash, keycloak_sub FROM users-- returns the entire user table including all Keycloak subject IDs and any locally cached sensitive fields to the admin UI.",
+                  "mitigation": "All user data queries use JPA parameterised queries; LIKE patterns use CONCAT(:param, '%') with a bound parameter, never string concatenation; even admin-facing queries follow the same parameterisation rules — privilege does not exempt from SQL injection protection.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 191,
+                  "score": ""
+                },
+                {
+                  "id": "c42faaca-1390-4ebc-8641-33e8427d888e",
+                  "title": "\tUser datastore response logged — PII written to application logs (GDPR violation)",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application logs the User entity object returned by the datastore response at INFO level for audit purposes. The log entry contains name, email, address, and Keycloak subject ID for every user whose profile is accessed. Log aggregation tools (ELK, Splunk) now hold a full copy of all user PII — a separate, uncontrolled data store that violates GDPR's data minimisation and purpose limitation principles.",
+                  "mitigation": "User entity must implement toString() returning only user_id and account_status — never PII fields; @JsonIgnore on all PII fields in the entity; structured logging records only user_id for operational tracking; PII fields are explicitly excluded from all log formatters; GDPR data mapping must include the logging pipeline as a data processing activity.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 192,
+                  "score": ""
+                },
+                {
+                  "id": "49137375-3feb-4bda-90bd-0a68abad950a",
+                  "title": "User enumeration via sequential ID read flood exhausting DB connections",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "An attacker sends thousands of GET /users/{id} requests with sequential integer IDs. Even though each request is rejected (IDOR check fails), the read flow still executes a DB query per request to perform the lookup before applying the ownership check. The volume of queries exhausts DB connections and degrades response times for all other flows.",
+                  "mitigation": "Apply the ownership check before the DB query where possible (e.g. compare JWT sub to URL parameter before hitting the DB — if they don't match, return 403 immediately without a DB round-trip); rate-limit user profile reads per authenticated user; IP-level rate limiting at the reverse proxy for unauthenticated enumeration attempts.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 193,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": [
+                "3dcb33ae-0ed9-4f04-b3eb-55a1b2113edb"
+              ],
+              "threatFrequency": {
+                "tampering": 2,
+                "informationDisclosure": 2,
+                "denialOfService": 2
+              }
             },
             "labels": [
               "Datastore\nResponse"
@@ -11666,6 +13717,6 @@
     ],
     "diagramTop": 7,
     "reviewer": "Diogo Sousa & Diogo Pereira",
-    "threatTop": 101
+    "threatTop": 193
   }
 }
