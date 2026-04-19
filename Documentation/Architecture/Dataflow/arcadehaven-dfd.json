@@ -1206,8 +1206,8 @@
           },
           {
             "position": {
-              "x": 760,
-              "y": 760
+              "x": 790,
+              "y": 780
             },
             "size": {
               "width": 120,
@@ -1775,8 +1775,8 @@
           },
           {
             "position": {
-              "x": 1180,
-              "y": 360
+              "x": 1240,
+              "y": 390
             },
             "size": {
               "width": 140,
@@ -2030,7 +2030,9 @@
                   "score": ""
                 }
               ],
-              "trustBoundaryIds": []
+              "trustBoundaryIds": [
+                "8d1b9491-bc28-4019-abd2-b0b3f7b926a8"
+              ]
             },
             "labels": [
               "Request"
@@ -2047,7 +2049,7 @@
             "vertices": [
               {
                 "x": 260,
-                "y": 500
+                "y": 520
               }
             ]
           },
@@ -2123,7 +2125,9 @@
                   "score": ""
                 }
               ],
-              "trustBoundaryIds": [],
+              "trustBoundaryIds": [
+                "8d1b9491-bc28-4019-abd2-b0b3f7b926a8"
+              ],
               "threatFrequency": {
                 "tampering": 2,
                 "informationDisclosure": 1,
@@ -2145,7 +2149,7 @@
             "vertices": [
               {
                 "x": 260,
-                "y": 610
+                "y": 590
               }
             ]
           },
@@ -2242,8 +2246,8 @@
             },
             "vertices": [
               {
-                "x": 470,
-                "y": 180
+                "x": 510,
+                "y": 160
               }
             ]
           },
@@ -2335,8 +2339,8 @@
             },
             "vertices": [
               {
-                "x": 570,
-                "y": 180
+                "x": 610,
+                "y": 160
               }
             ]
           },
@@ -2371,7 +2375,9 @@
               "isPublicNetwork": false,
               "protocol": "",
               "threats": [],
-              "trustBoundaryIds": []
+              "trustBoundaryIds": [
+                "8d1b9491-bc28-4019-abd2-b0b3f7b926a8"
+              ]
             },
             "labels": [
               "User\nRequest"
@@ -2387,7 +2393,7 @@
             },
             "vertices": [
               {
-                "x": 480,
+                "x": 500,
                 "y": 420
               }
             ]
@@ -2423,7 +2429,9 @@
               "isPublicNetwork": false,
               "protocol": "",
               "threats": [],
-              "trustBoundaryIds": []
+              "trustBoundaryIds": [
+                "8d1b9491-bc28-4019-abd2-b0b3f7b926a8"
+              ]
             },
             "labels": [
               "User\nResponse"
@@ -2440,59 +2448,7 @@
             "vertices": [
               {
                 "x": 560,
-                "y": 420
-              }
-            ]
-          },
-          {
-            "shape": "flow",
-            "attrs": {
-              "line": {
-                "stroke": "#333333",
-                "targetMarker": {
-                  "name": "block"
-                },
-                "sourceMarker": {
-                  "name": ""
-                },
-                "strokeDasharray": null
-              }
-            },
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Flow",
-              "name": "Library Request",
-              "description": "",
-              "outOfScope": false,
-              "isTrustBoundary": false,
-              "reasonOutOfScope": "",
-              "hasOpenThreats": false,
-              "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
-            },
-            "labels": [
-              "Library Request"
-            ],
-            "id": "3d8ef28b-b98b-42e3-a0f8-5fd8ca60331b",
-            "source": {
-              "cell": "555b696f-ef2e-4fd3-b48b-bdda735ce50a",
-              "port": "3c71e586-3b1c-43a2-bebe-7ae3b8f9e0be"
-            },
-            "target": {
-              "cell": "2f75482f-5a82-463d-8d69-497bff11476f",
-              "port": "50f6dee5-2d25-48ed-ab91-defc2602c10f"
-            },
-            "vertices": [
-              {
-                "x": 650,
-                "y": 470
+                "y": 440
               }
             ]
           },
@@ -2527,7 +2483,9 @@
               "isPublicNetwork": false,
               "protocol": "",
               "threats": [],
-              "trustBoundaryIds": []
+              "trustBoundaryIds": [
+                "8d1b9491-bc28-4019-abd2-b0b3f7b926a8"
+              ]
             },
             "labels": [
               "Library Response"
@@ -2543,216 +2501,8 @@
             },
             "vertices": [
               {
-                "x": 660,
-                "y": 560
-              }
-            ]
-          },
-          {
-            "shape": "flow",
-            "attrs": {
-              "line": {
-                "stroke": "#333333",
-                "targetMarker": {
-                  "name": "block"
-                },
-                "sourceMarker": {
-                  "name": ""
-                },
-                "strokeDasharray": null
-              }
-            },
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Flow",
-              "name": "Order Request",
-              "description": "",
-              "outOfScope": false,
-              "isTrustBoundary": false,
-              "reasonOutOfScope": "",
-              "hasOpenThreats": false,
-              "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
-            },
-            "labels": [
-              "Order Request"
-            ],
-            "id": "5b82061c-6d7b-48bd-ba8d-5a207729c90d",
-            "source": {
-              "cell": "555b696f-ef2e-4fd3-b48b-bdda735ce50a",
-              "port": "3c71e586-3b1c-43a2-bebe-7ae3b8f9e0be"
-            },
-            "target": {
-              "cell": "d1061d69-3f94-494b-b91a-70b59c8f0f31",
-              "port": "12ed4972-2035-4c0a-999c-742946d9ff1d"
-            },
-            "vertices": [
-              {
-                "x": 650,
-                "y": 520
-              }
-            ]
-          },
-          {
-            "shape": "flow",
-            "attrs": {
-              "line": {
-                "stroke": "#333333",
-                "targetMarker": {
-                  "name": "block"
-                },
-                "sourceMarker": {
-                  "name": ""
-                },
-                "strokeDasharray": null
-              }
-            },
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Flow",
-              "name": "Order Response",
-              "description": "",
-              "outOfScope": false,
-              "isTrustBoundary": false,
-              "reasonOutOfScope": "",
-              "hasOpenThreats": false,
-              "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
-            },
-            "labels": [
-              "Order Response"
-            ],
-            "id": "35fa7047-564a-41e8-baf6-8bfe739cb4fb",
-            "source": {
-              "cell": "d1061d69-3f94-494b-b91a-70b59c8f0f31",
-              "port": "12ed4972-2035-4c0a-999c-742946d9ff1d"
-            },
-            "target": {
-              "cell": "555b696f-ef2e-4fd3-b48b-bdda735ce50a",
-              "port": "3c71e586-3b1c-43a2-bebe-7ae3b8f9e0be"
-            },
-            "vertices": [
-              {
-                "x": 650,
-                "y": 590
-              }
-            ]
-          },
-          {
-            "shape": "flow",
-            "attrs": {
-              "line": {
-                "stroke": "#333333",
-                "targetMarker": {
-                  "name": "block"
-                },
-                "sourceMarker": {
-                  "name": ""
-                },
-                "strokeDasharray": null
-              }
-            },
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Flow",
-              "name": "Library Request",
-              "description": "",
-              "outOfScope": false,
-              "isTrustBoundary": false,
-              "reasonOutOfScope": "",
-              "hasOpenThreats": false,
-              "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
-            },
-            "labels": [
-              "Library Request"
-            ],
-            "id": "2b67564b-c4cd-4eab-bf93-2d3f4f757449",
-            "source": {
-              "cell": "555b696f-ef2e-4fd3-b48b-bdda735ce50a",
-              "port": "3c71e586-3b1c-43a2-bebe-7ae3b8f9e0be"
-            },
-            "target": {
-              "cell": "12268196-8d66-40dd-9801-8f7d2ccb8a17",
-              "port": "17ffd2c7-3c68-4fda-9582-beb579a721d3"
-            },
-            "vertices": [
-              {
-                "x": 650,
-                "y": 710
-              }
-            ]
-          },
-          {
-            "shape": "flow",
-            "attrs": {
-              "line": {
-                "stroke": "#333333",
-                "targetMarker": {
-                  "name": "block"
-                },
-                "sourceMarker": {
-                  "name": ""
-                },
-                "strokeDasharray": null
-              }
-            },
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Flow",
-              "name": "Library Response",
-              "description": "",
-              "outOfScope": false,
-              "isTrustBoundary": false,
-              "reasonOutOfScope": "",
-              "hasOpenThreats": false,
-              "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
-              "threats": [],
-              "trustBoundaryIds": []
-            },
-            "labels": [
-              "Library Response"
-            ],
-            "id": "f0243ed9-94c6-48b2-b237-015c549cff29",
-            "source": {
-              "cell": "12268196-8d66-40dd-9801-8f7d2ccb8a17",
-              "port": "17ffd2c7-3c68-4fda-9582-beb579a721d3"
-            },
-            "target": {
-              "cell": "555b696f-ef2e-4fd3-b48b-bdda735ce50a",
-              "port": "3c71e586-3b1c-43a2-bebe-7ae3b8f9e0be"
-            },
-            "vertices": [
-              {
-                "x": 650,
-                "y": 800
+                "x": 740,
+                "y": 460
               }
             ]
           },
@@ -2787,7 +2537,9 @@
               "isPublicNetwork": false,
               "protocol": "",
               "threats": [],
-              "trustBoundaryIds": []
+              "trustBoundaryIds": [
+                "8d1b9491-bc28-4019-abd2-b0b3f7b926a8"
+              ]
             },
             "labels": [
               "User Request"
@@ -2803,12 +2555,8 @@
             },
             "vertices": [
               {
-                "x": 520,
-                "y": 630
-              },
-              {
-                "x": 560,
-                "y": 850
+                "x": 570,
+                "y": 820
               }
             ]
           },
@@ -2843,7 +2591,9 @@
               "isPublicNetwork": false,
               "protocol": "",
               "threats": [],
-              "trustBoundaryIds": []
+              "trustBoundaryIds": [
+                "8d1b9491-bc28-4019-abd2-b0b3f7b926a8"
+              ]
             },
             "labels": [
               "User Response"
@@ -2859,7 +2609,7 @@
             },
             "vertices": [
               {
-                "x": 470,
+                "x": 500,
                 "y": 840
               }
             ]
@@ -2952,8 +2702,8 @@
             },
             "vertices": [
               {
-                "x": 830,
-                "y": 170
+                "x": 900,
+                "y": 180
               }
             ]
           },
@@ -3050,8 +2800,8 @@
             },
             "vertices": [
               {
-                "x": 900,
-                "y": 210
+                "x": 960,
+                "y": 250
               }
             ]
           },
@@ -3143,8 +2893,8 @@
             },
             "vertices": [
               {
-                "x": 980,
-                "y": 340
+                "x": 1080,
+                "y": 350
               }
             ]
           },
@@ -3241,8 +2991,8 @@
             },
             "vertices": [
               {
-                "x": 980,
-                "y": 420
+                "x": 1030,
+                "y": 390
               }
             ]
           },
@@ -3333,286 +3083,8 @@
             },
             "vertices": [
               {
-                "x": 980,
-                "y": 500
-              }
-            ]
-          },
-          {
-            "shape": "flow",
-            "attrs": {
-              "line": {
-                "stroke": "#333333",
-                "targetMarker": {
-                  "name": "block"
-                },
-                "sourceMarker": {
-                  "name": ""
-                },
-                "strokeDasharray": null
-              }
-            },
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Flow",
-              "name": "Invoice Response",
-              "description": "",
-              "outOfScope": false,
-              "isTrustBoundary": false,
-              "reasonOutOfScope": "",
-              "hasOpenThreats": false,
-              "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
-              "threats": [
-                {
-                  "id": "b4c56baa-a953-498e-86d5-7b5aee3c5cf3",
-                  "title": "Invoice PDF content manipulation in transit",
-                  "status": "Open",
-                  "severity": "Medium",
-                  "type": "Tampering",
-                  "description": "On an unencrypted internal network, an attacker on the same host intercepts the byte stream between the PDF generation library and the file-write operation, replacing invoice amount fields.",
-                  "mitigation": "Generate and write invoice PDFs atomically within the application process (no separate file service); use TLS even for internal service communication; verify PDF integrity with a hash stored in the DB after generation.",
-                  "modelType": "STRIDE",
-                  "new": false,
-                  "number": 69,
-                  "score": ""
-                },
-                {
-                  "id": "30082019-8512-4ceb-91c3-1a28b32ae83e",
-                  "title": "Game image/invoice served without access control",
-                  "status": "Open",
-                  "severity": "High",
-                  "type": "Information disclosure",
-                  "description": "Invoice PDFs are served from GET /files/invoices/{filename}. Without auth checks on this endpoint, any user can enumerate filenames and download invoices belonging to other users.",
-                  "mitigation": "Authenticate and authorise all file delivery endpoints; verify that the requesting user's ID matches the invoice owner before streaming the file; use random UUID filenames (not predictable sequences); consider pre-signed, time-limited URLs for download links.",
-                  "modelType": "STRIDE",
-                  "new": false,
-                  "number": 70,
-                  "score": ""
-                },
-                {
-                  "id": "30bf8036-dcf2-45fe-8ed3-26c502a7b59b",
-                  "title": "Concurrent invoice PDF generation overloading CPU/memory",
-                  "status": "Open",
-                  "severity": "Medium",
-                  "type": "Denial of service",
-                  "description": "Attacker or bot places and completes 100 orders simultaneously. Each triggers synchronous PDF invoice generation (CPU and memory intensive), causing a Java heap OOM or CPU spike that degrades the entire application.",
-                  "mitigation": "Move PDF generation to an asynchronous background worker (message queue, e.g. RabbitMQ or Spring @Async); limit concurrent PDF generation tasks; apply per-user order rate limiting; set JVM heap limits appropriately in Docker container resource constraints.",
-                  "modelType": "STRIDE",
-                  "new": false,
-                  "number": 71,
-                  "score": ""
-                }
-              ],
-              "trustBoundaryIds": []
-            },
-            "labels": [
-              "Invoice Response"
-            ],
-            "id": "c88c0201-0a20-4a72-9ec1-b1f004c87c30",
-            "source": {
-              "cell": "db8a8443-6082-4047-b902-d407e7b46916",
-              "port": "1c16b99a-e4d9-493b-b2d1-bec5f5cf360d"
-            },
-            "target": {
-              "cell": "d1061d69-3f94-494b-b91a-70b59c8f0f31",
-              "port": "96977675-f551-4707-996c-a8ad9fd69fd2"
-            },
-            "vertices": [
-              {
-                "x": 1010,
-                "y": 600
-              }
-            ]
-          },
-          {
-            "shape": "flow",
-            "attrs": {
-              "line": {
-                "stroke": "red",
-                "strokeWidth": 2.5,
-                "targetMarker": {
-                  "name": "block"
-                },
-                "sourceMarker": {
-                  "name": ""
-                },
-                "strokeDasharray": null
-              }
-            },
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Flow",
-              "name": "Insert/Query\nGame Request",
-              "description": "",
-              "outOfScope": false,
-              "isTrustBoundary": false,
-              "reasonOutOfScope": "",
-              "hasOpenThreats": true,
-              "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
-              "threats": [
-                {
-                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
-                  "title": "SQL injection via unsanitised flow payload",
-                  "status": "Open",
-                  "severity": "High",
-                  "type": "Tampering",
-                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
-                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
-                  "modelType": "STRIDE",
-                  "new": false,
-                  "number": 63,
-                  "score": ""
-                },
-                {
-                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
-                  "title": "Credentials in DB connection string exposed",
-                  "status": "Open",
-                  "severity": "Critical",
-                  "type": "Information disclosure",
-                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
-                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
-                  "modelType": "STRIDE",
-                  "new": false,
-                  "number": 64,
-                  "score": ""
-                },
-                {
-                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
-                  "title": "Unbounded query results exhausting memory",
-                  "status": "Open",
-                  "severity": "Medium",
-                  "type": "Denial of service",
-                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
-                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
-                  "modelType": "STRIDE",
-                  "new": false,
-                  "number": 65,
-                  "score": ""
-                }
-              ],
-              "trustBoundaryIds": []
-            },
-            "labels": [
-              "Insert/Query\nGame Request"
-            ],
-            "id": "0dfd2c53-c1bf-44b6-a041-2bd373ba4669",
-            "source": {
-              "cell": "2f75482f-5a82-463d-8d69-497bff11476f",
-              "port": "559ea182-7aa1-47df-9fba-c043904e9ef7"
-            },
-            "target": {
-              "cell": "442e99a9-6b2f-44d6-9634-9fbc19487a07",
-              "port": "155867ca-daeb-4250-8d7b-88b44c12b071"
-            },
-            "vertices": [
-              {
-                "x": 980,
-                "y": 520
-              }
-            ]
-          },
-          {
-            "shape": "flow",
-            "attrs": {
-              "line": {
-                "stroke": "red",
-                "strokeWidth": 2.5,
-                "targetMarker": {
-                  "name": "block"
-                },
-                "sourceMarker": {
-                  "name": ""
-                },
-                "strokeDasharray": null
-              }
-            },
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Flow",
-              "name": "Database Response",
-              "description": "",
-              "outOfScope": false,
-              "isTrustBoundary": false,
-              "reasonOutOfScope": "",
-              "hasOpenThreats": true,
-              "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
-              "threats": [
-                {
-                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
-                  "title": "SQL injection via unsanitised flow payload",
-                  "status": "Open",
-                  "severity": "High",
-                  "type": "Tampering",
-                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
-                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
-                  "modelType": "STRIDE",
-                  "new": false,
-                  "number": 63,
-                  "score": ""
-                },
-                {
-                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
-                  "title": "Credentials in DB connection string exposed",
-                  "status": "Open",
-                  "severity": "Critical",
-                  "type": "Information disclosure",
-                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
-                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
-                  "modelType": "STRIDE",
-                  "new": false,
-                  "number": 64,
-                  "score": ""
-                },
-                {
-                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
-                  "title": "Unbounded query results exhausting memory",
-                  "status": "Open",
-                  "severity": "Medium",
-                  "type": "Denial of service",
-                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
-                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
-                  "modelType": "STRIDE",
-                  "new": false,
-                  "number": 65,
-                  "score": ""
-                }
-              ],
-              "trustBoundaryIds": []
-            },
-            "labels": [
-              "Database Response"
-            ],
-            "id": "490d4d42-67d4-4189-ae95-a46f3d82fdc8",
-            "source": {
-              "cell": "442e99a9-6b2f-44d6-9634-9fbc19487a07",
-              "port": "155867ca-daeb-4250-8d7b-88b44c12b071"
-            },
-            "target": {
-              "cell": "2f75482f-5a82-463d-8d69-497bff11476f",
-              "port": "6462db5d-54dc-4690-b84e-27bfe08ac13e"
-            },
-            "vertices": [
-              {
-                "x": 980,
-                "y": 640
+                "x": 1000,
+                "y": 470
               }
             ]
           },
@@ -3704,8 +3176,8 @@
             },
             "vertices": [
               {
-                "x": 980,
-                "y": 700
+                "x": 1010,
+                "y": 690
               }
             ]
           },
@@ -3797,8 +3269,8 @@
             },
             "vertices": [
               {
-                "x": 960,
-                "y": 790
+                "x": 1000,
+                "y": 750
               }
             ]
           },
@@ -3890,8 +3362,8 @@
             },
             "vertices": [
               {
-                "x": 980,
-                "y": 820
+                "x": 1030,
+                "y": 810
               }
             ]
           },
@@ -3988,8 +3460,8 @@
             },
             "vertices": [
               {
-                "x": 980,
-                "y": 900
+                "x": 1070,
+                "y": 870
               }
             ]
           },
@@ -4081,8 +3553,8 @@
             },
             "vertices": [
               {
-                "x": 910,
-                "y": 1010
+                "x": 1040,
+                "y": 960
               }
             ]
           },
@@ -4174,14 +3646,563 @@
             },
             "vertices": [
               {
-                "x": 900,
-                "y": 1100
+                "x": 1070,
+                "y": 1020
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Library Request",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "trustBoundaryIds": [
+                "8d1b9491-bc28-4019-abd2-b0b3f7b926a8"
+              ]
+            },
+            "labels": [
+              "Library Request"
+            ],
+            "id": "3d8ef28b-b98b-42e3-a0f8-5fd8ca60331b",
+            "source": {
+              "cell": "555b696f-ef2e-4fd3-b48b-bdda735ce50a",
+              "port": "3c71e586-3b1c-43a2-bebe-7ae3b8f9e0be"
+            },
+            "target": {
+              "cell": "2f75482f-5a82-463d-8d69-497bff11476f",
+              "port": "50f6dee5-2d25-48ed-ab91-defc2602c10f"
+            },
+            "vertices": [
+              {
+                "x": 650,
+                "y": 410
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Order Request",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "trustBoundaryIds": [
+                "8d1b9491-bc28-4019-abd2-b0b3f7b926a8"
+              ]
+            },
+            "labels": [
+              "Order Request"
+            ],
+            "id": "5b82061c-6d7b-48bd-ba8d-5a207729c90d",
+            "source": {
+              "cell": "555b696f-ef2e-4fd3-b48b-bdda735ce50a",
+              "port": "3c71e586-3b1c-43a2-bebe-7ae3b8f9e0be"
+            },
+            "target": {
+              "cell": "d1061d69-3f94-494b-b91a-70b59c8f0f31",
+              "port": "12ed4972-2035-4c0a-999c-742946d9ff1d"
+            },
+            "vertices": [
+              {
+                "x": 690,
+                "y": 540
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Database Response",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": true,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [
+                {
+                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
+                  "title": "SQL injection via unsanitised flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
+                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": ""
+                },
+                {
+                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
+                  "title": "Credentials in DB connection string exposed",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
+                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": ""
+                },
+                {
+                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
+                  "title": "Unbounded query results exhausting memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
+                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": []
+            },
+            "labels": [
+              "Database Response"
+            ],
+            "id": "490d4d42-67d4-4189-ae95-a46f3d82fdc8",
+            "source": {
+              "cell": "442e99a9-6b2f-44d6-9634-9fbc19487a07",
+              "port": "872844ed-2bc6-41ba-9826-51a1d9ea3c38"
+            },
+            "target": {
+              "cell": "2f75482f-5a82-463d-8d69-497bff11476f",
+              "port": "6462db5d-54dc-4690-b84e-27bfe08ac13e"
+            },
+            "vertices": [
+              {
+                "x": 1020,
+                "y": 630
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Insert/Query\nGame Request",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": true,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [
+                {
+                  "id": "b14e91f2-e021-4589-9a26-f13aa2e2b701",
+                  "title": "SQL injection via unsanitised flow payload",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "An unsanitised game search term is interpolated directly into a native JPA query: SELECT * FROM games WHERE title = '${input}'. Input of ' OR '1'='1 returns all records.",
+                  "mitigation": "Use Spring Data JPA repository methods or @Query with :param bindings exclusively; ban native query string concatenation via code review and SonarQube rules; parameterise all dynamic filters.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": ""
+                },
+                {
+                  "id": "fa37b2c2-a0eb-4422-87bf-a3192da5530f",
+                  "title": "Credentials in DB connection string exposed",
+                  "status": "Open",
+                  "severity": "Critical",
+                  "type": "Information disclosure",
+                  "description": "The application.properties file containing spring.datasource.password=plaintext is committed to the GitHub repository, exposing DB credentials to anyone with repo access.",
+                  "mitigation": "Store DB credentials in environment variables or a secrets manager (e.g. Docker secrets, HashiCorp Vault, or GitHub Actions secrets); never commit credentials to source control; add .gitignore rules and pre-commit hooks scanning for secrets (e.g. truffleHog, detect-secrets).",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": ""
+                },
+                {
+                  "id": "fc7058ba-6e06-47cb-8979-2f1b7ac6a6c6",
+                  "title": "Unbounded query results exhausting memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "GET /games with no pagination causes a SELECT * FROM games with no LIMIT, loading the entire catalogue into the JPA entity list in memory. As the catalogue grows, this causes OOM on the application server.",
+                  "mitigation": "Enforce pagination via Spring Data Pageable on all repository methods that return collections; set a maximum page size (e.g. 100); add DB indices on all ORDER BY and WHERE columns used in catalogue queries; query timeout configuration in HikariCP.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": []
+            },
+            "labels": [
+              "Insert/Query\nGame Request"
+            ],
+            "id": "0dfd2c53-c1bf-44b6-a041-2bd373ba4669",
+            "source": {
+              "cell": "2f75482f-5a82-463d-8d69-497bff11476f",
+              "port": "6462db5d-54dc-4690-b84e-27bfe08ac13e"
+            },
+            "target": {
+              "cell": "442e99a9-6b2f-44d6-9634-9fbc19487a07",
+              "port": "872844ed-2bc6-41ba-9826-51a1d9ea3c38"
+            },
+            "vertices": [
+              {
+                "x": 1100,
+                "y": 610
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Invoice Response",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": true,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [
+                {
+                  "id": "b4c56baa-a953-498e-86d5-7b5aee3c5cf3",
+                  "title": "Invoice PDF content manipulation in transit",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "On an unencrypted internal network, an attacker on the same host intercepts the byte stream between the PDF generation library and the file-write operation, replacing invoice amount fields.",
+                  "mitigation": "Generate and write invoice PDFs atomically within the application process (no separate file service); use TLS even for internal service communication; verify PDF integrity with a hash stored in the DB after generation.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 69,
+                  "score": ""
+                },
+                {
+                  "id": "30082019-8512-4ceb-91c3-1a28b32ae83e",
+                  "title": "Game image/invoice served without access control",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Invoice PDFs are served from GET /files/invoices/{filename}. Without auth checks on this endpoint, any user can enumerate filenames and download invoices belonging to other users.",
+                  "mitigation": "Authenticate and authorise all file delivery endpoints; verify that the requesting user's ID matches the invoice owner before streaming the file; use random UUID filenames (not predictable sequences); consider pre-signed, time-limited URLs for download links.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 70,
+                  "score": ""
+                },
+                {
+                  "id": "30bf8036-dcf2-45fe-8ed3-26c502a7b59b",
+                  "title": "Concurrent invoice PDF generation overloading CPU/memory",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Attacker or bot places and completes 100 orders simultaneously. Each triggers synchronous PDF invoice generation (CPU and memory intensive), causing a Java heap OOM or CPU spike that degrades the entire application.",
+                  "mitigation": "Move PDF generation to an asynchronous background worker (message queue, e.g. RabbitMQ or Spring @Async); limit concurrent PDF generation tasks; apply per-user order rate limiting; set JVM heap limits appropriately in Docker container resource constraints.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 71,
+                  "score": ""
+                }
+              ],
+              "trustBoundaryIds": []
+            },
+            "labels": [
+              "Invoice Response"
+            ],
+            "id": "c88c0201-0a20-4a72-9ec1-b1f004c87c30",
+            "source": {
+              "cell": "db8a8443-6082-4047-b902-d407e7b46916",
+              "port": "7fe4fa3e-8b92-4ed7-b191-719e1c9986a4"
+            },
+            "target": {
+              "cell": "d1061d69-3f94-494b-b91a-70b59c8f0f31",
+              "port": "96977675-f551-4707-996c-a8ad9fd69fd2"
+            },
+            "vertices": [
+              {
+                "x": 1080,
+                "y": 510
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Library Response",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "trustBoundaryIds": [
+                "8d1b9491-bc28-4019-abd2-b0b3f7b926a8"
+              ]
+            },
+            "labels": [
+              "Library Response"
+            ],
+            "id": "f0243ed9-94c6-48b2-b237-015c549cff29",
+            "source": {
+              "cell": "12268196-8d66-40dd-9801-8f7d2ccb8a17",
+              "port": "17ffd2c7-3c68-4fda-9582-beb579a721d3"
+            },
+            "target": {
+              "cell": "555b696f-ef2e-4fd3-b48b-bdda735ce50a",
+              "port": "d83a52dd-9f2f-4029-b911-20ae7082f3bb"
+            },
+            "vertices": [
+              {
+                "x": 660,
+                "y": 760
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Order Response",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "trustBoundaryIds": [
+                "8d1b9491-bc28-4019-abd2-b0b3f7b926a8"
+              ]
+            },
+            "labels": [
+              "Order Response"
+            ],
+            "id": "35fa7047-564a-41e8-baf6-8bfe739cb4fb",
+            "source": {
+              "cell": "d1061d69-3f94-494b-b91a-70b59c8f0f31",
+              "port": "12ed4972-2035-4c0a-999c-742946d9ff1d"
+            },
+            "target": {
+              "cell": "555b696f-ef2e-4fd3-b48b-bdda735ce50a",
+              "port": "3c71e586-3b1c-43a2-bebe-7ae3b8f9e0be"
+            },
+            "vertices": [
+              {
+                "x": 650,
+                "y": 590
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Library Request",
+              "description": "",
+              "outOfScope": false,
+              "isTrustBoundary": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "trustBoundaryIds": [
+                "8d1b9491-bc28-4019-abd2-b0b3f7b926a8"
+              ]
+            },
+            "labels": [
+              "Library Request"
+            ],
+            "id": "2b67564b-c4cd-4eab-bf93-2d3f4f757449",
+            "source": {
+              "cell": "555b696f-ef2e-4fd3-b48b-bdda735ce50a",
+              "port": "d83a52dd-9f2f-4029-b911-20ae7082f3bb"
+            },
+            "target": {
+              "cell": "12268196-8d66-40dd-9801-8f7d2ccb8a17",
+              "port": "17ffd2c7-3c68-4fda-9582-beb579a721d3"
+            },
+            "vertices": [
+              {
+                "x": 690,
+                "y": 680
               }
             ]
           },
           {
             "position": {
-              "x": 1180,
+              "x": 1220,
               "y": 720
             },
             "size": {
@@ -4384,16 +4405,16 @@
             ],
             "id": "9a700359-ac39-4075-b287-e24948b71fb3",
             "source": {
-              "x": 160,
+              "x": 180,
               "y": 360
             },
             "target": {
-              "x": 160,
+              "x": 180,
               "y": 760
             },
             "vertices": [
               {
-                "x": 140,
+                "x": 160,
                 "y": 560
               }
             ]
@@ -4444,25 +4465,48 @@
               "description": "",
               "isTrustBoundary": true,
               "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
+              "crossingFlows": [
+                "cf76e83d-810b-48b7-b360-191df09fa2e4",
+                "a047ed24-35cf-4b46-9f35-3065b95ce178",
+                "296bb735-cc4a-4aa8-b6df-ef6f6afafaef",
+                "fac047a0-235b-4623-a79a-238cbd99b0b3",
+                "2ce9fb7b-4a01-437c-abee-a5c3586cfea4",
+                "7ebda1de-ab93-4896-91fa-6e784cbfb14f",
+                "9867844e-4c08-4472-af31-355d06d1c102",
+                "3d8ef28b-b98b-42e3-a0f8-5fd8ca60331b",
+                "5b82061c-6d7b-48bd-ba8d-5a207729c90d",
+                "f0243ed9-94c6-48b2-b237-015c549cff29",
+                "35fa7047-564a-41e8-baf6-8bfe739cb4fb",
+                "2b67564b-c4cd-4eab-bf93-2d3f4f757449"
+              ],
+              "containedElements": [
+                "555b696f-ef2e-4fd3-b48b-bdda735ce50a"
+              ]
             },
             "labels": [
               "REST/Modules\nBoundary"
             ],
             "id": "8d1b9491-bc28-4019-abd2-b0b3f7b926a8",
             "source": {
-              "x": 610,
-              "y": 420
+              "x": 470,
+              "y": 370
             },
             "target": {
-              "x": 610,
+              "x": 410,
               "y": 980
             },
             "vertices": [
               {
-                "x": 700,
-                "y": 700
+                "x": 620,
+                "y": 430
+              },
+              {
+                "x": 740,
+                "y": 620
+              },
+              {
+                "x": 680,
+                "y": 830
               }
             ]
           },
@@ -4487,16 +4531,16 @@
             "id": "83b45577-4b49-4036-8eb9-63715e3656d4",
             "source": {
               "x": 850,
-              "y": 120
+              "y": 140
             },
             "target": {
-              "x": 1120,
-              "y": 320
+              "x": 1050,
+              "y": 290
             },
             "vertices": [
               {
                 "x": 990,
-                "y": 170
+                "y": 190
               }
             ]
           },
@@ -4520,21 +4564,21 @@
             ],
             "id": "05f5577b-52b5-4234-b10f-66c993637b71",
             "source": {
-              "x": 1080,
-              "y": 260
+              "x": 1150,
+              "y": 350
             },
             "target": {
-              "x": 1130,
-              "y": 600
+              "x": 1180,
+              "y": 580
             },
             "vertices": [
               {
-                "x": 1130,
-                "y": 380
+                "x": 1190,
+                "y": 390
               },
               {
-                "x": 1150,
-                "y": 520
+                "x": 1210,
+                "y": 470
               }
             ]
           },
@@ -4558,16 +4602,16 @@
             ],
             "id": "e8fc15f6-b12c-405b-89c2-97ea1eecbbe0",
             "source": {
-              "x": 1090,
-              "y": 520
+              "x": 1210,
+              "y": 610
             },
             "target": {
-              "x": 1090,
-              "y": 980
+              "x": 1210,
+              "y": 950
             },
             "vertices": [
               {
-                "x": 1130,
+                "x": 1170,
                 "y": 760
               }
             ]
@@ -5423,13 +5467,6 @@
                 "informationDisclosure": 1,
                 "denialOfService": 1
               }
-            },
-            "tools": {
-              "items": [
-                "boundary",
-                "button-remove"
-              ],
-              "name": null
             }
           },
           {
@@ -5616,108 +5653,6 @@
                 "denialOfService": 1
               }
             }
-          },
-          {
-            "shape": "trust-boundary-curve",
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Boundary",
-              "name": "User/System\nBoundary",
-              "description": "",
-              "isTrustBoundary": true,
-              "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
-            },
-            "labels": [
-              "User/System\nBoundary"
-            ],
-            "id": "b913edae-b541-4d49-925e-a7a56aca5b90",
-            "source": {
-              "x": 230,
-              "y": 260
-            },
-            "target": {
-              "x": 230,
-              "y": 620
-            },
-            "vertices": [
-              {
-                "x": 210,
-                "y": 440
-              }
-            ]
-          },
-          {
-            "shape": "trust-boundary-curve",
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Boundary",
-              "name": "Auth/System\nBoundary",
-              "description": "",
-              "isTrustBoundary": true,
-              "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
-            },
-            "labels": [
-              "Auth/System\nBoundary"
-            ],
-            "id": "716e8c1a-b159-4831-a70a-58ea5498e70a",
-            "source": {
-              "x": 380,
-              "y": 170
-            },
-            "target": {
-              "x": 720,
-              "y": 170
-            },
-            "vertices": [
-              {
-                "x": 550,
-                "y": 130
-              }
-            ]
-          },
-          {
-            "shape": "trust-boundary-curve",
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Boundary",
-              "name": "RAWG API/System\nBoundary",
-              "description": "",
-              "isTrustBoundary": true,
-              "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
-            },
-            "labels": [
-              "RAWG API/System\nBoundary"
-            ],
-            "id": "c4f03aaa-659b-4fed-b573-cc23ff52d0bb",
-            "source": {
-              "x": 380,
-              "y": 740
-            },
-            "target": {
-              "x": 720,
-              "y": 740
-            },
-            "vertices": [
-              {
-                "x": 550,
-                "y": 790
-              }
-            ]
           },
           {
             "shape": "flow",
@@ -5998,7 +5933,7 @@
             },
             "vertices": [
               {
-                "x": 515,
+                "x": 500,
                 "y": 260
               }
             ]
@@ -6096,7 +6031,7 @@
             },
             "vertices": [
               {
-                "x": 590,
+                "x": 600,
                 "y": 260
               }
             ]
@@ -6682,44 +6617,6 @@
             "connector": "smooth",
             "data": {
               "type": "tm.Boundary",
-              "name": "Module/FileSystem\nBoundary",
-              "description": "",
-              "isTrustBoundary": true,
-              "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
-            },
-            "labels": [
-              "Module/FileSystem\nBoundary"
-            ],
-            "id": "4e353e80-b952-470d-8a58-c0ed4b96a5be",
-            "source": {
-              "x": 860,
-              "y": 470
-            },
-            "target": {
-              "x": 770,
-              "y": 680
-            },
-            "vertices": [
-              {
-                "x": 860,
-                "y": 580
-              },
-              {
-                "x": 810,
-                "y": 660
-              }
-            ]
-          },
-          {
-            "shape": "trust-boundary-curve",
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Boundary",
               "name": "Database/User\nBoundary",
               "description": "",
               "isTrustBoundary": true,
@@ -6745,8 +6642,148 @@
                 "y": 280
               },
               {
-                "x": 895,
-                "y": 330
+                "x": 890,
+                "y": 350
+              }
+            ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Auth/System\nBoundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "Auth/System\nBoundary"
+            ],
+            "id": "716e8c1a-b159-4831-a70a-58ea5498e70a",
+            "source": {
+              "x": 380,
+              "y": 230
+            },
+            "target": {
+              "x": 720,
+              "y": 230
+            },
+            "vertices": [
+              {
+                "x": 550,
+                "y": 190
+              }
+            ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Module/FileSystem\nBoundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "Module/FileSystem\nBoundary"
+            ],
+            "id": "4e353e80-b952-470d-8a58-c0ed4b96a5be",
+            "source": {
+              "x": 900,
+              "y": 470
+            },
+            "target": {
+              "x": 810,
+              "y": 680
+            },
+            "vertices": [
+              {
+                "x": 900,
+                "y": 580
+              },
+              {
+                "x": 850,
+                "y": 660
+              }
+            ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "RAWG API/System\nBoundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "RAWG API/System\nBoundary"
+            ],
+            "id": "c4f03aaa-659b-4fed-b573-cc23ff52d0bb",
+            "source": {
+              "x": 380,
+              "y": 720
+            },
+            "target": {
+              "x": 720,
+              "y": 720
+            },
+            "vertices": [
+              {
+                "x": 550,
+                "y": 770
+              }
+            ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "User/System\nBoundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "User/System\nBoundary"
+            ],
+            "id": "b913edae-b541-4d49-925e-a7a56aca5b90",
+            "source": {
+              "x": 230,
+              "y": 260
+            },
+            "target": {
+              "x": 230,
+              "y": 620
+            },
+            "vertices": [
+              {
+                "x": 210,
+                "y": 440
               }
             ]
           }
@@ -6970,7 +7007,7 @@
           },
           {
             "position": {
-              "x": 430,
+              "x": 440,
               "y": 100
             },
             "size": {
@@ -7591,7 +7628,7 @@
           },
           {
             "position": {
-              "x": 430,
+              "x": 480,
               "y": 500
             },
             "size": {
@@ -7816,17 +7853,17 @@
             ],
             "id": "0ebc02d7-57e8-4280-8bad-a1605f97f1af",
             "source": {
-              "x": 350,
-              "y": 60
+              "x": 340,
+              "y": 30
             },
             "target": {
-              "x": 380,
+              "x": 340,
               "y": 280
             },
             "vertices": [
               {
-                "x": 365,
-                "y": 170
+                "x": 370,
+                "y": 150
               }
             ]
           },
@@ -7850,16 +7887,16 @@
             ],
             "id": "4304f8e4-58a2-4a3d-898f-318362f6b98c",
             "source": {
-              "x": 730,
-              "y": 50
+              "x": 720,
+              "y": 40
             },
             "target": {
-              "x": 760,
-              "y": 230
+              "x": 730,
+              "y": 260
             },
             "vertices": [
               {
-                "x": 745,
+                "x": 760,
                 "y": 140
               }
             ]
@@ -7884,17 +7921,17 @@
             ],
             "id": "4eee38fc-53d8-4dd6-8ac7-fe9d9c56afb3",
             "source": {
-              "x": 20,
-              "y": 420
+              "x": 10,
+              "y": 400
             },
             "target": {
               "x": 250,
-              "y": 420
+              "y": 400
             },
             "vertices": [
               {
                 "x": 135,
-                "y": 460
+                "y": 420
               }
             ]
           },
@@ -7918,16 +7955,16 @@
             ],
             "id": "c1bcec61-176c-4696-bdf9-e28ef94cf28e",
             "source": {
-              "x": 330,
-              "y": 460
+              "x": 390,
+              "y": 450
             },
             "target": {
-              "x": 380,
-              "y": 630
+              "x": 400,
+              "y": 640
             },
             "vertices": [
               {
-                "x": 355,
+                "x": 420,
                 "y": 540
               }
             ]
@@ -8025,8 +8062,8 @@
             },
             "vertices": [
               {
-                "x": 250,
-                "y": 90
+                "x": 310,
+                "y": 100
               }
             ]
           },
@@ -8118,8 +8155,8 @@
             },
             "vertices": [
               {
-                "x": 250,
-                "y": 190
+                "x": 320,
+                "y": 210
               }
             ]
           },
@@ -8229,8 +8266,8 @@
             },
             "vertices": [
               {
-                "x": 640,
-                "y": 90
+                "x": 690,
+                "y": 100
               }
             ]
           },
@@ -8335,8 +8372,8 @@
             },
             "vertices": [
               {
-                "x": 650,
-                "y": 180
+                "x": 700,
+                "y": 200
               }
             ]
           },
@@ -8467,8 +8504,8 @@
             },
             "vertices": [
               {
-                "x": 20,
-                "y": 300
+                "x": 70,
+                "y": 350
               }
             ]
           },
@@ -8604,8 +8641,8 @@
             },
             "vertices": [
               {
-                "x": 110,
-                "y": 320
+                "x": 190,
+                "y": 350
               }
             ]
           },
@@ -8741,8 +8778,8 @@
             },
             "vertices": [
               {
-                "x": 260,
-                "y": 500
+                "x": 320,
+                "y": 490
               }
             ]
           },
@@ -8873,8 +8910,8 @@
             },
             "vertices": [
               {
-                "x": 260,
-                "y": 580
+                "x": 320,
+                "y": 600
               }
             ]
           }
@@ -10001,7 +10038,7 @@
             },
             "vertices": [
               {
-                "x": 430,
+                "x": 410,
                 "y": 220
               }
             ]
@@ -10135,8 +10172,8 @@
             },
             "vertices": [
               {
-                "x": 500,
-                "y": 230
+                "x": 490,
+                "y": 220
               }
             ]
           },
@@ -10274,8 +10311,8 @@
             },
             "vertices": [
               {
-                "x": 650,
-                "y": 400
+                "x": 630,
+                "y": 360
               }
             ]
           },
@@ -10408,8 +10445,8 @@
             },
             "vertices": [
               {
-                "x": 650,
-                "y": 470
+                "x": 630,
+                "y": 430
               }
             ]
           },
@@ -10548,7 +10585,7 @@
             "vertices": [
               {
                 "x": 500,
-                "y": 610
+                "y": 570
               }
             ]
           },
@@ -10681,8 +10718,8 @@
             },
             "vertices": [
               {
-                "x": 380,
-                "y": 610
+                "x": 400,
+                "y": 570
               }
             ]
           },
@@ -10815,8 +10852,8 @@
             },
             "vertices": [
               {
-                "x": 240,
-                "y": 390
+                "x": 270,
+                "y": 370
               }
             ]
           },
@@ -10954,8 +10991,8 @@
             },
             "vertices": [
               {
-                "x": 240,
-                "y": 470
+                "x": 280,
+                "y": 440
               }
             ]
           }
@@ -11533,8 +11570,8 @@
           },
           {
             "position": {
-              "x": 620,
-              "y": 420
+              "x": 610,
+              "y": 340
             },
             "size": {
               "width": 120,
@@ -11758,17 +11795,17 @@
             ],
             "id": "42d94728-b522-437b-99f9-0539f2c0b1e2",
             "source": {
-              "x": 20,
-              "y": 210
+              "x": -40,
+              "y": 230
             },
             "target": {
-              "x": 470,
-              "y": 210
+              "x": 410,
+              "y": 230
             },
             "vertices": [
               {
-                "x": 240,
-                "y": 150
+                "x": 180,
+                "y": 170
               }
             ]
           },
@@ -11792,17 +11829,17 @@
             ],
             "id": "6ff7df04-8d70-49e8-a256-1b325a966b99",
             "source": {
-              "x": 20,
-              "y": 700
+              "x": -10,
+              "y": 690
             },
             "target": {
-              "x": 470,
-              "y": 700
+              "x": 370,
+              "y": 690
             },
             "vertices": [
               {
-                "x": 240,
-                "y": 740
+                "x": 180,
+                "y": 720
               }
             ]
           },
@@ -11827,16 +11864,16 @@
             "id": "1dfcf38d-12d4-4684-a995-473285c6090e",
             "source": {
               "x": 540,
-              "y": 300
+              "y": 260
             },
             "target": {
-              "x": 560,
-              "y": 640
+              "x": 530,
+              "y": 520
             },
             "vertices": [
               {
                 "x": 520,
-                "y": 460
+                "y": 380
               }
             ]
           },
@@ -11972,8 +12009,8 @@
             },
             "vertices": [
               {
-                "x": 150,
-                "y": 250
+                "x": 140,
+                "y": 240
               }
             ]
           },
@@ -12104,7 +12141,7 @@
             },
             "vertices": [
               {
-                "x": 230,
+                "x": 220,
                 "y": 240
               }
             ]
@@ -12236,7 +12273,7 @@
             },
             "vertices": [
               {
-                "x": 150,
+                "x": 130,
                 "y": 590
               }
             ]
@@ -12373,8 +12410,8 @@
             },
             "vertices": [
               {
-                "x": 240,
-                "y": 590
+                "x": 220,
+                "y": 600
               }
             ]
           },
@@ -12511,7 +12548,7 @@
             "vertices": [
               {
                 "x": 430,
-                "y": 390
+                "y": 350
               }
             ]
           },
@@ -12643,7 +12680,7 @@
             "vertices": [
               {
                 "x": 430,
-                "y": 470
+                "y": 420
               }
             ]
           }
@@ -13627,8 +13664,8 @@
           },
           {
             "position": {
-              "x": 505,
-              "y": 125
+              "x": 515,
+              "y": 110
             },
             "size": {
               "width": 120,
@@ -13806,7 +13843,7 @@
           },
           {
             "position": {
-              "x": 505,
+              "x": 515,
               "y": 780
             },
             "size": {
@@ -13984,184 +14021,6 @@
             }
           },
           {
-            "shape": "trust-boundary-curve",
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Boundary",
-              "name": "Module/Data\nHandler\nBoundary",
-              "description": "",
-              "isTrustBoundary": true,
-              "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
-            },
-            "labels": [
-              "Module/Data\nHandler\nBoundary"
-            ],
-            "id": "dfadf953-37b8-498d-b07e-bd7c08317bfe",
-            "source": {
-              "x": 20,
-              "y": 290
-            },
-            "target": {
-              "x": 260,
-              "y": 290
-            },
-            "vertices": [
-              {
-                "x": 135,
-                "y": 260
-              }
-            ]
-          },
-          {
-            "shape": "trust-boundary-curve",
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Boundary",
-              "name": "Data Handler/\nDatabase\nBoundary",
-              "description": "",
-              "isTrustBoundary": true,
-              "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
-            },
-            "labels": [
-              "Data Handler/\nDatabase\nBoundary"
-            ],
-            "id": "dd9b40ee-fbf1-4008-889b-47909c53a933",
-            "source": {
-              "x": 390,
-              "y": 40
-            },
-            "target": {
-              "x": 430,
-              "y": 260
-            },
-            "vertices": [
-              {
-                "x": 450,
-                "y": 150
-              }
-            ]
-          },
-          {
-            "shape": "trust-boundary-curve",
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Boundary",
-              "name": "Module/Metadata\nHandler Boundary",
-              "description": "",
-              "isTrustBoundary": true,
-              "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
-            },
-            "labels": [
-              "Module/Metadata\nHandler Boundary"
-            ],
-            "id": "3653080f-20c4-40ea-bf18-66eece71c960",
-            "source": {
-              "x": 400,
-              "y": 370
-            },
-            "target": {
-              "x": 430,
-              "y": 590
-            },
-            "vertices": [
-              {
-                "x": 445,
-                "y": 480
-              }
-            ]
-          },
-          {
-            "shape": "trust-boundary-curve",
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Boundary",
-              "name": "Metadata\nHandler/RAWG\nBoundary",
-              "description": "",
-              "isTrustBoundary": true,
-              "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
-            },
-            "labels": [
-              "Metadata\nHandler/RAWG\nBoundary"
-            ],
-            "id": "fef16814-fd87-4ea3-a2f4-03daf0df4aaf",
-            "source": {
-              "x": 760,
-              "y": 370
-            },
-            "target": {
-              "x": 790,
-              "y": 600
-            },
-            "vertices": [
-              {
-                "x": 910,
-                "y": 390
-              },
-              {
-                "x": 960,
-                "y": 450
-              },
-              {
-                "x": 920,
-                "y": 570
-              }
-            ]
-          },
-          {
-            "shape": "trust-boundary-curve",
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Boundary",
-              "name": "Image Handler/\nFile System\nBoundary",
-              "description": "",
-              "isTrustBoundary": true,
-              "hasOpenThreats": false,
-              "crossingFlows": [],
-              "containedElements": []
-            },
-            "labels": [
-              "Image Handler/\nFile System\nBoundary"
-            ],
-            "id": "b84a3748-e4be-4a1e-9f5b-3b8aadbbb196",
-            "source": {
-              "x": 390,
-              "y": 700
-            },
-            "target": {
-              "x": 430,
-              "y": 880
-            },
-            "vertices": [
-              {
-                "x": 450,
-                "y": 790
-              }
-            ]
-          },
-          {
             "shape": "flow",
             "attrs": {
               "line": {
@@ -14250,7 +14109,7 @@
             "vertices": [
               {
                 "x": 100,
-                "y": 315
+                "y": 310
               }
             ]
           },
@@ -14343,7 +14202,7 @@
             "vertices": [
               {
                 "x": 180,
-                "y": 315
+                "y": 300
               }
             ]
           },
@@ -14435,8 +14294,8 @@
             },
             "vertices": [
               {
-                "x": 300,
-                "y": 130
+                "x": 330,
+                "y": 110
               }
             ]
           },
@@ -14528,8 +14387,8 @@
             },
             "vertices": [
               {
-                "x": 310,
-                "y": 200
+                "x": 330,
+                "y": 180
               }
             ]
           },
@@ -14812,8 +14671,8 @@
             },
             "vertices": [
               {
-                "x": 730,
-                "y": 450
+                "x": 810,
+                "y": 440
               }
             ]
           },
@@ -14905,8 +14764,8 @@
             },
             "vertices": [
               {
-                "x": 720,
-                "y": 510
+                "x": 820,
+                "y": 520
               }
             ]
           },
@@ -15189,8 +15048,8 @@
             },
             "vertices": [
               {
-                "x": 310,
-                "y": 760
+                "x": 320,
+                "y": 770
               }
             ]
           },
@@ -15282,8 +15141,144 @@
             },
             "vertices": [
               {
-                "x": 320,
-                "y": 830
+                "x": 330,
+                "y": 840
+              }
+            ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Data Handler/\nDatabase\nBoundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "Data Handler/\nDatabase\nBoundary"
+            ],
+            "id": "dd9b40ee-fbf1-4008-889b-47909c53a933",
+            "source": {
+              "x": 400,
+              "y": 30
+            },
+            "target": {
+              "x": 420,
+              "y": 270
+            },
+            "vertices": [
+              {
+                "x": 430,
+                "y": 150
+              }
+            ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Module/Data\nHandler\nBoundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "Module/Data\nHandler\nBoundary"
+            ],
+            "id": "dfadf953-37b8-498d-b07e-bd7c08317bfe",
+            "source": {
+              "x": 20,
+              "y": 270
+            },
+            "target": {
+              "x": 250,
+              "y": 270
+            },
+            "vertices": [
+              {
+                "x": 135,
+                "y": 240
+              }
+            ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Module/Metadata\nHandler Boundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "Module/Metadata\nHandler Boundary"
+            ],
+            "id": "3653080f-20c4-40ea-bf18-66eece71c960",
+            "source": {
+              "x": 420,
+              "y": 370
+            },
+            "target": {
+              "x": 430,
+              "y": 590
+            },
+            "vertices": [
+              {
+                "x": 445,
+                "y": 480
+              }
+            ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Metadata\nHandler/RAWG\nBoundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "Metadata\nHandler/RAWG\nBoundary"
+            ],
+            "id": "df0a0db6-4446-4ef5-a23a-24a2dc29b198",
+            "source": {
+              "x": 950,
+              "y": 380
+            },
+            "target": {
+              "x": 950,
+              "y": 600
+            },
+            "vertices": [
+              {
+                "x": 970,
+                "y": 480
               }
             ]
           },
@@ -15307,21 +15302,51 @@
             ],
             "id": "fb231d78-bc22-4092-a52c-4a5529330831",
             "source": {
-              "x": 40,
-              "y": 780
+              "x": 20,
+              "y": 720
             },
             "target": {
               "x": 280,
-              "y": 750
+              "y": 720
             },
             "vertices": [
               {
-                "x": 60,
-                "y": 720
-              },
+                "x": 170,
+                "y": 730
+              }
+            ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Image Handler/\nFile System\nBoundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false,
+              "crossingFlows": [],
+              "containedElements": []
+            },
+            "labels": [
+              "Image Handler/\nFile System\nBoundary"
+            ],
+            "id": "b84a3748-e4be-4a1e-9f5b-3b8aadbbb196",
+            "source": {
+              "x": 430,
+              "y": 710
+            },
+            "target": {
+              "x": 430,
+              "y": 900
+            },
+            "vertices": [
               {
-                "x": 160,
-                "y": 700
+                "x": 450,
+                "y": 790
               }
             ]
           }
