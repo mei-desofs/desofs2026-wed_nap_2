@@ -2,258 +2,54 @@
 
 ## 1. Purpose and Scope
 
-This document defines the Phase 1 security testing plan for ArcadeHaven. The plan is focused on:
+This document defines the Phase 1 security testing plan for ArcadeHaven. The plan is focused on defining the:
+- **Abuse Cases** testing methodology;
+- **DFDs STRIDE** testing methodology.
 
-- Defining the security testing methodology.
-- Using abuse cases as the basis for test design.
-- Documenting the threat model review process.
-- Ensuring traceability between security requirements and planned tests.
+## 2. Abuse Tests Cases
 
-This phase includes planning and traceability only. Test execution will occur during Sprint 1 and Sprint 2.
+| Test ID  | Abuse Case ID | Abuse Case | What to Test| Test Procedure| Expected Result |
+| -------- | ------------- | ---------- | ----------- | ------------- | --------------- |
+| T-AC-01  | AC-01         | Inject Malicious Code | Input sanitization | Submit script payloads, malformed JSON, and SQL meta-characters in user inputs | Payload is rejected or sanitized. No scripts are executed and no SQL query manipulation occurs |
+| T-AC-02  | AC-02         | Hijack Account | Session and token protection | Attempt the reuse of an existing session JWT Token | Access denied and report suspicious reuse of the token in logs |
+| T-AC-03  | AC-03         | Dictionary Attack | Login protection | Attempt logins using common password dictionaries | Rate limiting, lock endpoint to user/IP or MFA challenge triggered. No account takeover. |
+| T-AC-04  | AC-04         | Brute Force Login | Authentication resilience | Repeated failed login attempts | Lock endpoint to user/IP, throttling or MFA enforcement |
+| T-AC-05  | AC-05         | JWT Token Theft | Token misuse detection | Replay a valid JWT from another client or use expired token | Invalid/expired token rejected with no authorization access |
+| T-AC-06a | AC-06 (A-BC)  | Privilege Escalation (Role Management) | Admin-only operations | Call role change endpoint with non-admin tokens | Non-execute operation with 403 Fordbidden response |
+| T-AC-06b | AC-06 (G-MAC) | Privilege Escalation (Game Management) | Restricted game-management actions | Attempt protected game management operations with non-publisher token | Non-execute operation with 403 Fordbidden response |
+| T-AC-07  | AC-07         | JWT Token Theft (Protected Operations) | Endpoint authentication | Call protected role-management endpoints with invalid, expired or stolen tokens | Non-execute operation with 403 Fordbidden response |
+| T-AC-08  | AC-08         | Upload Malicious File | File upload validation | Upload executable and scripts files renamed as image/PDF | Upload rejected or filename sanitized. No file execution occurs |
+| T-AC-09  | AC-09         | Upload Oversized File | Upload images above specified size | Upload images above allowed size | Upload rejected with size limit rejection response |
+| T-AC-10  | AC-10         | Bypass MIME Verification | File type verification | Upload file with safe extension but malicious content or mismatched MIME type | Server validates contents and either rejects or sanitizes malicious file |
+| T-AC-11  | AC-11         | Guess Game Key | Key entropy and validation | Try random key activations and brute-force attempts | Invalid keys rejected, trigger rate limiting and monitorig |
+| T-AC-12  | AC-12         | Modify Order | Server-side order integrity            | Alter order data in body | Server recalculates and validates values. Order rejected |
+| T-AC-13  | AC-13         | Force Duplicated Purchase | Business logic integrity | Attempt repeated purchase of a game | Server validates game purchase and rejects or handles rest of the order safely |
+| T-AC-14  | AC-14         | Bypass Payment | Order finalization validation | Attempt to complete order without valid payment confirmation | Server-side verifies payment confirmation and order is not completed |
+| T-AC-15  | AC-15         | Invoice ID Enumeration | Object-level authorization | Request invoices by random/sequential IDs of other users invoices | Access denied with 403 Fordbidden response |
+| T-AC-16  | AC-16         | Path Traversal Attack | File path handling | Request `../` paths and encoded traversal variants in download endpoints | Traversal path blocked with rejected operation or sanited path file |
+| T-AC-17  | AC-17         | Unauthorized Invoice Access | Secure file access | Try direct file download without proper token | Access denied with 403 Fordbidden response |
 
-This document is self-contained; the threat model review workflow and phase roadmap are included inline.
+## 3. STRIDE Tests Cases
 
-## 2. Security Testing Methodology
-
-The methodology combines:
-
-- OWASP Web Security Testing Guide as the main testing reference.
-- OWASP ASVS as the verification baseline for controls.
-- Risk-based prioritization using STRIDE and DREAD.
-
-### 2.1 Testing Layers
-
-1. Requirements and design security review.
-2. Static analysis and dependency analysis.
-3. API security testing.
-4. Authentication and authorization testing.
-5. Input validation and file operation testing.
-6. Logging and security monitoring validation.
-
-### 2.2 Planned Techniques and Tools
-
-| Test Type | Planned Technique | Planned Tooling | Main Output |
-| --- | --- | --- | --- |
-| SAST | Source code and rule-based analysis | SonarCloud, CodeQL | Findings and severity report |
-| SCA | Dependency vulnerability analysis | OWASP Dependency-Check, Snyk, Dependabot | CVE report and fix backlog |
-| DAST | Runtime API probing and attack simulation | OWASP ZAP | DAST report |
-| Auth/Authz | Manual and automated scenario testing | Postman/Newman, API tests | Access-control validation results |
-| Input and file validation | Negative testing with malicious payloads | Integration tests, request collections | Validation and rejection evidence |
-| Logging and auditability | Event generation and verification | Application logs, SIEM-ready logs | Audit trail evidence |
-
-### 2.3 Entry and Exit Criteria
-
-Entry criteria:
-
-- Security requirements are approved.
-- Abuse cases are documented and linked to requirements.
-- Threat model baseline is published.
-
-Exit criteria:
-
-- Each mapped security requirement has at least one planned test.
-- High-risk abuse cases are covered by planned tests.
-- Threat model review checklist is completed.
-
-## 3. Abuse-Case Driven Testing Strategy
-
-The seed abuse-case model covers authentication and authorization. The testing plan expands coverage to game, order, library, and file-operation flows.
-
-Abuse-case diagram references:
-
-- Abuse-case catalog: [../ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md](../ThreatModeling/AbuseCases/v1/AbuseCasesExpanded.md)
-- Auth diagram: [../ThreatModeling/AbuseCases/v1/authorization-abuse-case.puml](../ThreatModeling/AbuseCases/v1/authorization-abuse-case.puml)
-- Game diagram: [../ThreatModeling/AbuseCases/v1/game-management-abuse-case.puml](../ThreatModeling/AbuseCases/v1/game-management-abuse-case.puml)
-- Orders and library diagram: [../ThreatModeling/AbuseCases/v1/orders-library-abuse-case.puml](../ThreatModeling/AbuseCases/v1/orders-library-abuse-case.puml)
-- File operations diagram: [../ThreatModeling/AbuseCases/v1/file-operations-abuse-case.puml](../ThreatModeling/AbuseCases/v1/file-operations-abuse-case.puml)
-
-### 3.1 Abuse Cases for Security Planning
-
-The table below lists all 20 abuse cases used as the baseline for this plan.
-
-| Abuse Case ID | Abuse Case | Target Flow | Related Requirements |
-| --- | --- | --- | --- |
-| AC-01 | Brute Force Login | Login | RF-02, RNF-09 |
-| AC-02 | JWT Token Theft/Reuse | Authenticated API access | RF-02, RNF-02, RNF-03, RNF-05 |
-| AC-03 | Privilege Escalation | Role changes and admin actions | RF-03, RF-04, RF-05, RNF-04 |
-| AC-04 | SQL Injection in search/filter | Search and game listing | RF-11, RNF-06 |
-| AC-05 | Malicious file upload | Image upload | RF-29, RF-30, RNF-10 |
-| AC-06 | Path traversal on invoice download | Invoice retrieval | RF-19, RF-27 |
-| AC-07 | Activation key disclosure | Library and key visualization | RF-23, RF-28, RNF-08 |
-| AC-08 | Order tampering | Order create and cancel | RF-14, RF-20 |
-| AC-09 | Username enumeration during login errors | Login error response | RF-02, RNF-07, RNF-09 |
-| AC-10 | Password reset abuse and token guessing | Password reset flow | RF-02, RNF-02 |
-| AC-11 | Forced browsing to publisher-only routes | Publisher game routes | RF-07, RF-08, RNF-04 |
-| AC-12 | Forced browsing to admin approval endpoints | Admin game approval | RF-09, RNF-04 |
-| AC-13 | Mass assignment in profile updates | Profile update endpoint | RF-06, RNF-06 |
-| AC-14 | Stored XSS via game description fields | Game create/edit form | RF-07, RF-08, RNF-06 |
-| AC-15 | Duplicate order race condition abuse | Order creation | RF-14, RF-15 |
-| AC-16 | Unauthorized order cancellation | Order cancel endpoint | RF-20, RNF-04 |
-| AC-17 | Unauthorized library entry revocation | Library management | RF-25, RNF-04 |
-| AC-18 | Exposure of sensitive logs with tokens/passwords | Logging output | RNF-07, RNF-23 |
-| AC-19 | Abuse of RAWG integration for payload pollution | External API enrichment | RF-12, RNF-06, RNF-16 |
-| AC-20 | Abuse of startup directory creation with unsafe paths | File system initialization | RF-26, RF-27 |
-| AC-21 | Log injection via CRLF — attacker injects newline characters into user-controlled fields (login username, search query, game description) to forge or corrupt structured log entries | Any input field that is logged (login, search, game description, profile) | RNF-06, RNF-07 |
-
-### 3.2 Abuse-Case Coverage Rule
-
-Each abuse case must have:
-
-1. A mapped threat category.
-2. At least one planned security test.
-3. Expected security control and evidence type.
-
-### 3.3 Domain Coverage Summary
-
-| Domain | Count | Abuse Case IDs | Primary Threat IDs |
-| --- | --- | --- | --- |
-| Authentication | 4 | AC-01, AC-02, AC-09, AC-10 | TH-01, TH-02 |
-| Authorization | 4 | AC-03, AC-11, AC-12, AC-17 | TH-03, TH-09 |
-| Input Validation and Injection | 4 | AC-04, AC-13, AC-14, AC-19 | TH-04 |
-| File and Storage Operations | 4 | AC-05, AC-06, AC-07, AC-20 | TH-05, TH-06, TH-07 |
-| Orders and Business Logic | 3 | AC-08, AC-15, AC-16 | TH-08 |
-| Logging and Error Handling | 2 | AC-18, AC-21 | TH-07, TH-09 |
-
-## 4. Threat Model Review Process
-
-### 4.1 Review Triggers
-
-Threat model review is mandatory when any of the following occurs:
-
-- New endpoint or exposed API contract change.
-- Authentication or authorization rule change.
-- Data flow or trust boundary change.
-- New integration with external systems.
-- New file-system operation triggered by user input.
-
-### 4.2 Roles
-
-- Threat Model Owner: maintains threat inventory and updates mappings.
-- Security Reviewer: validates STRIDE classification and risk scoring quality.
-- Technical Owner: confirms feasibility and implementation details.
-- Approver: confirms acceptance of risk and planned actions.
-
-### 4.3 Review Cadence
-
-- Sprint planning: review planned changes and expected threats.
-- Sprint end: validate implemented controls and update residual risk.
-- Before release: perform final review of high-risk threats.
-
-### 4.4 Review Workflow Steps
-
-1. Change detection and review request.
-2. Identify impacted assets and trust boundaries.
-3. Re-run STRIDE classification for impacted scope.
-4. Update DREAD scores in risk register.
-5. Add or update mitigations.
-6. Update traceability matrix with new tests.
-7. Record approval decision and pending actions.
-
-### 4.5 SLA and Outputs
-
-- Review SLA: 3 business days after request.
-- Outputs:
-  - Updated threat entries.
-  - Updated risk and mitigation mappings.
-  - Updated planned tests and traceability links.
-  - Open actions with owner and due date.
-
-### 4.6 Quality Checklist
-
-- Scope includes all changed trust boundaries.
-- No new endpoint remains without threat classification.
-- All Critical and High risks have treatment and planned tests.
-- Risk acceptance is explicit and owner-approved.
-
-## 5. Security Requirement to Planned Test Traceability Matrix
-
-For the expanded matrix with ASVS references, owner roles, and sprint allocation
-. For ASVS-specific assessments see [ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md](ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md) and [ASVS/V17_Communications/V17-Communications.md](ASVS/V17_Communications/V17-Communications.md).
-
-| Requirement ID | Security Requirement | Abuse Case | Planned Test ID | ASVS Req | Test Focus | Planned Evidence | Status |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| RNF-01 | Password Storage with BCrypt | AC-01 | ST-001 | V6.2.1 | Hashing policy and no plaintext storage | Code scan result and unit test output | Planned |
-| RNF-02 | JWT authentication with expiration | AC-02 | ST-002 | V9.2.1, V9.3.1 | Token expiration and invalid token rejection | API test report | Planned |
-| RNF-03 | Endpoint authentication enforcement | AC-02 | ST-003 | V4.1.2, V6.1.3 | Anonymous access denied on protected routes | Access-control test log | Planned |
-| RNF-04 | Role-based access control | AC-03 | ST-004 | V3.1.1, V3.2.1 | Role isolation for admin and publisher routes | Authorization matrix test result | Planned |
-| RNF-05 | HTTPS-only communication | AC-02 | ST-005 | V12.1.1, V12.2.1 | Insecure transport rejection and TLS enforcement | Environment and gateway config evidence | Planned |
-| RNF-06 | Input validation and sanitization | AC-04 | ST-006 | V5.1.1, V5.2.1 | SQL injection payload rejection | Negative test run output | Planned |
-| RNF-06 | Input validation and sanitization | AC-04 | ST-007 | V5.1.3, V5.2.4 | XSS payload neutralization/rejection | Validation test output | Planned |
-| RNF-07 | Critical event logging | AC-03 | ST-008 | V16.2.1, V16.2.4, V16.3.2 | Log generation for login and role-change events | Structured log samples | Planned |
-| RNF-08 | Secure activation key generation | AC-07 | ST-009 | V6.3.1 | Entropy and uniqueness checks for keys | Unit/integration test evidence | Planned |
-| RNF-09 | Brute-force protection | AC-01 | ST-010 | V6.2.2, V6.1.1 | Rate limiting and temporary lockout behavior | API attack simulation report | Planned |
-| RNF-10 | MIME verification on uploads | AC-05 | ST-011 | V5.3.1, V5.3.2 | Extension/MIME mismatch rejection | Upload validation report | Planned |
-| RNF-23 | Sensitive configuration management | AC-18 | ST-016 | V16.5.3, V16.5.4, V14.2.1 | Verify secrets are externalized and masked in logs | Config and log review evidence | Planned |
-| RF-19 | Download invoice | AC-06 | ST-012 | V5.3.4 | Authorization and path traversal prevention | Endpoint security test output | Planned |
-| RF-29 | Upload game images | AC-05 | ST-013 | V5.3.1, V5.3.2 | Authenticated-only upload and file constraints | Integration test report | Planned |
-| RF-30 | Validate uploaded files | AC-05 | ST-014 | V5.3.1, V5.3.3 | Oversized and unsupported-type rejection | Validation evidence | Planned |
-| RF-14 | Create order | AC-08 | ST-015 | V3.3.1 | Server-side ownership and integrity checks | Business-security test report | Planned |
-| RNF-06, RNF-07 | Error response security and log injection prevention | AC-18, AC-21 | ST-017 | V16.4.1, V16.5.2 | API error responses do not expose stack traces, internal paths, or SQL fragments; CRLF injection sanitised in logged fields | Negative test output (trigger 4xx/5xx errors; inject CRLF in logged input fields) | Planned |
-
-## 6. Sprint and Phase Roadmap
-
-### 6.1 Phase 1 (Current — Planning)
-
-- Define methodology and test categories.
-- Link abuse cases to requirements.
-- Define threat model review process.
-- Build initial traceability matrix.
-- Deliverable: this security testing plan document.
-
-Success criteria:
-- No security requirement left without a planned test.
-- All high-risk abuse cases mapped to at least one test.
-- Threat model review process documented and approved.
-
-### 6.2 Sprint 1 (Execution Start)
-
-- Implement and execute ST-001 to ST-011, ST-016, and ST-017.
-- Run SAST, SCA, and first DAST pass.
-- Open remediation backlog for findings.
-- Define evidence templates per test (ST-001 to ST-016).
-- Activate findings triage and SLA workflow.
-- Use threat model review checklist for each PR with security impact.
-
-Success criteria:
-- All Sprint 1 tests executed and evidenced.
-- No unresolved Critical risk at Sprint 2 gate.
-
-### 6.3 Sprint 2 (Execution Close)
-
-- Implement and execute remaining tests (ST-012 to ST-015).
-- Re-test mitigations and close high-risk findings.
-- Re-score DREAD with residual-risk updates after Sprint 1 findings.
-- Validate ASVS checklist status to Verified where applicable.
-- Produce final security testing evidence bundle.
-- Produce release decision record with accepted residual risks.
-
-Success criteria:
-- Release gate rule satisfied.
-- Residual-risk acceptance documented and approved.
-- Final evidence bundle complete and referenced in deliverable.
-
-## 7. Evidence and Findings Governance
-
-### 7.1 Finding Severity and SLA
-
-| Severity | Required Action | SLA |
-| --- | --- | --- |
-| Critical | Fix before release — blocks release gate | Immediate |
-| High | Fix within current sprint or document accepted risk | Same sprint |
-| Medium | Backlog with assigned owner and due date | Next sprint |
-| Low | Document as accepted or defer with justification | Release |
-
-### 7.2 Evidence Format
-
-Each executed test must record:
-
-- Test ID (ST-001 to ST-016).
-- Date executed.
-- Executor name.
-- Tool and method used.
-- Result: pass, fail, or finding with description.
-- Artifact reference (log file, scan report, screenshot, test output).
-
-### 7.3 Release Gate Rule
-
-No Critical-severity finding may remain unresolved at release. High-severity findings require either a fix or a documented risk acceptance approved by the Security Reviewer. The release decision record must list all accepted residual risks with owner sign-off.
+| Test Family ID | STRIDE Category        | Threats | What to Test | Implementation | Expected Result |
+| -------------- | ---------------------- | ------- | ------------ | -------------- | --------------- |
+| T-ST-01        | Spoofing               | User impersonation, stolen credentials/JWT, untrusted issuer acceptance | Authentication and token trust | Test missing token, invalid signature, expired token, wrong issuer, wrong audience or replayed token | All invalid tokens rejected |
+| T-ST-02        | Spoofing               | Credential stuffing, brute forcing  | Login defense controls | Automated repeated login attempts, common-password attempts | Lock endpoint to user/IP, endpoint throttling, MFA triggered. No takeover occurs |
+| T-ST-03        | Tampering              | Request body manipulation, client-side changes | Server-side validation | Modify protected fields in requests | Server validates and rejects tampered fields. Uses canonical values for operations/recalculations |
+| T-ST-04        | Tampering              | SQL injection | Injection rejection | Submit SQL payloads in credentials or requests parameter | No query manipulation occurs |
+| T-ST-05        | Tampering              | JWT Token/Header payload tampering | Token integrity | Modify claims, role fields or header values | Token and access rejected with no privilege gain |
+| T-ST-06        | Tampering              | Path traversal, arbitrary file read-write | File system integrity and safety | Use traversal payloads in file requests | Access denied with 403 Fordbidden response |
+| T-ST-07        | Tampering              | Malicious external content from RAWG | External input sanitization | Send content from external metadata in request | Stored content sanitized and no malicious code/script executed |
+| T-ST-08        | Repudiation            | Missing audit logs for protected operations | Security logging | Perform protected operations and verify proper logging | Logs are complete, attributable, and tamper-evident |
+| T-ST-09        | Repudiation            | Missing auth event logging | Authentication event logging | Trigger login success and failure, logout, denied access and token failure | Events are logged, complete, attributable and tamper-evident |
+| T-ST-10        | Information Disclosure | Verbose errors, stack traces, secrets in logs/config | Error handling and secret exposure | Exception occurs in CI output | No sensitive internals or secrets exposed |
+| T-ST-11        | Information Disclosure | Tokens in URLs/logs, insecure storage | Token confidentiality | Pass token in query or logs | Token rejected and not logged |
+| T-ST-12        | Information Disclosure | Unauthenticated file access | Access to protected files | Request protected resources belonging to another user | Rejected access with only authorized access to proper owner or admin |
+| T-ST-13        | Information Disclosure | Data in transit exposure | Transport security | Attempt HTTP access, downgrade attempts, inspect headers/cookies | HTTPS enforce and no sensitive data exposure |
+| T-ST-14        | Denial of Service      | No rate limiting on public/protected endpoints | API abuse resistance | Burst requests to endpoints | Access denied with 429 Too Many Requests. Service remains available |
+| T-ST-15        | Denial of Service      | Oversized uploads, unbounded queries, no pagination | Resource exhaustion protection | Large uploads, huge page sizes, unbounded list requests | Server-side limits enforced with no excessive memory/disk/CPU consumption |
+| T-ST-16        | Denial of Service      | External dependency failures | Resilience and graceful degradation | Simulate external API/dependency timeout/unavailability | Cached keys/data or fallback used. Graceful failure |
+| T-ST-17        | Denial of Service      | Expensive synchronous processing | Backpressure and async processing | Trigger many concurrent invoice/order operations | Queueing/limits applied and system remains responsive |
+| T-ST-18        | Elevation of Privilege | Missing role checks | RBAC enforcement | User attempts unauthorized operations | Access denied with 403 Fordbidden response |
+| T-ST-19        | Elevation of Privilege | Ownership bypass | Object-level authorization | Access/modify another user's resources | Ownership check enforced on every request |
+| T-ST-20        | Elevation of Privilege | Wrong JWT claim mapping or stale claims after role change | Authorization trust verification | Change user data, reuse old token, craft role in unexpected claim | Old privileges invalidated. Only trusted claim path honored |
