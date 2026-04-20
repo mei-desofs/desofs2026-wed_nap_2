@@ -100,7 +100,7 @@ ArcadeHaven is a digital game store with three user roles — **Admin**, **Publi
 | Game submission | [PNG](../ThreatModeling/AbuseCases/game-submission-abuse-case.png) | [PUML](../ThreatModeling/AbuseCases/game-submission-abuse-case.puml) |
 | Role management | [PNG](../ThreatModeling/AbuseCases/role-management-abuse-case.png) | [PUML](../ThreatModeling/AbuseCases/role-management-abuse-case.puml) |
 
-[Visual Paradigm project file](../ThreatModeling/AbuseCases/DESOFS%20-%20Abuse%20Cases.vpp)
+[Visual Paradigm project file](../ThreatModeling/AbuseCases/DESOFS_Abuse%20Cases.vpp)
 
 ---
 

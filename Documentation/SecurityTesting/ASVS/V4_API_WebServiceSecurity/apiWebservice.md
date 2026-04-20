@@ -12,9 +12,9 @@
 | Req ID | Level | Status | Observations |
 |---|---|---|---|
 | V4.1.1 | 1 |  Planned | All API responses will include `Content-Type: application/json; charset=UTF-8`. File download endpoints will use the appropriate MIME type (e.g. `application/pdf`, `image/png`). Enforced globally via Spring Boot's response configuration. |
-| V4.1.2 | 2 |  Planned | Only the API's public-facing documentation endpoint (if any) will redirect HTTP to HTTPS. All other endpoints will reject HTTP requests directly rather than redirecting, to prevent silent plaintext data leakage. |
+| V4.1.2 | 2 |  Planned | All HTTP traffic is redirected to HTTPS at the reverse proxy level. The application itself is only exposed over HTTPS.  |
 | V4.1.3 | 2 |  Planned | Headers such as `X-Real-IP` and `X-Forwarded-For` set by intermediary layers (e.g. reverse proxy, Docker network) will be validated server-side. End-users will not be able to override these headers. Configuration will be enforced in the Spring Boot application and documented in the deployment guide. |
-| V4.1.4 | 3 |  Planned | Spring Security will be configured to explicitly allowlist HTTP methods per endpoint (GET, POST, PUT, PATCH, DELETE, OPTIONS for preflight). All other methods (e.g. TRACE, CONNECT) will return `405 Method Not Allowed`. |
+| V4.1.4 | 3 |  N/A | Due to the academic scope of this project, this requirement is considered out of scope and is therefore not implemented. |
 | V4.1.5 | 3 |  N/A | ArcadeHaven does not handle highly sensitive inter-system transactions requiring per-message digital signatures. Transport-level TLS is considered sufficient for the current scope. |
 
 ---

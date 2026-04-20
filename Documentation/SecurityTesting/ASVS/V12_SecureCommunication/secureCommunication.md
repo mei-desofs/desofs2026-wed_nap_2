@@ -9,13 +9,13 @@
 
 ## V12.1 — General TLS Security Guidance
 
-| Req ID | Level | Status | Observations |
-|---|---|---|---|
-| V12.1.1 | 1 |  Planned | ArcadeHaven will enforce TLS 1.2 and TLS 1.3 only. TLS 1.0 and 1.1 will be explicitly disabled in the Spring Boot embedded Tomcat configuration and in the reverse proxy (Nginx/Docker). TLS 1.3 will be set as the preferred version. |
+| Req ID | Level | Status | Observations                                                                                                                                                                                                                                        |
+|---|---|---|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| V12.1.1 | 1 |  Planned | ArcadeHaven will enforce TLS 1.2 and TLS 1.3 only. TLS 1.0 and 1.1 will be explicitly disabled in the Spring Boot embedded Tomcat configuration and in the reverse proxy (Nginx/Docker). TLS 1.3 will be set as the preferred version.              |
 | V12.1.2 | 2 |  Planned | Only strong cipher suites will be enabled. Weak ciphers (e.g. RC4, 3DES, NULL) will be explicitly disabled. For Level 2, cipher suites supporting forward secrecy (ECDHE-based) will be preferred and configured in the reverse proxy TLS settings. |
-| V12.1.3 | 2 |  N/A | ArcadeHaven does not implement mutual TLS (mTLS) client certificate authentication in Phase 1. Authentication is handled via JWT Bearer tokens. |
-| V12.1.4 | 3 |  Planned | OCSP Stapling will be configured in the reverse proxy (Nginx) for production deployment in Phase 2 Sprint 2. Not applicable for the development environment. |
-| V12.1.5 | 3 |  Planned | Encrypted Client Hello (ECH) will be evaluated for Phase 2 Sprint 2 during production deployment. Dependent on the hosting provider and reverse proxy support. |
+| V12.1.3 | 2 |  N/A | ArcadeHaven does not implement mutual TLS (mTLS) client certificate authentication in Phase 1. Authentication is handled via JWT Bearer tokens.                                                                                                     |
+| V12.1.4 | 3 |  N/A | OCSP Stapling needed to be configured in the reverse proxy (Nginx) for production deployment in Phase 2 Sprint 2. Not applicable for the development environment.                                                                                   |
+| V12.1.5 | 3 |  N/A | Encrypted Client Hello (ECH) needed to be evaluated for Phase 2 Sprint 2 during production deployment. Dependent on the hosting provider and reverse proxy support.                                                                                 |
 
 ---
 

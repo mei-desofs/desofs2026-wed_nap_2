@@ -18,14 +18,14 @@
 
 ## V5.2 — File Upload and Content
 
-| Req ID | Level | Status | Observations |
-|---|---|---|---|
-| V5.2.1 | 1 |  Planned | Maximum file size limits will be enforced at the Spring Boot level via `spring.servlet.multipart.max-file-size` and `spring.servlet.multipart.max-request-size`. Requests exceeding the limit will be rejected with a 413 response before processing begins. |
+| Req ID | Level | Status | Observations                                                                                                                                                                                                                                                                                               |
+|---|---|---|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| V5.2.1 | 1 |  Planned | Maximum file size limits will be enforced at the Spring Boot level via `spring.servlet.multipart.max-file-size` and `spring.servlet.multipart.max-request-size`. Requests exceeding the limit will be rejected with a 413 response before processing begins.                                               |
 | V5.2.2 | 1 |  Planned | All uploaded files will be validated by checking the file extension against an allowlist (JPEG, PNG, WebP) and verifying the magic bytes of the file content. Image files will be re-written server-side (via Java ImageIO) to strip any embedded malicious content and confirm the file is a valid image. |
-| V5.2.3 | 2 |  N/A | ArcadeHaven does not accept compressed archive uploads (zip, gz, etc.) from users in Phase 1. Only individual image files are accepted. |
-| V5.2.4 | 3 |  Planned | A per-user file quota will be enforced: Publishers will be limited to a maximum number of images per game listing and a total storage quota per account. Enforcement will be implemented at the application service layer before file storage operations. |
-| V5.2.5 | 3 |  N/A | No compressed file uploads are accepted. Symlink exploitation via zip files is not applicable in the current scope. |
-| V5.2.6 | 3 |  Planned | Uploaded images will be validated for maximum pixel dimensions before processing. Images exceeding the defined maximum (e.g. 4096x4096 pixels) will be rejected to prevent pixel flood (decompression bomb) attacks. |
+| V5.2.3 | 2 |  N/A | ArcadeHaven does not accept compressed archive uploads (zip, gz, etc.) from users in Phase 1. Only individual image files are accepted.                                                                                                                                                                    |
+| V5.2.4 | 3 |  N/A | A per-user file quota need tu be enforced: Publishers will be limited to a maximum number of images per game listing and a total storage quota per account. Enforcement will be implemented at the application service layer before file storage operations.                                               |
+| V5.2.5 | 3 |  N/A | No compressed file uploads are accepted. Symlink exploitation via zip files is not applicable in the current scope.                                                                                                                                                                                        |
+| V5.2.6 | 3 |  N/A | Uploaded images need be validated for maximum pixel dimensions before processing. Images exceeding the defined maximum (e.g. 4096x4096 pixels) will be rejected to prevent pixel flood (decompression bomb) attacks.                                                                                       |
 
 ---
 

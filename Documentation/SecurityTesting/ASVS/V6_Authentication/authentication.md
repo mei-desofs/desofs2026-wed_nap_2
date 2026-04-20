@@ -192,7 +192,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because PixelVault's public authentication endpoint (`POST /api/auth/login`) is a primary target for automated brute-force and credential stuffing attacks. Without rate limiting and lockout mechanisms, an attacker could systematically attempt millions of credential combinations. Spring Security will be configured to enforce rate limiting per IP address, and account lockout after repeated failed attempts will be implemented at the application level.
+**Justification**: This requirement is relevant because ArcadeHaven's public authentication endpoint (`POST /api/auth/login`) is a primary target for automated brute-force and credential stuffing attacks. Without rate limiting and lockout mechanisms, an attacker could systematically attempt millions of credential combinations. Spring Security will be configured to enforce rate limiting per IP address, and account lockout after repeated failed attempts will be implemented at the application level.
 
 **Security Requirement**: Brute-Force and Credential Stuffing Protection — The application must implement rate limiting on authentication endpoints and enforce temporary account lockout after a configurable number of consecutive failed login attempts.
 
@@ -204,7 +204,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because default accounts with predictable credentials are a common attack vector. PixelVault will not ship with any default user accounts. The initial ADMIN account will be seeded via a secure, environment-variable-driven database migration script (Flyway), with a randomly generated password that must be changed on first login.
+**Justification**: This requirement is relevant because default accounts with predictable credentials are a common attack vector. ArcadeHaven will not ship with any default user accounts. The initial ADMIN account will be seeded via a secure, environment-variable-driven database migration script (Flyway), with a randomly generated password that must be changed on first login.
 
 **Security Requirement**: No Default User Accounts — The application must not include any default or well-known user accounts. Any seed accounts required for initial setup must use randomly generated credentials injected via environment variables and must be documented in the operations guide.
 
@@ -216,7 +216,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because single-factor authentication based solely on a password is insufficient for protecting sensitive user data such as purchase history, activation keys, and personal information. PixelVault will evaluate the feasibility of implementing TOTP-based MFA (e.g. via Google Authenticator) as an optional but strongly recommended second factor for all users, and mandatory for ADMIN accounts.
+**Justification**: This requirement is relevant because single-factor authentication based solely on a password is insufficient for protecting sensitive user data such as purchase history, activation keys, and personal information. ArcadeHaven will evaluate the feasibility of implementing TOTP-based MFA (e.g. via Google Authenticator) as an optional but strongly recommended second factor for all users, and mandatory for ADMIN accounts.
 
 **Security Requirement**: Multi-Factor Authentication Support — The application must support multi-factor authentication. MFA must be mandatory for ADMIN role accounts and optional for PUBLISHER and BUYER roles. TOTP (RFC 6238) is the target mechanism.
 
@@ -228,19 +228,19 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant to ensure all authentication flows are consistently secured. PixelVault uses a single authentication pathway via JWT. However, future extensions such as OAuth2 social login may be considered. Any additional pathway will be fully documented alongside its security controls before implementation.
+**Justification**: This requirement is relevant to ensure all authentication flows are consistently secured. ArcadeHaven uses a single authentication pathway via JWT. However, future extensions such as OAuth2 social login may be considered. Any additional pathway will be fully documented alongside its security controls before implementation.
 
 **Security Requirement**: Consistent Authentication Pathway Security — All authentication pathways must be documented and subject to the same security controls. No undocumented or backdoor authentication pathways are permitted.
 
 ---
 
-### ASVS Requirement V6.3.5 — Planned
+### ASVS Requirement V6.3.5 — N/A
 
 **ASVS Requirement Description**: Verify that users are notified of suspicious authentication attempts (successful or unsuccessful). This may include authentication attempts from new locations or devices.
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because notifying users of suspicious activity allows them to respond quickly to potential account compromise. PixelVault will implement an audit log for authentication events, and email notifications will be sent to users upon login from a new IP address or after multiple failed attempts. This is a Level 3 requirement and will be considered for Phase 2 Sprint 2.
+**Justification**: This requirement is relevant because notifying users of suspicious activity allows them to respond quickly to potential account compromise. ArcadeHaven will implement an audit log for authentication events, and email notifications will be sent to users upon login from a new IP address or after multiple failed attempts. This is a Level 3 requirement and will be considered for Phase 2 Sprint 2.
 
 **Security Requirement**: Suspicious Activity Notification — The application must log all authentication events and notify users via email when suspicious activity is detected, such as logins from new IP addresses or repeated failed attempts.
 
@@ -252,31 +252,31 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: PixelVault does not use email as an authentication factor. Authentication is performed exclusively via username/password credentials with JWT tokens. Email is only used for account registration confirmation and security notifications, never as an authentication mechanism.
+**Justification**: ArcadeHaven does not use email as an authentication factor. Authentication is performed exclusively via username/password credentials with JWT tokens. Email is only used for account registration confirmation and security notifications, never as an authentication mechanism.
 
-**Security Requirement**: NOT APPLICABLE — PixelVault does not use email as an authentication factor. This requirement is satisfied by design.
+**Security Requirement**: NOT APPLICABLE — ArcadeHaven does not use email as an authentication factor. This requirement is satisfied by design.
 
 ---
 
-### ASVS Requirement V6.3.7 — Planned
+### ASVS Requirement V6.3.7 — N/A
 
 **ASVS Requirement Description**: Verify that users are notified after updates to authentication details, such as credential resets or modification of the username or email.
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because notifying users of changes to their authentication details helps them detect unauthorised account modifications. PixelVault will send email notifications whenever a user's password, email address, or username is changed, regardless of whether the change was initiated by the user or an administrator.
+**Justification**: This requirement is relevant because notifying users of changes to their authentication details helps them detect unauthorised account modifications. ArcadeHaven will send email notifications whenever a user's password, email address, or username is changed, regardless of whether the change was initiated by the user or an administrator.
 
 **Security Requirement**: Authentication Detail Change Notification — The application must send an email notification to the user's registered address whenever authentication details (password, email, username) are modified, including changes initiated by administrators.
 
 ---
 
-### ASVS Requirement V6.3.8 — Planned
+### ASVS Requirement V6.3.8 — N/A
 
 **ASVS Requirement Description**: Verify that valid users cannot be deduced from failed authentication challenges, such as by basing on error messages, HTTP response codes, or differing response times.
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because differing error messages or response times for valid versus invalid usernames allow attackers to enumerate valid accounts. PixelVault will return a uniform error message ("Invalid credentials") for all failed authentication attempts, with consistent response times achieved through constant-time comparison of credentials.
+**Justification**: This requirement is relevant because differing error messages or response times for valid versus invalid usernames allow attackers to enumerate valid accounts. ArcadeHaven will return a uniform error message ("Invalid credentials") for all failed authentication attempts, with consistent response times achieved through constant-time comparison of credentials.
 
 **Security Requirement**: User Enumeration Prevention — The application must return identical error messages and HTTP status codes (401) for all failed authentication attempts, regardless of whether the username exists. Response times must be consistent to prevent timing-based enumeration.
 
@@ -290,7 +290,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because weak or long-lived system-generated passwords represent a significant attack surface. PixelVault will generate initial passwords and activation codes using `SecureRandom`, ensuring cryptographic randomness. All system-generated credentials will expire after 24 hours and must comply with the password policy defined in V6.2.1.
+**Justification**: This requirement is relevant because weak or long-lived system-generated passwords represent a significant attack surface. ArcadeHaven will generate initial passwords and activation codes using `SecureRandom`, ensuring cryptographic randomness. All system-generated credentials will expire after 24 hours and must comply with the password policy defined in V6.2.1.
 
 **Security Requirement**: Secure System-Generated Credentials — System-generated passwords and activation codes must be generated using a cryptographically secure random number generator (`SecureRandom`), comply with the password policy, and expire within 24 hours of generation.
 
@@ -302,7 +302,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because password hints and secret questions are easily guessable or discoverable through social engineering and public information. PixelVault will not implement any password hint or knowledge-based authentication mechanism. Password recovery will be handled exclusively via a secure, time-limited reset token sent to the user's registered email address.
+**Justification**: This requirement is relevant because password hints and secret questions are easily guessable or discoverable through social engineering and public information. ArcadeHaven will not implement any password hint or knowledge-based authentication mechanism. Password recovery will be handled exclusively via a secure, time-limited reset token sent to the user's registered email address.
 
 **Security Requirement**: No Password Hints or Secret Questions — The application must not implement password hints or knowledge-based authentication (secret questions). Password recovery must use secure, time-limited tokens delivered to the user's registered email address.
 
@@ -314,7 +314,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because insecure password reset flows are a common vulnerability that can be exploited to bypass authentication entirely. PixelVault will implement a password reset flow using a cryptographically secure, single-use token with a 1-hour expiry, delivered to the user's registered email. The reset flow will not bypass MFA where it is enabled.
+**Justification**: This requirement is relevant because insecure password reset flows are a common vulnerability that can be exploited to bypass authentication entirely. ArcadeHaven will implement a password reset flow using a cryptographically secure, single-use token with a 1-hour expiry, delivered to the user's registered email. The reset flow will not bypass MFA where it is enabled.
 
 **Security Requirement**: Secure Password Reset Flow — The password reset process must use a cryptographically secure, single-use token with a maximum validity of 1 hour. The process must not bypass MFA and must invalidate the token immediately after use.
 
@@ -326,31 +326,31 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because a lost MFA device could be exploited to gain unauthorised access if the account recovery process is weaker than the original authentication. PixelVault will require identity re-verification at the same level as enrollment before recovering access to an account where MFA has been lost.
+**Justification**: This requirement is relevant because a lost MFA device could be exploited to gain unauthorised access if the account recovery process is weaker than the original authentication. ArcadeHaven will require identity re-verification at the same level as enrollment before recovering access to an account where MFA has been lost.
 
 **Security Requirement**: MFA Recovery Identity Proofing — Account recovery following loss of an MFA factor must require identity verification at the same assurance level as the original enrollment process.
 
 ---
 
-### ASVS Requirement V6.4.5 — Planned
+### ASVS Requirement V6.4.5 — N/A
 
 **ASVS Requirement Description**: Verify that renewal instructions for authentication mechanisms which expire are sent with enough time to be carried out before the old mechanism expires.
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant to ensure users are not unexpectedly locked out of their accounts due to expiring authentication mechanisms. PixelVault will send advance notifications before any authentication-related credential (e.g. activation codes, password reset tokens) expires, giving users sufficient time to act.
+**Justification**: This requirement is relevant to ensure users are not unexpectedly locked out of their accounts due to expiring authentication mechanisms. ArcadeHaven will send advance notifications before any authentication-related credential (e.g. activation codes, password reset tokens) expires, giving users sufficient time to act.
 
 **Security Requirement**: Advance Expiry Notification — The application must notify users sufficiently in advance before any authentication credential or mechanism expires, to prevent unintended account lockout.
 
 ---
 
-### ASVS Requirement V6.4.6 — Planned
+### ASVS Requirement V6.4.6 — N/A
 
 **ASVS Requirement Description**: Verify that administrative users can initiate the password reset process for the user, but that this does not allow them to change or choose the new password.
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because allowing administrators to directly set a user's password creates a privilege abuse risk. PixelVault will implement an admin-initiated password reset that triggers a secure reset email to the user, ensuring only the user can define the new password. Administrators will never have access to or be able to set a user's plain-text password.
+**Justification**: This requirement is relevant because allowing administrators to directly set a user's password creates a privilege abuse risk. ArcadeHaven will implement an admin-initiated password reset that triggers a secure reset email to the user, ensuring only the user can define the new password. Administrators will never have access to or be able to set a user's plain-text password.
 
 **Security Requirement**: Admin-Initiated Password Reset — Administrators must be able to trigger a password reset for a user, which sends a secure reset link to the user's email. Administrators must not be able to directly set or view a user's password.
 
@@ -364,7 +364,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because reusable one-time codes defeat the purpose of multi-factor authentication. PixelVault will implement single-use enforcement for all OTPs and lookup secrets, invalidating them immediately upon successful use. TOTP codes will be validated against a time window and marked as used to prevent replay attacks.
+**Justification**: This requirement is relevant because reusable one-time codes defeat the purpose of multi-factor authentication. ArcadeHaven will implement single-use enforcement for all OTPs and lookup secrets, invalidating them immediately upon successful use. TOTP codes will be validated against a time window and marked as used to prevent replay attacks.
 
 **Security Requirement**: Single-Use OTP Enforcement — All one-time passwords, lookup secrets, and out-of-band codes must be invalidated immediately after a single successful use. Replay of used codes must be rejected.
 
@@ -376,7 +376,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because storing lookup secrets in plain text or with weak hashing exposes them to theft if the database is compromised. PixelVault will hash all stored lookup secrets using BCrypt, the same algorithm used for passwords, ensuring that even short secrets are protected at rest.
+**Justification**: This requirement is relevant because storing lookup secrets in plain text or with weak hashing exposes them to theft if the database is compromised. ArcadeHaven will hash all stored lookup secrets using BCrypt, the same algorithm used for passwords, ensuring that even short secrets are protected at rest.
 
 **Security Requirement**: Secure Storage of Lookup Secrets — All lookup secrets stored in the database must be hashed using BCrypt or an equivalent approved password hashing algorithm. Plain-text storage of any secret is strictly prohibited.
 
@@ -388,7 +388,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because predictable OTPs or seeds can be exploited by attackers to bypass MFA. PixelVault will use Java's `SecureRandom` class for all cryptographic random number generation, ensuring that OTPs and seeds are unpredictable.
+**Justification**: This requirement is relevant because predictable OTPs or seeds can be exploited by attackers to bypass MFA. ArcadeHaven will use Java's `SecureRandom` class for all cryptographic random number generation, ensuring that OTPs and seeds are unpredictable.
 
 **Security Requirement**: CSPRNG for OTP Generation — All lookup secrets, out-of-band authentication codes, and TOTP seeds must be generated using `SecureRandom` or an equivalent CSPRNG. Use of `Math.random()` or similar non-cryptographic generators is strictly prohibited.
 
@@ -400,9 +400,9 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because low-entropy codes are vulnerable to brute-force attacks. PixelVault will generate OTPs and lookup codes with a minimum of 6 random alphanumeric characters, providing at least 31 bits of entropy, well above the 20-bit minimum.
+**Justification**: This requirement is relevant because low-entropy codes are vulnerable to brute-force attacks. ArcadeHaven will generate OTPs and lookup codes with a minimum of 6 random alphanumeric characters, providing at least 31 bits of entropy, well above the 20-bit minimum.
 
-**Security Requirement**: Minimum OTP Entropy — All lookup secrets and out-of-band authentication codes must have a minimum of 20 bits of entropy. PixelVault will use 6-character alphanumeric codes as the baseline, providing at least 31 bits of entropy.
+**Security Requirement**: Minimum OTP Entropy — All lookup secrets and out-of-band authentication codes must have a minimum of 20 bits of entropy. ArcadeHaven will use 6-character alphanumeric codes as the baseline, providing at least 31 bits of entropy.
 
 ---
 
@@ -412,19 +412,19 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because long-lived OTPs increase the window of opportunity for an attacker to exploit a stolen code. PixelVault will enforce a 5-minute expiry on all OTPs and out-of-band codes, and TOTP validation will use a time window of ±1 step (30 seconds per step) to account for clock drift.
+**Justification**: This requirement is relevant because long-lived OTPs increase the window of opportunity for an attacker to exploit a stolen code. ArcadeHaven will enforce a 5-minute expiry on all OTPs and out-of-band codes, and TOTP validation will use a time window of ±1 step (30 seconds per step) to account for clock drift.
 
 **Security Requirement**: OTP Lifetime Enforcement — Out-of-band authentication codes must expire after a maximum of 5 minutes. TOTP validation must use a time window of ±1 step (30 seconds). Expired codes must be rejected.
 
 ---
 
-### ASVS Requirement V6.5.6 — Planned
+### ASVS Requirement V6.5.6 — N/A
 
 **ASVS Requirement Description**: Verify that any authentication factor (including physical devices) can be revoked in case of theft or other loss.
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because a stolen authentication factor (e.g. a TOTP device) must be revocable to prevent unauthorised access. PixelVault will provide users with the ability to revoke and re-enroll their MFA device through the account settings, with re-verification required before revocation.
+**Justification**: This requirement is relevant because a stolen authentication factor (e.g. a TOTP device) must be revocable to prevent unauthorised access. ArcadeHaven will provide users with the ability to revoke and re-enroll their MFA device through the account settings, with re-verification required before revocation.
 
 **Security Requirement**: MFA Factor Revocation — The application must allow users to revoke any registered authentication factor. Revocation must require re-verification of identity and must take effect immediately.
 
@@ -436,19 +436,19 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: PixelVault does not implement biometric authentication. Authentication is based on password (something you know) and optionally TOTP (something you have). Biometric mechanisms are outside the scope of this project.
+**Justification**: ArcadeHaven does not implement biometric authentication. Authentication is based on password (something you know) and optionally TOTP (something you have). Biometric mechanisms are outside the scope of this project.
 
-**Security Requirement**: NOT APPLICABLE — PixelVault does not implement biometric authentication mechanisms. This requirement is not applicable to the current project scope.
+**Security Requirement**: NOT APPLICABLE — ArcadeHaven does not implement biometric authentication mechanisms. This requirement is not applicable to the current project scope.
 
 ---
 
-### ASVS Requirement V6.5.8 — Planned
+### ASVS Requirement V6.5.8 — N/A
 
 **ASVS Requirement Description**: Verify that time-based one-time passwords (TOTPs) are checked based on a time source from a trusted service and not from an untrusted or client-provided source.
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because using a client-provided time source for TOTP validation would allow attackers to manipulate the time window and reuse expired codes. PixelVault's TOTP validation will rely exclusively on the server's system clock, synchronised via NTP, and will never accept a time value provided by the client.
+**Justification**: This requirement is relevant because using a client-provided time source for TOTP validation would allow attackers to manipulate the time window and reuse expired codes. ArcadeHaven's TOTP validation will rely exclusively on the server's system clock, synchronised via NTP, and will never accept a time value provided by the client.
 
 **Security Requirement**: Trusted Time Source for TOTP — TOTP validation must use the server's system clock as the time source, synchronised via NTP. Client-provided time values must never be used in TOTP validation.
 
@@ -462,9 +462,9 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: PixelVault does not implement SMS or phone-based OTP delivery. MFA will be implemented via TOTP (authenticator apps), which is a stronger mechanism than PSTN-based delivery. This requirement is not applicable to the current project scope.
+**Justification**: ArcadeHaven does not implement SMS or phone-based OTP delivery. MFA will be implemented via TOTP (authenticator apps), which is a stronger mechanism than PSTN-based delivery. This requirement is not applicable to the current project scope.
 
-**Security Requirement**: NOT APPLICABLE — PixelVault does not use PSTN (SMS/phone) for OTP delivery. MFA is implemented via TOTP only.
+**Security Requirement**: NOT APPLICABLE — ArcadeHaven does not use PSTN (SMS/phone) for OTP delivery. MFA is implemented via TOTP only.
 
 ---
 
@@ -474,7 +474,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because an unbound OTP could be intercepted and used to authenticate a different session. PixelVault will bind all out-of-band codes to a specific session identifier and authentication request, ensuring that a code generated for one session cannot be reused in another.
+**Justification**: This requirement is relevant because an unbound OTP could be intercepted and used to authenticate a different session. ArcadeHaven will bind all out-of-band codes to a specific session identifier and authentication request, ensuring that a code generated for one session cannot be reused in another.
 
 **Security Requirement**: OTP Session Binding — All out-of-band authentication codes must be cryptographically bound to the specific authentication request and session for which they were generated. Cross-session reuse must be rejected.
 
@@ -486,7 +486,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is relevant because short OTP codes (e.g. 6 digits) are vulnerable to brute-force if no rate limiting is applied. PixelVault will enforce rate limiting on OTP verification endpoints, locking the verification attempt after 5 consecutive failures and expiring codes after 5 minutes, as defined in V6.5.5.
+**Justification**: This requirement is relevant because short OTP codes (e.g. 6 digits) are vulnerable to brute-force if no rate limiting is applied. ArcadeHaven will enforce rate limiting on OTP verification endpoints, locking the verification attempt after 5 consecutive failures and expiring codes after 5 minutes, as defined in V6.5.5.
 
 **Security Requirement**: OTP Brute-Force Protection — OTP verification endpoints must enforce rate limiting, rejecting further attempts after 5 consecutive failures. Codes must expire after a maximum of 5 minutes as defined in V6.5.5.
 
@@ -498,9 +498,9 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: PixelVault does not implement push notification-based MFA. Authentication uses TOTP via authenticator apps only. Push bombing protection is therefore not applicable to the current project scope.
+**Justification**: ArcadeHaven does not implement push notification-based MFA. Authentication uses TOTP via authenticator apps only. Push bombing protection is therefore not applicable to the current project scope.
 
-**Security Requirement**: NOT APPLICABLE — PixelVault does not use push notifications for MFA. This requirement does not apply to the current project scope.
+**Security Requirement**: NOT APPLICABLE — ArcadeHaven does not use push notifications for MFA. This requirement does not apply to the current project scope.
 
 ---
 
@@ -512,9 +512,9 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: PixelVault does not implement certificate-based cryptographic authentication. Authentication is performed via username/password with JWT tokens. Certificate-based authentication is outside the current project scope.
+**Justification**: ArcadeHaven does not implement certificate-based cryptographic authentication. Authentication is performed via username/password with JWT tokens. Certificate-based authentication is outside the current project scope.
 
-**Security Requirement**: NOT APPLICABLE — PixelVault does not use certificate-based cryptographic authentication. This requirement does not apply to the current project scope.
+**Security Requirement**: NOT APPLICABLE — ArcadeHaven does not use certificate-based cryptographic authentication. This requirement does not apply to the current project scope.
 
 ---
 
@@ -524,9 +524,9 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: PixelVault does not implement challenge-response cryptographic authentication or cryptographic devices. This requirement is not applicable to the current project scope.
+**Justification**: ArcadeHaven does not implement challenge-response cryptographic authentication or cryptographic devices. This requirement is not applicable to the current project scope.
 
-**Security Requirement**: NOT APPLICABLE — PixelVault does not implement challenge-response cryptographic authentication. This requirement does not apply to the current project scope.
+**Security Requirement**: NOT APPLICABLE — ArcadeHaven does not implement challenge-response cryptographic authentication. This requirement does not apply to the current project scope.
 
 ---
 
@@ -538,9 +538,9 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: PixelVault does not integrate with external identity providers in Phase 1. Authentication is handled internally via username/password and JWT. OAuth2/OIDC social login may be considered in future phases, at which point this requirement will become applicable.
+**Justification**: ArcadeHaven does not integrate with external identity providers in Phase 1. Authentication is handled internally via username/password and JWT. OAuth2/OIDC social login may be considered in future phases, at which point this requirement will become applicable.
 
-**Security Requirement**: NOT APPLICABLE — PixelVault does not support external identity providers in the current phase. If OAuth2/OIDC is introduced in future phases, this requirement must be revisited.
+**Security Requirement**: NOT APPLICABLE — ArcadeHaven does not support external identity providers in the current phase. If OAuth2/OIDC is introduced in future phases, this requirement must be revisited.
 
 ---
 
@@ -550,7 +550,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: This requirement is directly relevant to PixelVault's JWT-based authentication. JWTs must be signed using a strong algorithm (RS256 or HS256 with a sufficiently long secret) and the signature must be validated on every request. The application must reject unsigned tokens, tokens with the `alg: none` header, and tokens with invalid signatures.
+**Justification**: This requirement is directly relevant to ArcadeHaven's JWT-based authentication. JWTs must be signed using a strong algorithm (RS256 or HS256 with a sufficiently long secret) and the signature must be validated on every request. The application must reject unsigned tokens, tokens with the `alg: none` header, and tokens with invalid signatures.
 
 **Security Requirement**: JWT Signature Validation — All JWT tokens must be signed using RS256 or HS256. The signature must be validated on every request. Unsigned tokens, tokens with `alg: none`, and tokens with invalid signatures must be rejected with a 401 response.
 
@@ -562,7 +562,7 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: PixelVault does not use SAML assertions in Phase 1. However, JWT tokens are subject to a similar replay risk and will be addressed through short token expiry (15 minutes for access tokens) and token revocation via a denylist for logout events.
+**Justification**: ArcadeHaven does not use SAML assertions in Phase 1. However, JWT tokens are subject to a similar replay risk and will be addressed through short token expiry (15 minutes for access tokens) and token revocation via a denylist for logout events.
 
 **Security Requirement**: JWT Replay Prevention — JWT access tokens must have a maximum validity of 15 minutes. A token denylist mechanism must be implemented to support immediate invalidation upon logout or security events.
 
@@ -574,9 +574,9 @@
 
 **Related Functional Requirement**: User Registration and Authentication
 
-**Justification**: PixelVault does not use a separate Identity Provider in Phase 1. Authentication is handled entirely within the application. This requirement will be revisited if external IdP integration is introduced in future phases.
+**Justification**: ArcadeHaven does not use a separate Identity Provider in Phase 1. Authentication is handled entirely within the application. This requirement will be revisited if external IdP integration is introduced in future phases.
 
-**Security Requirement**: NOT APPLICABLE — PixelVault does not use a separate Identity Provider in the current phase. This requirement does not apply to the current project scope.
+**Security Requirement**: NOT APPLICABLE — ArcadeHaven does not use a separate Identity Provider in the current phase. This requirement does not apply to the current project scope.
 
 ---
 
