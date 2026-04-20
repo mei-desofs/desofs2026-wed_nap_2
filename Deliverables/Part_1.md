@@ -3,6 +3,7 @@
 This document presents the work developed during the **first phase**, including the respective contributors.
 
 This phase corresponds to the first two stages of the **Secure Software Development Life Cycle (SSDLC)**:
+
 - **Analysis**
 - **Design**
 
@@ -12,89 +13,144 @@ The **Design** stage is responsible for defining the system architecture and pla
 
 Together, these stages ensure that security is considered from the early stages of development, enabling a more robust and secure system.
 
+---
+
 ## Folder Guide
 
-- Deliverables: Final delivery artifacts used for submission.
-- Documentation: Main Phase 1 knowledge base.
-- Overview: Entry point for reading the complete documentation.
-- Architecture: System architecture, domain model, and data flow artifacts.
-- Requirements: Functional and non-functional requirements baseline.
-- Mitigations: Security controls mapped to risks and threats.
-- SSDLC: Process and risk methodology (including DREAD).
-- ThreatModeling: Threat inventory, risk analysis, abuse cases, and attack trees.
-- SecurityTesting: Security planning, workflow, ASVS mapping, and traceability.
-- ASVS: Chapter-by-chapter security verification documentation.
+- **Deliverables**: Final submission artifacts.
+- **Documentation**: Main Phase 1 knowledge base.
+- **Overview**: Entry point for the full documentation.
+- **Architecture**: System architecture, domain model, and data flow artifacts.
+- **Requirements**: Functional and non-functional requirements baseline.
+- **Mitigations**: Security controls mapped to threats and risks.
+- **SSDLC**: Development lifecycle and risk methodology (including DREAD).
+- **ThreatModeling**: Threat identification, risk analysis, abuse cases, and attack trees.
+- **SecurityTesting**: Security validation strategy, ASVS mapping, and traceability.
+
+---
 
 ## Architecture Views
 
-- [Logical View](../Documentation/Architecture/Diagrams/Views/logical-view.puml)
-- [Physical Deployment View (Docker)](../Documentation/Architecture/Diagrams/Views/physical-deployment-docker.puml)
+> The following diagrams represent different architectural perspectives of the system.
 
-## Project Tree
+### Level 1 Views
+- [Logical View](../Documentation/Architecture/Diagrams/Views/Level1/LogicView.png)
+- [Development View](../Documentation/Architecture/Diagrams/Views/Level1/DevelopmentView.png)
+- [Physical View](../Documentation/Architecture/Diagrams/Views/Level1/PhysicalView.png)
 
-- [desofs2026-wed_nap_2](../)
+### Level 2 Views
+- [Logical View](../Documentation/Architecture/Diagrams/Views/Level2/LogicView.png)
+- [Development View](../Documentation/Architecture/Diagrams/Views/Level2/DevelopmentView.png)
+- [Physical View](../Documentation/Architecture/Diagrams/Views/Level2/Physical.png)
+
+### Level 3 Views
+- [Logical View](../Documentation/Architecture/Diagrams/Views/Level3/LogicView.png)
+
+### Other Diagrams
+- [Use Case Diagram](../Documentation/Architecture/Diagrams/Views/UseCase/UseCase.png)
+- [Domain Model (SVG)](../Documentation/Architecture/Diagrams/DomainModel/ArcadeHaven_Domain_Model.svg)
+- [Domain Model (PlantUML)](../Documentation/Architecture/Diagrams/DomainModel/domain_model.puml)
+
+---
+
+## Project Structure
+
+- [Root](../)
   - [README.md](../README.md)
-  - [Deliverables](./)
-    - [Part_1.md](./Part_1.md)
-    - [Phase1](./Phase1/)
-    - [ASVS_5.0_Tracker.xlsx](./ASVS_5.0_Tracker.xlsx)
-  - [Documentation](../Documentation/)
-    - [Overview](../Documentation/Overview/)
-      - [README.md](../Documentation/Overview/README.md)
-    - [Architecture](../Documentation/Architecture/)
-      - [analysis.md](../Documentation/Architecture/architecture.md)
-      - [Dataflow](../Documentation/Architecture/Dataflow/)
-        - [dataflow.md](../Documentation/Architecture/Dataflow/dataflow.md)
-        - [arcadehaven-dfd.json](../Documentation/Architecture/Dataflow/arcadehaven-dfd.json)
-      - [Diagrams](../Documentation/Architecture/Diagrams/)
-        - [DomainModel](../Documentation/Architecture/Diagrams/DomainModel/)
-          - [domain_model.puml](../Documentation/Architecture/Diagrams/DomainModel/domain_model.puml)
-          - [ArcadeHaven_Domain_Model.svg](../Documentation/Architecture/Diagrams/DomainModel/ArcadeHaven_Domain_Model.svg)
-        - [Views](../Documentation/Architecture/Diagrams/Views/)
-          - [README.md](../Documentation/Architecture/Diagrams/Views/README.md)
-          - [logical-view.puml](../Documentation/Architecture/Diagrams/Views/logical-view.puml)
-          - [physical-deployment-docker.puml](../Documentation/Architecture/Diagrams/Views/physical-deployment-docker.puml)
-    - [Requirements](../Documentation/Requirements/)
-      - [requirements.md](../Documentation/Requirements/requirements.md)
-    - [Mitigations](../Documentation/Mitigations/)
-      - [Mitigations.md](../Documentation/Mitigations/Mitigations.md)
-    - [SSDLC](../Documentation/SSDLC/)
-      - [SSDLC.md](../Documentation/SSDLC/SSDLC.md)
-      - [DREAD.md](../Documentation/SSDLC/DREAD.md)
-    - [ThreatModeling](../Documentation/ThreatModeling/)
-      - [ThreatIdentificationAndAnalysis](../Documentation/ThreatModeling/ThreatIdentificationAndAnalysis/)
-        - [threatIdentificationAndAnalysis.md](../Documentation/ThreatModeling/ThreatIdentificationAndAnalysis/threatIdentificationAndAnalysis.md)
-      - [RiskAssessment](../Documentation/ThreatModeling/RiskAssessment/)
-        - [riskAssessment.md](../Documentation/ThreatModeling/RiskAssessment/riskAssessment.md)
-      - [AbuseCases](../Documentation/ThreatModeling/AbuseCases/)
-          - [AbuseCases.md](../Documentation/ThreatModeling/AbuseCases/AbuseCases.md)
-      - [AttackTrees](../Documentation/ThreatModeling/AttackTrees/)
-        - [AttackTrees.md](../Documentation/ThreatModeling/AttackTrees/AttackTrees.md)
-        - [TH-01-Account-Takeover-Attack-Tree.puml](../Documentation/ThreatModeling/AttackTrees/Account-Takeover-Attack-Tree.puml)
-        - [TH-04-Input-Injection-Attack-Tree.puml](../Documentation/ThreatModeling/AttackTrees/Input-Injection-Attack-Tree.puml)
-        - [TH-08-Order-Tampering-Attack-Tree.puml](../Documentation/ThreatModeling/AttackTrees/Order-Tampering-Attack-Tree.puml)
-    - [SecurityTesting](../Documentation/SecurityTesting/)
-      - [securityTesting.md](../Documentation/SecurityTesting/securityTesting.md)
-      - [ThreatModelReviewWorkflow.md](../Documentation/SecurityTesting/ThreatModelReviewWorkflow.md)
-      - [TraceabilityMatrix.md](../Documentation/SecurityTesting/TraceabilityMatrix.md)
-      - [ASVS](../Documentation/SecurityTesting/ASVS/)
-        - [V1_EncodingSanitization](../Documentation/SecurityTesting/ASVS/V1_EncodingSanitization/)
-        - [V2_ValidationBusinessLogic](../Documentation/SecurityTesting/ASVS/V2_ValidationBusinessLogic/)
-        - [V3_WebFrontendSecurity](../Documentation/SecurityTesting/ASVS/V3_WebFrontendSecurity/)
-        - [V4_API_WebServiceSecurity](../Documentation/SecurityTesting/ASVS/V4_API_WebServiceSecurity/)
-        - [V5_FileHandling](../Documentation/SecurityTesting/ASVS/V5_FileHandling/)
-        - [V6_Authentication](../Documentation/SecurityTesting/ASVS/V6_Authentication/)
-        - [V7_SessionManagement](../Documentation/SecurityTesting/ASVS/V7_SessionManagement/)
-        - [V8_Authorization](../Documentation/SecurityTesting/ASVS/V8_Authorization/)
-        - [V9_Self-contained Tokens](../Documentation/SecurityTesting/ASVS/V9_Self-contained%20Tokens/)
-        - [V10_OAuthOIDC](../Documentation/SecurityTesting/ASVS/V10_OAuthOIDC/)
-        - [V11_Cryptography](../Documentation/SecurityTesting/ASVS/V11_Cryptography/)
-        - [V12_SecureCommunication](../Documentation/SecurityTesting/ASVS/V12_SecureCommunication/)
-        - [V13_Configuration](../Documentation/SecurityTesting/ASVS/V13_Configuration/)
-        - [V14_DataProtection](../Documentation/SecurityTesting/ASVS/V14_DataProtection/)
-        - [V15_Secure_Coding_and_Archite](../Documentation/SecurityTesting/ASVS/V15_Secure_Coding_and_Archite/)
-        - [V16_Loggin_Error_Handling](../Documentation/SecurityTesting/ASVS/V16_Loggin_Error_Handling/)
-        - [V17_Communications](../Documentation/SecurityTesting/ASVS/V17_Communications/)
+
+### Deliverables
+- [Part_1.md](./Part_1.md)
+- [ASVS_5.0_Tracker.xlsx](./ASVS_5.0_Tracker.xlsx)
+
+---
+
+### Documentation
+
+#### Overview
+- [README.md](../Documentation/Overview/README.md)
+
+#### Architecture
+- [architecture.md](../Documentation/Architecture/architecture.md)
+
+##### Dataflow
+- [dataflow.md](../Documentation/Architecture/Dataflow/dataflow.md)
+- [DFD JSON](../Documentation/Architecture/Dataflow/arcadehaven-dfd.json)
+- [DFD PDF](../Documentation/Architecture/Dataflow/arcadehaven-dfd.pdf)
+
+###### DFD Levels
+- [Level 0](../Documentation/Architecture/Dataflow/Level-0/DFD_Level0_Context.png)
+- [Level 1 - ArcadeHaven System](../Documentation/Architecture/Dataflow/Level-1/DFD_Level1_ArcadeHavenSystem.png)
+- [Level 1 - Auth API](../Documentation/Architecture/Dataflow/Level-1/DFD_Level1_AuthAPI.png)
+- [Level 1 - Database](../Documentation/Architecture/Dataflow/Level-1/DFD_Level1_Database.png)
+- [Level 1 - RAWG API](../Documentation/Architecture/Dataflow/Level-1/DFD_Level1_RAWGAPI.png)
+- [Level 2 - Game Management](../Documentation/Architecture/Dataflow/Level-2/DFD_Level2_GameManagement.png)
+
+---
+
+#### Requirements
+- [requirements.md](../Documentation/Requirements/requirements.md)
+
+---
+
+#### Mitigations
+- [mitigations.md](../Documentation/Mitigations/mitigations.md)
+
+---
+
+#### SSDLC
+- [SSDLC.md](../Documentation/SSDLC/SSDLC.md)
+- [DREAD.md](../Documentation/SSDLC/DREAD.md)
+
+---
+
+#### Threat Modeling
+
+- [Threat Model Overview](../Documentation/ThreatModeling/ThreatModel.md)
+
+##### Threat Identification & Analysis
+- [threatIdentificationAndAnalysis.md](../Documentation/ThreatModeling/ThreatIdentificationAndAnalysis/threatIdentificationAndAnalysis.md)
+
+##### Risk Assessment
+- [riskAssessment.md](../Documentation/ThreatModeling/RiskAssessment/riskAssessment.md)
+
+##### Abuse Cases
+- [AbuseCases.md](../Documentation/ThreatModeling/AbuseCases/AbuseCases.md)
+
+##### Attack Trees
+- [AttackTrees.md](../Documentation/ThreatModeling/AttackTrees/AttackTrees.md)
+- [Account Takeover](../Documentation/ThreatModeling/AttackTrees/Account-Takeover-Attack-Tree.puml)
+- [Input Injection](../Documentation/ThreatModeling/AttackTrees/Input-Injection-Attack-Tree.puml)
+- [Order Tampering](../Documentation/ThreatModeling/AttackTrees/Order-Tampering-Attack-Tree.puml)
+
+---
+
+#### Security Testing
+
+- [securityTesting.md](../Documentation/SecurityTesting/securityTesting.md)
+- [Threat Model Review Workflow](../Documentation/SecurityTesting/ThreatModelReviewWorkflow.md)
+- [Traceability Matrix](../Documentation/SecurityTesting/TraceabilityMatrix.md)
+
+##### ASVS Controls
+
+- [V1 – Encoding & Sanitization](../Documentation/SecurityTesting/ASVS/V1_EncodingSanitization/encodingSanatization.md)
+- [V2 – Validation & Business Logic](../Documentation/SecurityTesting/ASVS/V2_ValidationBusinessLogic/validationBusinessLogic.md)
+- [V3 – Web Frontend Security](../Documentation/SecurityTesting/ASVS/V3_WebFrontendSecurity/webFrontendSecurity.md)
+- [V4 – API & Web Services](../Documentation/SecurityTesting/ASVS/V4_API_WebServiceSecurity/apiWebservice.md)
+- [V5 – File Handling](../Documentation/SecurityTesting/ASVS/V5_FileHandling/fileHandling.md)
+- [V6 – Authentication](../Documentation/SecurityTesting/ASVS/V6_Authentication/authentication.md)
+- [V7 – Session Management](../Documentation/SecurityTesting/ASVS/V7_SessionManagement/sessionManagement.md)
+- [V8 – Authorization](../Documentation/SecurityTesting/ASVS/V8_Authorization/authorization.md)
+- [V9 – Self-contained Tokens](../Documentation/SecurityTesting/ASVS/V9_Self-contained%20Tokens/self_containedTokens.md)
+- [V10 – OAuth & OIDC](../Documentation/SecurityTesting/ASVS/V10_OAuthOIDC/oauthOidc.md)
+- [V11 – Cryptography](../Documentation/SecurityTesting/ASVS/V11_Cryptography/V11-Cryptography.md)
+- [V12 – Secure Communication](../Documentation/SecurityTesting/ASVS/V12_SecureCommunication/secureCommunication.md)
+- [V13 – Configuration](../Documentation/SecurityTesting/ASVS/V13_Configuration/configuration.md)
+- [V14 – Data Protection](../Documentation/SecurityTesting/ASVS/V14_DataProtection/dataProtection.md)
+- [V15 – Secure Coding & Architecture](../Documentation/SecurityTesting/ASVS/V15_Secure_Coding_and_Archite/V15-SecureCoding.md)
+- [V16 – Security Logging & Error Handling](../Documentation/SecurityTesting/ASVS/V16_Security_Loggin_Error_Handling/V16-Security-Logging-Error-Handling.md)
+- [V17 – Communications](../Documentation/SecurityTesting/ASVS/V17_Communications/V17-Communications.md)
+
+---
 
 ## Work Distribution
 
@@ -116,7 +172,8 @@ During this phase, the workload was distributed among the group members as follo
   - [Mitigations](../Documentation/Mitigations/mitigations.md)
   - [Risk Assessment](../Documentation/ThreatModeling/RiskAssessment/riskAssessment.md)
   - [Threat Identification and Analysis](../Documentation/ThreatModeling/ThreatIdentificationAndAnalysis/threatIdentificationAndAnalysis.md)
- 
+  - [Threat Model](../Documentation/ThreatModeling/ThreatModel.md)
+
 
 - 1250505 - Diogo Sousa
   - [Requirements](../Documentation/Requirements/requirements.md)
@@ -149,7 +206,5 @@ During this phase, the workload was distributed among the group members as follo
   - [ASVS](../Documentation/SecurityTesting/ASVS)
     - [Cryptography](../Documentation/SecurityTesting/ASVS/V11_Cryptography/V11-Cryptography.md)
     - [Secure Coding and Architecture](../Documentation/SecurityTesting/ASVS/V15_Secure_Coding_and_Archite/V15-SecureCoding.md)
-    - [Security Logging and Error Handling](../Documentation/SecurityTesting/ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md)
-    - [Communications](../Documentation/SecurityTesting/ASVS/V17_Communications/V17-Communications.md)
-  - [Security Testing](../Documentation/SecurityTesting/)
-    - [Threat Model Review Workflow](../Documentation/SecurityTesting/ThreatModelReviewWorkflow.md)
+    - [Security Logging and Error Handling](../Documentation/SecurityTesting/ASVS/V16_Security_Loggin_Error_Handling/V16-Security-Logging-Error-Handling.md)
+  - [Threat Model Review Workflow](../Documentation/SecurityTesting/ThreatModelReviewWorkflow.md)
