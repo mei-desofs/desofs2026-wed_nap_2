@@ -1,90 +1,91 @@
-# Mitigation Plan and Control Catalog
+# Mitigations
 
 ## 1. Objective
 
-This document defines the mitigation strategy for the initial threat and risk baseline of ArcadeHaven.
+Mitigations are security controls and measures designed to reduce the impact of identified threats and vulnerabilities within a system. They define the rules to be followed and actions to be implemented within the system, so as to enforce proper security policies and to ensure the integrity, confidentiality and availability of the sytem.
 
-## 2. Mitigation Strategy
+This document defines the mitigation strategy for the ArcadeHaven system. As of this iteration of the project, the mitigations are currently being applied to the following elements:
+- Abuse cases (referenced [here](../ThreatModeling/AbuseCases/AbuseCases.md))
+- Dataflow Diagram STRIDES (referenced [here](../Architecture/Dataflow/arcadehaven-dfd.pdf))
 
-Mitigations are prioritized by risk level:
+These mitigations aim to provide a secure wway to address the identified security concerns within the ArcadeHaven system by providing a structured and traceable aproach to reducing the direct impact of these threats to the system.
 
-- Critical and High: mandatory in Sprint 1 or early Sprint 2.
-- Medium: implemented before release unless explicitly accepted.
-- Low: tracked in backlog with periodic review.
 
-## 3. Control Catalog
+## 2. Abuse Case Mitigation
 
-## 3.1 Authentication and Authorization Controls
+| Mitigation                            | Description                                                                                     | Related Abuse Case                  |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------- |
+| **Input Sanitization**                | All user inputs must be validated and sanitized before being processed to prevent injection attacks. | Inject Malicious Code (AC-01)  |
+| **Multi-Factor Authentication (MFA)** | Add an additional authentication factor to prevent unauthorized account access                  | Hijack Account (AC-02)              |
+|                                       |                                                                                                 | Dictionary Attack (AC-03)           |
+|                                       |                                                                                                 | Brute Force Login (AC-04)           |
+| **Rate Limiting and Account Lockout** | Limits repeated login attempts to prevent automated attacks                                     | Brute Force Login (AC-04)           |
+|                                       |                                                                                                 | Dictionary Attack (AC-03)           |
+| **Secure Token Management**           | Configure short-lived tokens and secure storage to prevent token reuse                          | JWT Token Theft (AC-05 and AC-07)   |
+| **Endpoint Authentication**           | Ensure all protected endpoints implement authentication validation through the use of the tokens | JWT Token Theft (AC-07)            |
+|                                       |                                                                                                 | Modify Order (AC-12)                |
+| **Role-Based Access Control (RBAC)**  | Restrict actions and operations to specific roles so as to mitigate privilege escalation        | Privilege Escalation                |
+| **Ownership Validation**              | Ensure owned resources can only be accessed by their owners                                     | Modify Order (AC-12)                |
+|                                       |                                                                                                 | Unauthorized Invoice Access (AC-17) |
+|                                       |                                                                                                 | Invoice ID Enumeration (AC-15)      |
+|                                       |                                                                                                 | Invoice ID Enumeration (AC-15)      |
+| **File Name Sanitization**            | Prevent malicious file naming and path manipulation                                             | Upload Malicious File (AC-08)       |
+| **File Size Validation**              | Restrict file sizes to prevent resource abuse and mitigate malicious resource injections        | Upload Oversized File (AC-09)       |
+| **MIME Type Verification**            | Validate actual file type to prevent malicious file uploads                                     | Bypass MIME-Verification (AC-10)    |
+|                                       |                                                                                                 | Upload Malicious File (AC-08)       |
+| **Server-Side Validation**            | Ensure all operations are validated on backend to prevent tampering and previlege escalation    | Modify Order (AC-12)                |
+|                                       |                                                                                                 | Force Duplicated Purchase (AC-13)   |
+|                                       |                                                                                                 | Bypass Payment (AC-14)              |
+| **Duplicate Purchase Check**          | Prevent purchasing the same game multiple times                                                 | Force Duplicated Purchase (AC-13)   |
+| **Payment Validation**                | Ensure order completion requires valid payment confirmation                                     | Bypass Payment (AC-14)              |
+| **Secure Key Generation**             | Generate unpredictable activation keys and securely storage them to prevent guessing            | Guess Game Key (AC-11)              |
+| **Authorization Check**               | Ensure authorization and access to sensitive resources is validated                             | Invoice ID Enumeration (AC-15)      |
+|                                       |                                                                                                 | Unauthorized Invoice Access (AC-17) |
+| **Secure File Storage**               | Store files outside public access and implemen required authentication to retrieve them         | Path Traversal Attack (AC-16)       |
+|                                       |                                                                                                 | Unauthorized Invoice Access (AC-17) |
+| **Path Validation**                   | Prevent directory traversal attacks by sanitizing file paths                                    | Path Traversal Attack (AC-16)       |
 
-| Control ID | Control | Mapped Threats | Mapped Risks | Mapped Requirements |
-| --- | --- | --- | --- | --- |
-| AC-001 | BCrypt password hashing policy | TH-01 | R-01 | RNF-01 |
-| AC-002 | JWT expiration and validation hardening | TH-02 | R-02 | RNF-02 |
-| AC-003 | Mandatory endpoint authentication | TH-02 | R-02 | RNF-03 |
-| AC-004 | Role-based access control matrix | TH-03 | R-03 | RF-03, RF-04, RF-05, RNF-04 |
-| AC-005 | HTTPS-only communication | TH-02 | R-02 | RNF-05 |
-| AC-006 | Rate limiting and temporary account lockout | TH-01 | R-01 | RNF-09 |
 
-## 3.2 Input Validation Controls
 
-| Control ID | Control | Mapped Threats | Mapped Risks | Mapped Requirements |
-| --- | --- | --- | --- | --- |
-| IV-001 | Server-side input validation for all user fields | TH-04 | R-04 | RNF-06 |
-| IV-002 | Parameterized persistence/query patterns | TH-04 | R-04 | RNF-06 |
-| IV-003 | Output sanitization for user-provided content | TH-04 | R-04 | RNF-06 |
+## 3. Stride Mitigations
 
-## 3.3 File Operation Controls
-
-| Control ID | Control | Mapped Threats | Mapped Risks | Mapped Requirements |
-| --- | --- | --- | --- | --- |
-| FO-001 | MIME and extension verification | TH-05 | R-05 | RF-30, RNF-10 |
-| FO-002 | File size limits and reject policy | TH-05 | R-05 | RF-29, RF-30 |
-| FO-003 | Safe path handling for file retrieval | TH-06 | R-06 | RF-19, RF-27 |
-| FO-004 | Access checks before invoice/key retrieval | TH-06, TH-07 | R-06, R-07 | RF-19, RF-23 |
-| FO-005 | Generated file names independent of user input | TH-05, TH-06 | R-05, R-06 | RF-27, RF-28 |
-
-## 3.4 Logging and Monitoring Controls
-
-| Control ID | Control | Mapped Threats | Mapped Risks | Mapped Requirements |
-| --- | --- | --- | --- | --- |
-| LM-001 | Security event logging for login outcomes | TH-01, TH-09 | R-01, R-09 | RNF-07 |
-| LM-002 | Audit logging for role changes and admin actions | TH-03, TH-09 | R-03, R-09 | RNF-07 |
-| LM-003 | Access logging for invoice and key operations | TH-07, TH-09 | R-07, R-09 | RNF-07 |
-
-## 3.5 Secrets and Configuration Controls
-
-| Control ID | Control | Mapped Threats | Mapped Risks | Mapped Requirements |
-| --- | --- | --- | --- | --- |
-| SC-001 | Secrets only in environment variables | TH-02, TH-07 | R-02, R-07 | RNF-23 |
-| SC-002 | No sensitive values in logs | TH-07, TH-09 | R-07, R-09 | RNF-07 |
-| SC-003 | Secure activation key generation entropy | TH-07 | R-07 | RNF-08 |
-
-## 3.6 Dependency and Container Controls
-
-| Control ID | Control | Mapped Threats | Mapped Risks | Mapped Requirements |
-| --- | --- | --- | --- | --- |
-| DC-001 | Dependency scanning in CI | TH-02, TH-04 | R-02, R-04 | RNF-20 |
-| DC-002 | Container image vulnerability scanning | TH-02 | R-02 | RNF-21, RNF-22 |
-| DC-003 | SLA-based vulnerability remediation policy | TH-02, TH-04, TH-05 | R-02, R-04, R-05 | RNF-20 |
-
-## 4. Control-to-Test Mapping
-
-| Control ID | Planned Tests |
-| --- | --- |
-| AC-001 | ST-001 |
-| AC-002, AC-003, AC-005 | ST-002, ST-003, ST-005 |
-| AC-004 | ST-004 |
-| AC-006 | ST-010 |
-| IV-001, IV-002, IV-003 | ST-006, ST-007 |
-| FO-001, FO-002 | ST-011, ST-013, ST-014 |
-| FO-003, FO-004, FO-005 | ST-012 |
-| LM-001, LM-002, LM-003 | ST-008 |
-| SC-001, SC-002 | ST-016 |
-| SC-003 | ST-009 |
-| DC-001, DC-002, DC-003 | Security pipeline checks in Sprint 1 and Sprint 2 |
-
-## 5. Implementation Priorities
-
-1. Sprint 1 priority: AC-001 to AC-006, IV-001 to IV-003, FO-001 to FO-003, LM-001 to LM-002.
-2. Sprint 2 priority: FO-004 to FO-005, LM-003, SC-001 to SC-003, DC-001 to DC-003 hardening.
-3. Release gate: all controls mapped to Critical and High risks must be implemented and evidenced.
+| STRIDE Category            | Mitigation                         | Description                                                                                      |
+| -------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **Spoofing**               | Multi-Factor Authentication (MFA)  | Enforce Keycloack MFA to prevent identity impersonation using stolen credentials                 |
+|                            | Strong Password Policies           | Require complex passwords and detect breached credentials to reduce account takeover risk        |
+|                            | JWT Validation and Verification    | Validate token signature, issuer, audience, and expiry on requests                               |
+|                            | Trusted Token Issuer Configuration | Only accept tokens from a trusted identity provider                                              |
+|                            | Secure Session Binding             | Bind sessions to device/IP and use short-lived tokens to prevent reuse                           |
+|                            | Credential Protection              | Avoid logging credentials or tokens and ensure secure storage and transmission                   |
+| **Tampering**              | Input Validation and Sanitization  | Validate and sanitize all inputs                                                                 |
+|                            | Server-Side Enforcement            | Never trust client input and compute critical values server-side                                 |
+|                            | Parameterized Queries              | Prevent SQL injection using prepared statements or ORM bindings                                  |
+|                            | File Path Validation               | Use canonical paths and UUID filenames to prevent path traversal attacks                         |
+|                            | Secure File Upload Handling        | Validate file type via magic bytes, scan for malware, restrict executable files                  |
+|                            | Data Integrity Checks              | Ensure integrity of generated artifacts                                                          |
+| **Repudiation**            | Centralized Audit Logging          | Log all critical actions with timestamps and user IDs                                            |
+|                            | Immutable Logs / SIEM              | Store logs in tamper-evident systems for forensic traceability                                   |
+|                            | Cross-System Correlation           | Propagate session IDs across services to correlate logs                                          |
+|                            | Action Attribution                 | Track who performed database, file and system actions                                            |
+|                            | Non-Repudiation Records            | Store signed or verifiable transaction records                                                   |
+| **Information Disclosure** | Encryption in Transit (TLS)        | Enforce HTTPS, HSTS, and disable plaintext HTTP to prevent interception                          |
+|                            | Encryption at Rest                 | Encrypt sensitive data                                                                           |
+|                            | Least Privilege Access             | Restrict access based on roles and ownership                                                     |
+|                            | Secure Error Handling              | Avoid leaking stack traces or internal system details in responses                               |
+|                            | Secure Token Handling              | Never expose tokens in URLs, logs, or client storage                                             |
+|                            | Secrets Management                 | Store credentials in environment variables or secret managers                                    |
+|                            | Secure File Access                 | Serve sensitive files via authenticated endpoints only                                           |
+|                            | Data Sanitization (External APIs)  | Treat external API data as untrusted and sanitize it before use                                  |
+| **Denial of Service**      | Rate Limiting                      | Limit requests per IP/user                                                                       |
+|                            | Resource Limits                    | Enforce file size limits, pagination, and query limits                                           |
+|                            | Connection and Timeout Controls    | Use reverse proxy with timeouts and connection limits                                            |
+|                            | Caching and Circuit Breakers       | Cache external dependencies and degrade gracefully                                               |
+|                            | Asynchronous Processing            | Offload heavy tasks to background workers                                                        |
+|                            | Monitoring and Alerting            | Detect abnormal usage patterns and trigger alerts                                                |
+|                            | High Availability (HA)             | Deploy critical services redundantly                                                             |
+| **Elevation of Privilege** | Role-Based Access Control (RBAC)   | Enforce roles at endpoint and method level                                                       |
+|                            | Ownership Validation               | Ensure users can only access their own resources                                                 |
+|                            | Strict Authorization Checks        | Validate permissions on every request, not just authentication                                   |
+|                            | Separation of Duties               | Separate admin vs user operations                                                                |
+|                            | Secure Role Assignment             | Restrict admin interfaces and protect role assignment mechanisms                                 |
+|                            | Token Claim Validation             | Ensure roles are extracted from trusted JWT claims only                                          |
