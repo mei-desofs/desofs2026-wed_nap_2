@@ -148,7 +148,7 @@ Together, these stages ensure that security is considered from the early stages 
 - [V14 – Data Protection](../Documentation/SecurityTesting/ASVS/V14_DataProtection/dataProtection.md)
 - [V15 – Secure Coding & Architecture](../Documentation/SecurityTesting/ASVS/V15_Secure_Coding_and_Archite/V15-SecureCoding.md)
 - [V16 – Security Logging & Error Handling](../Documentation/SecurityTesting/ASVS/V16_Security_Loggin_Error_Handling/V16-Security-Logging-Error-Handling.md)
-- [V17 – Communications](../Documentation/SecurityTesting/ASVS/V17_Communications/V17-Communications.md)
+- [V17 – WebRTC](../Documentation/SecurityTesting/ASVS/V17_WebRTC/V17-WebRTC.md)
 
 ---
 
@@ -167,7 +167,7 @@ During this phase, the workload was distributed among the group members as follo
     - [Secure Communication](../Documentation/SecurityTesting/ASVS/V12_SecureCommunication/secureCommunication.md)
     - [Data Protection](../Documentation/SecurityTesting/ASVS/V14_DataProtection/dataProtection.md)
     - [File Handling](../Documentation/SecurityTesting/ASVS/V5_FileHandling/fileHandling.md)
-    - [WebRTC]()
+    - [WebRTC](../Documentation/SecurityTesting/ASVS/V17_WebRTC/V17-WebRTC.md)
   - [STRIDE](../Documentation/Architecture/Dataflow/arcadehaven-dfd.pdf)
   - [Mitigations](../Documentation/Mitigations/mitigations.md)
   - [Risk Assessment](../Documentation/ThreatModeling/RiskAssessment/riskAssessment.md)
@@ -207,4 +207,6 @@ During this phase, the workload was distributed among the group members as follo
     - [Cryptography](../Documentation/SecurityTesting/ASVS/V11_Cryptography/V11-Cryptography.md)
     - [Secure Coding and Architecture](../Documentation/SecurityTesting/ASVS/V15_Secure_Coding_and_Archite/V15-SecureCoding.md)
     - [Security Logging and Error Handling](../Documentation/SecurityTesting/ASVS/V16_Security_Loggin_Error_Handling/V16-Security-Logging-Error-Handling.md)
+    - [WebRTC](../Documentation/SecurityTesting/ASVS/V17_WebRTC/V17-WebRTC.md)
+
   - [Threat Model Review Workflow](../Documentation/SecurityTesting/ThreatModelReviewWorkflow.md)
