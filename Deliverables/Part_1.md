@@ -74,9 +74,9 @@ Together, these stages ensure that security is considered from the early stages 
         - [TH-04-Input-Injection-Attack-Tree.puml](../Documentation/ThreatModeling/AttackTrees/Input-Injection-Attack-Tree.puml)
         - [TH-08-Order-Tampering-Attack-Tree.puml](../Documentation/ThreatModeling/AttackTrees/Order-Tampering-Attack-Tree.puml)
     - [SecurityTesting](../Documentation/SecurityTesting/)
-      - [SecurityTesting.md](../Documentation/SecurityTesting/SecurityTesting.md)
+      - [securityTesting.md](../Documentation/SecurityTesting/securityTesting.md)
       - [ThreatModelReviewWorkflow.md](../Documentation/SecurityTesting/ThreatModelReviewWorkflow.md)
-      - [TraceabilityMatrix-V2.md](../Documentation/SecurityTesting/TraceabilityMatrix-V2.md)
+      - [TraceabilityMatrix.md](../Documentation/SecurityTesting/TraceabilityMatrix.md)
       - [ASVS](../Documentation/SecurityTesting/ASVS/)
         - [V1_EncodingSanitization](../Documentation/SecurityTesting/ASVS/V1_EncodingSanitization/)
         - [V2_ValidationBusinessLogic](../Documentation/SecurityTesting/ASVS/V2_ValidationBusinessLogic/)
@@ -118,12 +118,15 @@ During this phase, the workload was distributed among the group members as follo
   - [Threat Identification and Analysis](../Documentation/ThreatModeling/ThreatIdentificationAndAnalysis/threatIdentificationAndAnalysis.md)
  
 
-- 1250505 - Diogo José
+- 1250505 - Diogo Sousa
   - [Requirements](../Documentation/Requirements/requirements.md)
   - [Architecture Views](../Documentation/Architecture/Diagrams/Views/Views.md)
   - [Abuse Cases](../Documentation/ThreatModeling/AbuseCases/AbuseCases.md)
   - [Dataflow Diagrams](../Documentation/Architecture/Dataflow/dataflow.md)
   - [Mitigations](../Documentation/Mitigations/mitigations.md)
+  - [Security Testing](../Documentation/SecurityTesting/)
+    - [Security Testing Plan](../Documentation/SecurityTesting/securityTesting.md)
+    - [Traceability Matrix](../Documentation/SecurityTesting/TraceabilityMatrix.md)
 
  
 
@@ -149,6 +152,4 @@ During this phase, the workload was distributed among the group members as follo
     - [Security Logging and Error Handling](../Documentation/SecurityTesting/ASVS/V16_Loggin_Error_Handling/V16-Logging-Error-Handling.md)
     - [Communications](../Documentation/SecurityTesting/ASVS/V17_Communications/V17-Communications.md)
   - [Security Testing](../Documentation/SecurityTesting/)
-    - [Security Testing Plan](../Documentation/SecurityTesting/SecurityTesting.md)
     - [Threat Model Review Workflow](../Documentation/SecurityTesting/ThreatModelReviewWorkflow.md)
-    - [Traceability Matrix v2](../Documentation/SecurityTesting/TraceabilityMatrix-V2.md)

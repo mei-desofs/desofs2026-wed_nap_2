@@ -35,7 +35,7 @@ Documentation/
 |   ├── MasterObjectivePlan.md
 |   ├── SecurityTesting.md
 │   ├── ThreatModelReviewWorkflow.md
-│   └── TraceabilityMatrix-V2.md
+│   └── TraceabilityMatrix.md
 │
 └── SSDLC/
     ├── SSDLC.md
@@ -53,9 +53,9 @@ Documentation/
 - [DREAD Analysis](../SSDLC/DREAD.md): STRIDE category-level DREAD summary plus individual per-threat DREAD scoring for all 76 threats identified by OWASP Threat Dragon, each anchored to CWE, OWASP Top 10 2021, and CVSS 3.1 base score ranges with per-dimension justification.
 - [Mitigations](../Mitigations/Mitigations.md): Proposed mitigations for identified threats, focusing on high-priority risks such as broken access control, insecure file handling, and credential exposure.
 - [Requirements](../Requirements/requirements.md): Justified security requirements for ArcadeHaven, covering authentication and authorization (Admin, Publisher, Buyer roles), data security, secure communication, input validation, third-party components (RAWG.io), logging, and monitoring.
-- [Security Testing](../SecurityTesting/SecurityTesting.md): Security testing methodology for ArcadeHaven, including abuse cases, threat model review process, and ASVS assessment focused on the platform architecture.
+- [Security Testing](../SecurityTesting/securityTesting.md): Security testing methodology for ArcadeHaven, including abuse cases, threat model review process, and ASVS assessment focused on the platform architecture.
 
-[//]: # (- [Security Traceability Matrix v2]&#40;../SecurityTesting/TraceabilityMatrix-V2.md&#41;: Requirement-to-threat-to-test mapping with owner and sprint planning.)
+[//]: # (- [Security Traceability Matrix]&#40;../SecurityTesting/TraceabilityMatrix.md&#41;: Requirement-to-threat-to-test mapping with owner and sprint planning.)
 
 
 
