@@ -18,11 +18,11 @@
 
 ## V3.2 — Unintended Content Interpretation
 
-| Req ID | Level | Status | Observations |
-|---|---|---|---|
-| V3.2.1 | 1 |  Planned | API responses will include `Content-Disposition: attachment` for file downloads and validate `Sec-Fetch-*` headers where applicable. |
-| V3.2.2 | 1 |  N/A | No HTML rendering occurs in the API. All responses are JSON or binary file content. |
-| V3.2.3 | 3 |  N/A | No client-side JavaScript is used. ArcadeHaven is a back-end REST API only. |
+| Req ID | Level | Status | Observations                                                                                                                          |
+|---|---|---|---------------------------------------------------------------------------------------------------------------------------------------|
+| V3.2.1 | 1 |  N/A | API responses don't include `Content-Disposition: attachment` for file downloads and validate `Sec-Fetch-*` headers where applicable. |
+| V3.2.2 | 1 |  N/A | No HTML rendering occurs in the API. All responses are JSON or binary file content.                                                   |
+| V3.2.3 | 3 |  N/A | No client-side JavaScript is used. ArcadeHaven is a back-end REST API only.                                                           |
 
 ---
 
@@ -40,16 +40,16 @@
 
 ## V3.4 — Browser Security Mechanism Headers
 
-| Req ID | Level | Status | Observations |
-|---|---|---|---|
-| V3.4.1 | 1 |  Planned | HSTS header (`Strict-Transport-Security: max-age=31536000; includeSubDomains`) will be enforced on all API responses via Spring Security. |
+| Req ID | Level | Status | Observations                                                                                                                                      |
+|---|---|---|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| V3.4.1 | 1 |  Planned | HSTS header (`Strict-Transport-Security: max-age=31536000; includeSubDomains`) will be enforced on all API responses via Spring Security.         |
 | V3.4.2 | 1 |  Planned | CORS will be configured with a strict allowlist of trusted origins. `Access-Control-Allow-Origin: *` will not be used on authenticated endpoints. |
-| V3.4.3 | 2 |  Planned | A global CSP header will be added with `object-src 'none'` and `base-uri 'none'` as minimum. Applicable to API responses serving file content. |
-| V3.4.4 | 2 |  Planned | `X-Content-Type-Options: nosniff` will be included on all API responses via Spring Security headers configuration. |
-| V3.4.5 | 2 |  Planned | `Referrer-Policy: no-referrer` will be set on all API responses to prevent leakage of sensitive URL data. |
-| V3.4.6 | 2 |  Planned | `Content-Security-Policy: frame-ancestors 'none'` will be set on all responses to prevent embedding. |
-| V3.4.7 | 3 |  Planned | CSP violation reporting endpoint will be considered for Phase 2. |
-| V3.4.8 | 3 |  N/A | ArcadeHaven does not serve HTML documents. `Cross-Origin-Opener-Policy` is not applicable to a JSON REST API. |
+| V3.4.3 | 2 |  N/A | CSP not applicable to JSON REST API without HTML responses.                                                                                       |
+| V3.4.4 | 2 |  Planned | `X-Content-Type-Options: nosniff` will be included on all API responses via Spring Security headers configuration.                                |
+| V3.4.5 | 2 |  N/A | Referrer-Policy has minimal relevance in API-only context.                                                                                        |
+| V3.4.6 | 2 |  N/A | Frame-ancestors not applicable (no browser rendering).                                                                                            |
+| V3.4.7 | 3 |  N/A | CSP reporting not applicable without CSP usage.                                                                                                  |
+| V3.4.8 | 3 |  N/A | ArcadeHaven does not serve HTML documents. `Cross-Origin-Opener-Policy` is not applicable to a JSON REST API.                                     |
 
 ---
 
@@ -60,11 +60,11 @@
 | V3.5.1 | 1 |  Planned | All sensitive endpoints require a valid JWT Bearer token in the `Authorization` header, which is not a CORS-safelisted header, effectively preventing CSRF. |
 | V3.5.2 | 1 |  Planned | All state-changing API calls require `Content-Type: application/json`, which triggers a CORS preflight. Requests without this header will be rejected. |
 | V3.5.3 | 1 |  Planned | All sensitive operations use appropriate HTTP methods (POST, PUT, PATCH, DELETE). GET endpoints are read-only and do not expose sensitive functionality. |
-| V3.5.4 | 2 |  N/A | ArcadeHaven is a single back-end application. Multiple hostname separation is not applicable at this stage. |
-| V3.5.5 | 2 |  N/A | ArcadeHaven does not use the `postMessage` interface. No client-side messaging is implemented. |
-| V3.5.6 | 3 |  N/A | JSONP is not used anywhere in ArcadeHaven. All responses are standard JSON. |
-| V3.5.7 | 3 |  Planned | No sensitive or authorization-dependent data will be included in JavaScript file responses. Static assets are public. |
-| V3.5.8 | 3 |  Planned | File download endpoints (invoices, game images) will validate `Sec-Fetch-*` headers and set `Cross-Origin-Resource-Policy: same-origin`. |
+| V3.5.4 | 2 |  N/A | Single backend; hostname separation not applicable. |
+| V3.5.5 | 2 |  N/A | No client-side messaging (postMessage). |
+| V3.5.6 | 3 |  N/A | JSONP not used. |
+| V3.5.7 | 3 |  N/A | API does not serve JavaScript files or executable client-side code. |
+| V3.5.8 | 3 |  N/A |  |
 
 ---
 

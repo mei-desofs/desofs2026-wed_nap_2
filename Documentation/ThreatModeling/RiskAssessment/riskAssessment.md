@@ -1,7 +1,7 @@
 # Risk Assessment
 
 **Project:** ArcadeHaven — DESOFS 2026  
-**Methodology:** OWASP Risk Rating Methodology  
+**Methodology:** [OWASP Risk Rating Methodology](https://owasp.org/www-community/OWASP_Risk_Rating_Methodology)  
 
 ---
 
@@ -601,16 +601,16 @@ Cloud misconfiguration is a common real-world incident. Impact is a GDPR breach 
 
 | # | Threat ID | Description | Likelihood | Impact | Risk Level |
 |---|-----------|-------------|:----------:|:------:|:----------:|
-| RISK-16 | L1B-P-14 | Weak JWT signing key — HS256 with guessable secret | 5.1 | 8.8 | **High** |
-| RISK-17 | L1A-P-14 | Malicious game file upload bypassing MIME check | 6.3 | 7.1 | **High** |
-| RISK-18 | L1B-F-06 | Token response cached by proxy — cross-user token leakage | 4.0 | 7.5 | **High** |
-| RISK-19 | L1D-F-06 | RAWG quota exhaustion via publisher flood | 6.5 | 4.2 | **Medium** |
-| RISK-20 | L1C-F-25 | Synchronous PDF generation in order write transaction | 5.8 | 3.9 | **Medium** |
-| RISK-21 | L1B-P-20 | Excessive clock skew accepting expired tokens | 4.1 | 5.5 | **Medium** |
-| RISK-22 | L1A-P-35 | User enumeration via login timing attack | 6.8 | 3.2 | **Medium** |
-| RISK-23 | L2-P-16 | EXIF metadata in uploaded images exposing developer PII | 5.5 | 4.1 | **Medium** |
-| RISK-24 | L1C-F-16 | Concurrent activation writes — key burned without use | 4.5 | 5.0 | **Medium** |
-| RISK-25 | L1D-F-14 | RAWG tracking pixels stored — GDPR violation | 4.0 | 5.5 | **Medium** |
+| RISK-16 | L1B-P-14 | Weak JWT signing key — HS256 with guessable secret |    5.1     |  8.8   | **High** |
+| RISK-17 | L1A-P-14 | Malicious game file upload bypassing MIME check |    5.9     |  7.4   | **High** |
+| RISK-18 | L1B-F-06 | Token response cached by proxy — cross-user token leakage |    4.0     |  7.5   | **High** |
+| RISK-19 | L1D-F-06 | RAWG quota exhaustion via publisher flood |    6.5     |  4.2   | **Medium** |
+| RISK-20 | L1C-F-25 | Synchronous PDF generation in order write transaction |    5.8     |  3.9   | **Medium** |
+| RISK-21 | L1B-P-20 | Excessive clock skew accepting expired tokens |    4.1     |  5.5   | **Medium** |
+| RISK-22 | L1A-P-35 | User enumeration via login timing attack |    6.8     |  3.2   | **Medium** |
+| RISK-23 | L2-P-16 | EXIF metadata in uploaded images exposing developer PII |    5.5     |  4.1   | **Medium** |
+| RISK-24 | L1C-F-16 | Concurrent activation writes — key burned without use |    4.5     |  5.0   | **Medium** |
+| RISK-25 | L1D-F-14 | RAWG tracking pixels stored — GDPR violation |    4.0     |  5.5   | **Medium** |
 
 ---
 
@@ -673,7 +673,7 @@ These risks must be resolved before ArcadeHaven goes live. Deployment with any o
 | 9 | RISK-10 | Credential stuffing against Keycloak | DevOps / Security | Low (Keycloak config) |
 | 10 | RISK-15 | User DB backup exposed — GDPR breach | DevOps / Infra | Low (S3 policy + encryption) |
 
-### Phase 2 — Current Sprint (High)
+### Phase 2 — Same Sprint (High)
 
 These risks significantly increase the platform's security posture and should be addressed in the same sprint as the critical fixes.
 
@@ -733,9 +733,9 @@ DREAD was considered but rejected because it does not include business impact fa
 
 **RISK-05 (alg:none) is ranked #1** despite not being the highest-impact threat in isolation, because it is the only vulnerability that can bypass the entire authentication and authorisation system in a single step. All other security controls are rendered void if this is exploited.
 
-**RISK-06 (Role Response tampering) is ranked lower than its impact score suggests** because the likelihood requires internal network access — a precondition that places it behind threats that require only a browser and a valid JWT account. However, it is still treated as Phase 2 because the architectural fix (enforcing in-process role resolution) is low-effort and eliminates the risk entirely.
+**RISK-06 (Role Response tampering) is ranked lower than its impact score suggests** because the likelihood requires internal network access, a precondition that places it behind threats that require only a browser and a valid JWT account. However, it is still treated as Phase 2 because the architectural fix (enforcing in-process role resolution) is low-effort and eliminates the risk entirely.
 
-**RISK-15 (unencrypted backup) is in Phase 1** despite being an infrastructure control rather than a code change, because a single misconfiguration incident would constitute an automatic GDPR data breach with mandatory notification obligations — a regulatory risk that cannot be deferred.
+**RISK-15 (unencrypted backup) is in Phase 1** despite being an infrastructure control rather than a code change, because a single misconfiguration incident would constitute an automatic GDPR data breach with mandatory notification obligations, a regulatory risk that cannot be deferred.
 
 **Risks L0-P-01 through L0-P-06** (Level 0 system-context threats) are not separately scored in the risk register because they are fully covered by more specific threats identified at lower DFD levels. The Level 0 analysis provides context for understanding the system boundary, not additional distinct risks.
 
@@ -752,6 +752,3 @@ After implementing all Phase 1 and Phase 2 mitigations, the following residual r
 | RISK-27 (Keycloak config accidentally deleted) | Low | Version-controlled Keycloak config + deployment smoke tests reduce likelihood to near-zero |
 | RISK-19 (RAWG quota exhaustion) | Medium | Per-publisher rate limiting reduces but does not eliminate; accepted pending RAWG paid tier upgrade |
 
----
-
-*End of Risk Assessment Document*

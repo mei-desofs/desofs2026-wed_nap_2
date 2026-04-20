@@ -31,7 +31,7 @@ This section consolidates the architecture artefacts used in Phase 1 analysis an
 
 #### Source Files
 
-- [Visual Paradigm Project](Diagrams/Views/DESOFS%20-%20Views.vpp)
+- [Visual Paradigm Project](Diagrams/Views/DESOFS_Views.vpp)
 
 
 ## Dataflow

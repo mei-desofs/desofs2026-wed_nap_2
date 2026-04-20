@@ -123,6 +123,7 @@ desofs2026-wed_nap_2/
 │       ├── infrastructure/  # Persistência, Segurança, Ficheiros
 │       └── api/             # Controllers REST
 ├── Deliverables/            # Entregas por fase/sprint
+├── Documentation/           # Documentação do Projeto
 ├── Dockerfile
 ├── docker-compose.yml
 └── pom.xml

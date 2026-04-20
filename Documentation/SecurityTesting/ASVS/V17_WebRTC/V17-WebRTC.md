@@ -1,8 +1,8 @@
-# V17 Communications
+# V17 WebRTC
 
 ## Executive Summary
 
-**V17 Communications (TURN Server, Media, Signaling) is 100% NOT APPLICABLE to ArcadeHaven.**
+**V17 WebRTC (TURN Server, Media, Signaling) is 100% NOT APPLICABLE to ArcadeHaven.**
 
 **Rationale:**
 ArcadeHaven is a **REST API-based e-commerce platform for digital game sales**, with no real-time media, WebRTC, peer-to-peer communication, or signaling infrastructure. This section documents the applicability assessment for all 12 ASVS V17 requirements and provides evidence-based justification for the N/A classification.
@@ -184,7 +184,7 @@ If ArcadeHaven is ever extended with real-time features, V17 must be re-evaluate
 
 ## 7. Conclusion
 
-**V17 Communications is formally determined to be 100% NOT APPLICABLE to ArcadeHaven Phase 1 and beyond.**
+**V17 WebRTC is formally determined to be 100% NOT APPLICABLE to ArcadeHaven Phase 1 and beyond.**
 
 **Section-by-Section Applicability:**
 - **V17.1 (TURN Servers):** Not applicable — ArcadeHaven has no peer-to-peer infrastructure or NAT traversal requirements
