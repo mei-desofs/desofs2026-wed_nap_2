@@ -1,0 +1,27 @@
+package isep.desosfs.arcadehaven.Domain;
+
+
+import isep.desosfs.arcadehaven.Domain.Enums.FileType;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+
+@Embeddable
+@Getter
+@AllArgsConstructor
+public class GameFile {
+
+    private String filename;
+    private String path;
+
+    @Enumerated(EnumType.STRING)
+    private FileType fileType;
+
+    private LocalDateTime uploadedAt = LocalDateTime.now();
+
+    protected GameFile() {}
+}
