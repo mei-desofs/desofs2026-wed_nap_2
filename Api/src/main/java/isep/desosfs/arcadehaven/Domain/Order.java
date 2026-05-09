@@ -20,6 +20,7 @@ public class Order {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "buyer_id", nullable = false)
     private User buyer;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -27,23 +28,43 @@ public class Order {
     private List<OrderItem> items = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private OrderStatus status = OrderStatus.PENDING;
 
+    @Column(precision = 10, scale = 2)
     private BigDecimal totalPrice = BigDecimal.ZERO;
 
     private String invoicePath;
 
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public void complete(String invoicePath) {
-        this.status = OrderStatus.COMPLETED;
-        this.invoicePath = invoicePath;
+    protected Order() {}
 
+    public static Order create(User buyer) {
+        Order order = new Order();
+        order.buyer = buyer;
+        return order;
+    }
+
+    public void addItem(OrderItem item) {
+        this.items.add(item);
+    }
+
+    public void complete(String invoicePath) {
+        if (this.status != OrderStatus.PENDING) {
+            throw new IllegalStateException("Only pending orders can be completed");
+        }
         this.items.forEach(OrderItem::generateActivationKey);
         this.totalPrice = calculateTotal();
+        this.invoicePath = invoicePath;
+        this.status = OrderStatus.COMPLETED;
     }
 
     public void cancel() {
+        if (this.status != OrderStatus.PENDING) {
+            throw new IllegalStateException("Only pending orders can be cancelled");
+        }
         this.status = OrderStatus.CANCELLED;
     }
 

@@ -26,21 +26,39 @@ public class User {
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
     private boolean active = true;
 
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    protected User() {}
+
+    public static User create(String username, String email, String passwordHash, Role role) {
+        User user = new User();
+        user.username = username;
+        user.email = email;
+        user.passwordHash = passwordHash;
+        user.role = role;
+        return user;
+    }
 
     public void deactivate() {
         this.active = false;
     }
 
-    public void changeRole(Role role) {
+    public void activate() {
+        this.active = true;
+    }
+
+    public void changeRole(Role newRole) {
         if (this.role == Role.ADMIN) {
-            throw new RuntimeException("Cannot change admin role");
+            throw new IllegalStateException("Cannot change admin role");
         }
-        this.role = role;
+        this.role = newRole;
     }
 
     public boolean isActive() {

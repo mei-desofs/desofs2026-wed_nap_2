@@ -1,4 +1,5 @@
 package isep.desosfs.arcadehaven.Domain;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -17,17 +18,26 @@ public class Library {
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "library_id")
     private List<LibraryEntry> entries = new ArrayList<>();
 
+    protected Library() {}
+
+    public static Library create(User user) {
+        Library library = new Library();
+        library.user = user;
+        return library;
+    }
+
     public void addGame(Game game, String activationKey) {
-        LibraryEntry entry = new LibraryEntry();
-        entry.getClass(); // placeholder safe init if needed
-        entries.add(entry);
+        this.entries.add(LibraryEntry.of(game, activationKey));
     }
 
     public boolean ownsGame(UUID gameId) {
