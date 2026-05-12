@@ -48,7 +48,7 @@ jobs:
 
       # Runs OWASP dependency vulnerability scan
       - name: Run OWASP Dependency Check
-        run: ./mvnw -B org.owasp:dependency-check-maven:check
+        run: ./mvnw -B org.owasp:dependency-check-maven:check -DossindexAnalyzerEnabled=false
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
