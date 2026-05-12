@@ -185,7 +185,7 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <version>12.1.3</version>
                 <configuration>
-                    <nvdApiKeyEnvironmentVariable>NVD_API_KEY</nvdApiKeyEnvironmentVariable
+                    <nvdApiKeyEnvironmentVariable>NVD_API_KEY</nvdApiKeyEnvironmentVariable>
                 </configuration>
             </plugin>
 		</plugins>
