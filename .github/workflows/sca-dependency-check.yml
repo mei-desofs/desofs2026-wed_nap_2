@@ -39,6 +39,13 @@ jobs:
       - name: Fix Maven wrapper permissions
         run: chmod +x ./mvnw
 
+      # Cache OWASP Dependency Check database
+      - name: Cache Dependency Check data
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          key: dependency-check-data
+
       # Runs OWASP dependency vulnerability scan
       - name: Run OWASP Dependency Check
         run: ./mvnw -B org.owasp:dependency-check-maven:check
@@ -46,7 +53,9 @@ jobs:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
       # Upload results to github actions
+      # Upload results to github actions
       - name: Upload Dependency Check report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report

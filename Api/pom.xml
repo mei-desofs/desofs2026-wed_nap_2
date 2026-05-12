@@ -186,6 +186,7 @@
                 <version>12.1.3</version>
                 <configuration>
                     <nvdApiKeyEnvironmentVariable>NVD_API_KEY</nvdApiKeyEnvironmentVariable>
+                    <ossIndexAnalyzerEnabled>false</ossIndexAnalyzerEnabled>
                 </configuration>
             </plugin>
 		</plugins>
