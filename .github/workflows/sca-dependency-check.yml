@@ -42,6 +42,8 @@ jobs:
       # Runs OWASP dependency vulnerability scan
       - name: Run OWASP Dependency Check
         run: ./mvnw -B org.owasp:dependency-check-maven:check
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
       # Upload results to github actions
       - name: Upload Dependency Check report
