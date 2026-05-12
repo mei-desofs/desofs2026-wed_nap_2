@@ -24,11 +24,11 @@ jobs:
     steps:
       # Get code from repository
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # Install Java for GitHub runner
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"
@@ -36,7 +36,7 @@ jobs:
 
       # Start CodeQL analysis for Java
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: java
           queries: security-extended,security-and-quality
@@ -51,4 +51,4 @@ jobs:
 
       # Runs security queries and uploads results to GitHub
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
