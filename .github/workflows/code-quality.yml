@@ -1,0 +1,48 @@
+name: Code Quality - Maven Verify
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+# Read repository
+permissions:
+  contents: read
+
+jobs:
+  code-quality:
+    name: Code Quality and Code Smells
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Api
+
+    steps:
+      # Get repository from github
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install Java for GitHub runner
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      # Gives execution permissions to Maven wrapper
+      - name: Fix Maven wrapper permissions
+        run: chmod +x ./mvnw
+
+      # Runs Checkstyle static code analysis (formatting issues, naming issues and bad code style)
+      - name: Run Checkstyle
+        run: ./mvnw -B checkstyle:check
+
+      # Runs SpotBugs static analysis (potential bugs, unsafe code and code smells)
+      - name: Run SpotBugs
+        run: ./mvnw -B spotbugs:check

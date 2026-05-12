@@ -1,0 +1,46 @@
+name: Build API and Test
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+# Only allows github to read contents in repository
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: Build and Test API
+    runs-on: ubuntu-latest
+
+    # Defines folder where pipeline runs commands
+    defaults:
+      run:
+        working-directory: Api
+
+    steps:
+      # Get code from repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Installs Java for GitHub Runner
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Clean project
+        run: ./mvnw -B clean
+
+      - name: Build project
+        run: ./mvnw -B compile
+
+      - name: Run tests
+        run: ./mvnw -B test

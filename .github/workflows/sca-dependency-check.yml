@@ -1,0 +1,51 @@
+name: SCA - Dependency Check # Software Composition Analysis (SCA)
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+# Reads repository
+permissions:
+  contents: read
+
+jobs:
+  sca:
+    name: OWASP Dependency Check
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Api
+
+    steps:
+      # Get repository from github
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install Java for GitHub Runner
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      # Gives execution permissions to Maven wrapper
+      - name: Fix Maven wrapper permissions
+        run: chmod +x ./mvnw
+
+      # Runs OWASP dependency vulnerability scan
+      - name: Run OWASP Dependency Check
+        run: ./mvnw -B org.owasp:dependency-check-maven:check
+
+      # Upload results to github actions
+      - name: Upload Dependency Check report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: Api/target/dependency-check-report.html

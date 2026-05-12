@@ -1,0 +1,38 @@
+name: SAST - CodeQL # Static Application Security Testing (SAST)
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+# Read repo, upload security log, interact with github actions
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  codeql:
+    name: CodeQL Java Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      # Get code from repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+          queries: security-extended,security-and-quality # Aggressive security checks
+
+      # Automatically tries to compile project
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      # Runs security queries and uploads it to github actions
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
