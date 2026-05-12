@@ -36,6 +36,10 @@ jobs:
           java-version: "21"
           cache: maven
 
+      # Gives execution permissions to Maven wrapper
+      - name: Fix Maven wrapper permissions
+        run: chmod +x ./mvnw
+
       - name: Clean project
         run: ./mvnw -B clean
 

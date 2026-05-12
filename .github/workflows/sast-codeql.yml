@@ -7,7 +7,6 @@ on:
   pull_request:
     branches: [ main ]
 
-# Read repo, upload security log, interact with github actions
 permissions:
   contents: read
   security-events: write
@@ -18,21 +17,38 @@ jobs:
     name: CodeQL Java Analysis
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: Api
+
     steps:
       # Get code from repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Install Java for GitHub runner
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      # Start CodeQL analysis for Java
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: java
-          queries: security-extended,security-and-quality # Aggressive security checks
+          queries: security-extended,security-and-quality
 
-      # Automatically tries to compile project
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+      # Gives execution permissions to Maven wrapper
+      - name: Fix Maven wrapper permissions
+        run: chmod +x ./mvnw
 
-      # Runs security queries and uploads it to github actions
+      # Build project manually instead of using CodeQL autobuild
+      - name: Build project for CodeQL
+        run: ./mvnw -B clean compile -DskipTests
+
+      # Runs security queries and uploads results to GitHub
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
