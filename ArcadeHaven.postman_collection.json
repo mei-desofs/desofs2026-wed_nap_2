@@ -3,12 +3,20 @@
     "name": "ArcadeHaven API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
-    { "key": "token",   "value": "",                      "type": "string" },
-    { "key": "gameId",  "value": "",                      "type": "string" },
-    { "key": "orderId", "value": "",                      "type": "string" },
-    { "key": "userId",  "value": "",                      "type": "string" }
+    { "key": "baseUrl",      "value": "http://localhost:8080",  "type": "string" },
+    { "key": "keycloakUrl", "value": "http://localhost:8180",  "type": "string" },
+    { "key": "realm",        "value": "arcadehaven",            "type": "string" },
+    { "key": "token",        "value": "",                       "type": "string" },
+    { "key": "gameId",       "value": "",                       "type": "string" },
+    { "key": "orderId",      "value": "",                       "type": "string" },
+    { "key": "userId",       "value": "",                       "type": "string" }
   ],
   "item": [
     {
@@ -21,13 +29,18 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "var json = pm.response.json();",
-                  "if (json.token) { pm.collectionVariables.set('token', json.token); }"
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns username and role', () => {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.username).to.eql('buyer1');",
+                  "  pm.expect(json.role).to.eql('BUYER');",
+                  "});"
                 ]
               }
             }
           ],
           "request": {
+            "auth": { "type": "noauth" },
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
@@ -44,13 +57,18 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "var json = pm.response.json();",
-                  "if (json.token) { pm.collectionVariables.set('token', json.token); }"
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns username and role', () => {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.username).to.eql('publisher1');",
+                  "  pm.expect(json.role).to.eql('PUBLISHER');",
+                  "});"
                 ]
               }
             }
           ],
           "request": {
+            "auth": { "type": "noauth" },
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
@@ -61,19 +79,19 @@
           }
         },
         {
-          "name": "Register – Admin",
+          "name": "Register – Admin (Expects 400)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "var json = pm.response.json();",
-                  "if (json.token) { pm.collectionVariables.set('token', json.token); }"
+                  "pm.test('ADMIN registration is forbidden', () => pm.response.to.have.status(400));"
                 ]
               }
             }
           ],
           "request": {
+            "auth": { "type": "noauth" },
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
@@ -84,26 +102,73 @@
           }
         },
         {
+          "name": "Login – Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "var json = pm.response.json();",
+                  "pm.test('Returns access_token', () => pm.expect(json.access_token).to.be.a('string'));",
+                  "if (json.access_token) { pm.collectionVariables.set('token', json.access_token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "client_id",  "value": "arcadehaven-public", "type": "text" },
+                { "key": "grant_type", "value": "password",           "type": "text" },
+                { "key": "username",   "value": "admin",              "type": "text" },
+                { "key": "password",   "value": "Admin123!",          "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token",
+              "host": ["{{keycloakUrl}}"],
+              "path": ["realms","{{realm}}","protocol","openid-connect","token"]
+            }
+          }
+        },
+        {
           "name": "Login – Buyer",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
                   "var json = pm.response.json();",
-                  "if (json.token) { pm.collectionVariables.set('token', json.token); }"
+                  "pm.test('Returns access_token', () => pm.expect(json.access_token).to.be.a('string'));",
+                  "if (json.access_token) { pm.collectionVariables.set('token', json.access_token); }"
                 ]
               }
             }
           ],
           "request": {
+            "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [],
             "body": {
-              "mode": "raw",
-              "raw": "{\n  \"username\": \"buyer1\",\n  \"password\": \"Password123!\"\n}"
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "client_id",  "value": "arcadehaven-public", "type": "text" },
+                { "key": "grant_type", "value": "password",           "type": "text" },
+                { "key": "username",   "value": "buyer1",             "type": "text" },
+                { "key": "password",   "value": "Password123!",       "type": "text" }
+              ]
             },
-            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] }
+            "url": {
+              "raw": "{{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token",
+              "host": ["{{keycloakUrl}}"],
+              "path": ["realms","{{realm}}","protocol","openid-connect","token"]
+            }
           }
         },
         {
@@ -113,43 +178,32 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
                   "var json = pm.response.json();",
-                  "if (json.token) { pm.collectionVariables.set('token', json.token); }"
+                  "pm.test('Returns access_token', () => pm.expect(json.access_token).to.be.a('string'));",
+                  "if (json.access_token) { pm.collectionVariables.set('token', json.access_token); }"
                 ]
               }
             }
           ],
           "request": {
+            "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [],
             "body": {
-              "mode": "raw",
-              "raw": "{\n  \"username\": \"publisher1\",\n  \"password\": \"Password123!\"\n}"
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "client_id",  "value": "arcadehaven-public", "type": "text" },
+                { "key": "grant_type", "value": "password",           "type": "text" },
+                { "key": "username",   "value": "publisher1",         "type": "text" },
+                { "key": "password",   "value": "Password123!",       "type": "text" }
+              ]
             },
-            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] }
-          }
-        },
-        {
-          "name": "Login – Admin",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var json = pm.response.json();",
-                  "if (json.token) { pm.collectionVariables.set('token', json.token); }"
-                ]
-              }
+            "url": {
+              "raw": "{{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token",
+              "host": ["{{keycloakUrl}}"],
+              "path": ["realms","{{realm}}","protocol","openid-connect","token"]
             }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin123!\"\n}"
-            },
-            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] }
           }
         }
       ]
@@ -159,14 +213,38 @@
       "item": [
         {
           "name": "Get All Active Games",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
           "request": {
+            "auth": { "type": "noauth" },
             "method": "GET",
             "url": { "raw": "{{baseUrl}}/api/games", "host": ["{{baseUrl}}"], "path": ["api","games"] }
           }
         },
         {
           "name": "Get Game by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has id field', () => pm.expect(pm.response.json().id).to.exist);"
+                ]
+              }
+            }
+          ],
           "request": {
+            "auth": { "type": "noauth" },
             "method": "GET",
             "url": { "raw": "{{baseUrl}}/api/games/{{gameId}}", "host": ["{{baseUrl}}"], "path": ["api","games","{{gameId}}"] }
           }
@@ -178,9 +256,19 @@
       "item": [
         {
           "name": "Get My Games",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/publisher/games", "host": ["{{baseUrl}}"], "path": ["api","publisher","games"] }
           }
         },
@@ -191,7 +279,12 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
                   "var json = pm.response.json();",
+                  "pm.test('Has id and title', () => {",
+                  "  pm.expect(json.id).to.exist;",
+                  "  pm.expect(json.title).to.eql('Space Rangers');",
+                  "});",
                   "if (json.id) { pm.collectionVariables.set('gameId', json.id); }"
                 ]
               }
@@ -199,10 +292,7 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type",  "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Space Rangers\",\n  \"description\": \"An epic space adventure game.\",\n  \"price\": 19.99,\n  \"rawgApiId\": \"space-rangers-2002\"\n}"
@@ -212,12 +302,20 @@
         },
         {
           "name": "Update Game",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Title updated', () => pm.expect(pm.response.json().title).to.eql('Space Rangers Remastered'));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
-            "header": [
-              { "key": "Content-Type",  "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Space Rangers Remastered\",\n  \"description\": \"An epic space adventure game – now remastered.\",\n  \"price\": 24.99\n}"
@@ -227,9 +325,18 @@
         },
         {
           "name": "Upload Game File (IMAGE)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "body": {
               "mode": "formdata",
               "formdata": [
@@ -247,17 +354,37 @@
       "item": [
         {
           "name": "Get My Orders",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api","orders"] }
           }
         },
         {
           "name": "Get Order by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has id field', () => pm.expect(pm.response.json().id).to.exist);"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}"] }
           }
         },
@@ -268,7 +395,9 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
                   "var json = pm.response.json();",
+                  "pm.test('Has id field', () => pm.expect(json.id).to.exist);",
                   "if (json.id) { pm.collectionVariables.set('orderId', json.id); }"
                 ]
               }
@@ -276,10 +405,7 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type",  "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"gameIds\": [\"{{gameId}}\"]\n}"
@@ -289,17 +415,37 @@
         },
         {
           "name": "Complete Order (Pay)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status is COMPLETED', () => pm.expect(pm.response.json().status).to.eql('COMPLETED'));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/complete", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","complete"] }
           }
         },
         {
           "name": "Cancel Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status is CANCELLED', () => pm.expect(pm.response.json().status).to.eql('CANCELLED'));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/cancel", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","cancel"] }
           }
         }
@@ -310,9 +456,19 @@
       "item": [
         {
           "name": "Get My Library",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has games list', () => pm.expect(pm.response.json().games).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/library", "host": ["{{baseUrl}}"], "path": ["api","library"] }
           }
         }
@@ -323,41 +479,92 @@
       "item": [
         {
           "name": "Get All Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "var json = pm.response.json();",
+                  "pm.test('Returns array', () => pm.expect(json).to.be.an('array'));",
+                  "if (json.length > 0) { pm.collectionVariables.set('userId', json[0].id); }"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/admin/users", "host": ["{{baseUrl}}"], "path": ["api","admin","users"] }
           }
         },
         {
           "name": "Get User by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has username field', () => pm.expect(pm.response.json().username).to.exist);"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/admin/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api","admin","users","{{userId}}"] }
           }
         },
         {
           "name": "Deactivate User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('User is inactive', () => pm.expect(pm.response.json().active).to.be.false);"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/admin/users/{{userId}}/deactivate", "host": ["{{baseUrl}}"], "path": ["api","admin","users","{{userId}}","deactivate"] }
           }
         },
         {
           "name": "Activate User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('User is active', () => pm.expect(pm.response.json().active).to.be.true);"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/admin/users/{{userId}}/activate", "host": ["{{baseUrl}}"], "path": ["api","admin","users","{{userId}}","activate"] }
           }
         },
         {
           "name": "Change User Role",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": {
               "raw": "{{baseUrl}}/api/admin/users/{{userId}}/role?role=PUBLISHER",
               "host": ["{{baseUrl}}"],
@@ -368,25 +575,55 @@
         },
         {
           "name": "Get All Games (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/admin/games", "host": ["{{baseUrl}}"], "path": ["api","admin","games"] }
           }
         },
         {
           "name": "Approve Game",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status is ACTIVE', () => pm.expect(pm.response.json().status).to.eql('ACTIVE'));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/admin/games/{{gameId}}/approve", "host": ["{{baseUrl}}"], "path": ["api","admin","games","{{gameId}}","approve"] }
           }
         },
         {
           "name": "Remove Game",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status is REMOVED', () => pm.expect(pm.response.json().status).to.eql('REMOVED'));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
             "url": { "raw": "{{baseUrl}}/api/admin/games/{{gameId}}/remove", "host": ["{{baseUrl}}"], "path": ["api","admin","games","{{gameId}}","remove"] }
           }
         }
