@@ -1,8 +1,7 @@
 package isep.desosfs.arcadehaven.Controller;
 
-import isep.desosfs.arcadehaven.Dto.Request.LoginRequest;
 import isep.desosfs.arcadehaven.Dto.Request.RegisterRequest;
-import isep.desosfs.arcadehaven.Dto.Response.AuthResponse;
+import isep.desosfs.arcadehaven.Dto.Response.RegisterResponse;
 import isep.desosfs.arcadehaven.Service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,12 +19,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
     }
 }

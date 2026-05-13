@@ -3,40 +3,45 @@ package isep.desosfs.arcadehaven.Service;
 import isep.desosfs.arcadehaven.Domain.Enums.Role;
 import isep.desosfs.arcadehaven.Domain.Library;
 import isep.desosfs.arcadehaven.Domain.User;
-import isep.desosfs.arcadehaven.Dto.Request.LoginRequest;
 import isep.desosfs.arcadehaven.Dto.Request.RegisterRequest;
-import isep.desosfs.arcadehaven.Dto.Response.AuthResponse;
+import isep.desosfs.arcadehaven.Dto.Response.RegisterResponse;
 import isep.desosfs.arcadehaven.Exception.BusinessException;
 import isep.desosfs.arcadehaven.Repository.LibraryRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
-import isep.desosfs.arcadehaven.Security.JwtService;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import jakarta.ws.rs.core.Response;
+import org.keycloak.admin.client.CreatedResponseUtil;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
     private final LibraryRepository libraryRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
+    private final Keycloak keycloak;
+
+    @Value("${keycloak.realm}")
+    private String realm;
 
     public AuthService(UserRepository userRepository, LibraryRepository libraryRepository,
-                       PasswordEncoder passwordEncoder, JwtService jwtService,
-                       AuthenticationManager authenticationManager) {
+                       Keycloak keycloak) {
         this.userRepository = userRepository;
         this.libraryRepository = libraryRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-        this.authenticationManager = authenticationManager;
+        this.keycloak = keycloak;
     }
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
+        if (request.role() == Role.ADMIN) {
+            throw new BusinessException("Invalid role for registration");
+        }
         if (userRepository.existsByUsername(request.username())) {
             throw new BusinessException("Username already taken");
         }
@@ -44,34 +49,40 @@ public class AuthService {
             throw new BusinessException("Email already registered");
         }
 
-        if (request.role() == Role.ADMIN) {
-            throw new BusinessException("Invalid role for registration");
-        }
+        String keycloakUserId = createKeycloakUser(request);
+        assignKeycloakRole(keycloakUserId, request.role().name());
 
-        User user = User.create(
-                request.username(),
-                request.email(),
-                passwordEncoder.encode(request.password()),
-                request.role()
-        );
+        User user = User.create(request.username(), request.email(), "", request.role());
         userRepository.save(user);
 
-        Library library = Library.create(user);
-        libraryRepository.save(library);
+        libraryRepository.save(Library.create(user));
 
-        String token = jwtService.generateToken(user.getUsername(), user.getRole().name());
-        return new AuthResponse(token, user.getUsername(), user.getRole().name());
+        return new RegisterResponse(user.getUsername(), user.getRole().name());
     }
 
-    public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.username(), request.password())
-        );
+    private String createKeycloakUser(RegisterRequest request) {
+        CredentialRepresentation credential = new CredentialRepresentation();
+        credential.setType(CredentialRepresentation.PASSWORD);
+        credential.setValue(request.password());
+        credential.setTemporary(false);
 
-        User user = userRepository.findByUsername(request.username())
-                .orElseThrow(() -> new BusinessException("User not found"));
+        UserRepresentation kcUser = new UserRepresentation();
+        kcUser.setUsername(request.username());
+        kcUser.setEmail(request.email());
+        kcUser.setEnabled(true);
+        kcUser.setEmailVerified(true);
+        kcUser.setCredentials(List.of(credential));
 
-        String token = jwtService.generateToken(user.getUsername(), user.getRole().name());
-        return new AuthResponse(token, user.getUsername(), user.getRole().name());
+        try (Response response = keycloak.realm(realm).users().create(kcUser)) {
+            if (response.getStatus() != 201) {
+                throw new BusinessException("Failed to create user in Keycloak: " + response.getStatus());
+            }
+            return CreatedResponseUtil.getCreatedId(response);
+        }
+    }
+
+    private void assignKeycloakRole(String keycloakUserId, String roleName) {
+        RoleRepresentation role = keycloak.realm(realm).roles().get(roleName).toRepresentation();
+        keycloak.realm(realm).users().get(keycloakUserId).roles().realmLevel().add(List.of(role));
     }
 }

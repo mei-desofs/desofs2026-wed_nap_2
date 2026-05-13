@@ -164,3 +164,6 @@ buildNumber.properties
 
 # API
 Api/.idea/
+
+# Environment variables — never commit real credentials
+.env
