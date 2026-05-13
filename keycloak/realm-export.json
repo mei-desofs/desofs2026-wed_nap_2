@@ -38,7 +38,7 @@
       "username": "admin",
       "email": "admin@arcadehaven.com",
       "firstName": "Admin",
-      "lastName": "User",
+      "lastName": "Administrator",
       "enabled": true,
       "emailVerified": true,
       "credentials": [

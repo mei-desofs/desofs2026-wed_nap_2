@@ -33,15 +33,18 @@ public class GameService {
         this.fileStorageService = fileStorageService;
     }
 
+    @Transactional(readOnly = true)
     public List<GameResponse> getAllActiveGames() {
         return gameRepository.findByStatus(GameStatus.ACTIVE)
                 .stream().map(GameResponse::from).toList();
     }
 
+    @Transactional(readOnly = true)
     public List<GameResponse> getAllGames() {
         return gameRepository.findAll().stream().map(GameResponse::from).toList();
     }
 
+    @Transactional(readOnly = true)
     public GameResponse getGameById(UUID id) {
         Game game = gameRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Game not found"));

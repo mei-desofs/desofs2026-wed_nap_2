@@ -69,8 +69,11 @@ public class AuthService {
         UserRepresentation kcUser = new UserRepresentation();
         kcUser.setUsername(request.username());
         kcUser.setEmail(request.email());
+        kcUser.setFirstName(request.username());
+        kcUser.setLastName("User");
         kcUser.setEnabled(true);
         kcUser.setEmailVerified(true);
+        kcUser.setRequiredActions(List.of());
         kcUser.setCredentials(List.of(credential));
 
         try (Response response = keycloak.realm(realm).users().create(kcUser)) {
