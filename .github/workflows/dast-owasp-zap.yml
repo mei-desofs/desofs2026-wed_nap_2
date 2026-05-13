@@ -2,10 +2,10 @@ name: DAST - OWASP ZAP # Dynamic Application Security Testing (DAST)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, pipeline ]
 
   pull_request:
-    branches: [ main ]
+    branches: [ main, pipeline ]
 
 # Read repo, write to security tab in github and read github actions
 permissions:

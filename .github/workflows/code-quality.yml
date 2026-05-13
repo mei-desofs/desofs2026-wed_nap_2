@@ -2,10 +2,10 @@ name: Code Quality - Maven Verify
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, pipeline ]
 
   pull_request:
-    branches: [ main ]
+    branches: [ main, pipeline ]
 
   workflow_dispatch:
 
