@@ -1,5 +1,6 @@
 package isep.desosfs.arcadehaven.Controller;
 
+import isep.desosfs.arcadehaven.Domain.Enums.FileType;
 import isep.desosfs.arcadehaven.Dto.Request.CreateGameRequest;
 import isep.desosfs.arcadehaven.Dto.Request.UpdateGameRequest;
 import isep.desosfs.arcadehaven.Dto.Response.GameResponse;
@@ -43,7 +44,37 @@ public class PublisherController {
     @PostMapping("/games/{id}/files")
     public ResponseEntity<GameResponse> uploadFile(@PathVariable UUID id,
                                                     @RequestParam MultipartFile file,
-                                                    @RequestParam(defaultValue = "IMAGE") String fileType) throws IOException {
+                                                    @RequestParam(defaultValue = "IMAGE") FileType fileType) throws IOException {
+        validateMimeType(file, fileType);
+
         return ResponseEntity.ok(gameService.uploadGameFile(id, file, fileType));
+    }
+
+    private void validateMimeType(MultipartFile file, FileType fileType) {
+        String mimeType = file.getContentType();
+
+        if (mimeType == null) {
+            throw new IllegalArgumentException("Missing MIME type");
+        }
+
+        switch (fileType) {
+            case IMAGE -> {
+                if (!mimeType.startsWith("image/")) {
+                    throw new IllegalArgumentException("Invalid image MIME type: " + mimeType);
+                }
+            }
+
+            case SCREENSHOT -> {
+                if (!mimeType.startsWith("image/")) {
+                    throw new IllegalArgumentException("Invalid screenshot MIME type: " + mimeType);
+                }
+            }
+
+            case COVER -> {
+                if (!mimeType.startsWith("image/")) {
+                    throw new IllegalArgumentException("Invalid cover MIME type: " + mimeType);
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package isep.desosfs.arcadehaven.Controller;
 
+import isep.desosfs.arcadehaven.Domain.Enums.Role;
 import isep.desosfs.arcadehaven.Dto.Response.GameResponse;
 import isep.desosfs.arcadehaven.Dto.Response.UserResponse;
 import isep.desosfs.arcadehaven.Service.AdminService;
@@ -45,7 +46,7 @@ public class AdminController {
 
     @PatchMapping("/users/{id}/role")
     public ResponseEntity<UserResponse> changeUserRole(@PathVariable UUID id,
-                                                        @RequestParam String role) {
+                                                        @RequestParam Role role) {
         return ResponseEntity.ok(adminService.changeUserRole(id, role));
     }
 

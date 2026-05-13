@@ -84,14 +84,13 @@ public class GameService {
     }
 
     @Transactional
-    public GameResponse uploadGameFile(UUID id, MultipartFile file, String fileType) throws IOException {
+    public GameResponse uploadGameFile(UUID id, MultipartFile file, FileType fileType) throws IOException {
         User publisher = getCurrentUser();
         Game game = gameRepository.findByIdAndPublisher(id, publisher)
                 .orElseThrow(() -> new ResourceNotFoundException("Game not found or not owned by you"));
 
-        FileType type = FileType.valueOf(fileType.toUpperCase());
         String path = fileStorageService.saveFile(file, "games/images");
-        game.addFile(file.getOriginalFilename(), path, type);
+        game.addFile(file.getOriginalFilename(), path, fileType);
         return GameResponse.from(gameRepository.save(game));
     }
 

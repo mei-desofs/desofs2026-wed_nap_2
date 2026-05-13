@@ -43,9 +43,9 @@ public class AdminService {
     }
 
     @Transactional
-    public UserResponse changeUserRole(UUID id, String role) {
+    public UserResponse changeUserRole(UUID id, Role role) {
         User user = findUser(id);
-        user.changeRole(Role.valueOf(role.toUpperCase()));
+        user.changeRole(role);
         return UserResponse.from(userRepository.save(user));
     }
 

@@ -44,11 +44,15 @@ public class AuthService {
             throw new BusinessException("Email already registered");
         }
 
+        if (request.role() == Role.ADMIN) {
+            throw new BusinessException("Invalid role for registration");
+        }
+
         User user = User.create(
                 request.username(),
                 request.email(),
                 passwordEncoder.encode(request.password()),
-                Role.valueOf(request.role())
+                request.role()
         );
         userRepository.save(user);
 
