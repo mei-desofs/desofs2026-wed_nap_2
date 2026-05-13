@@ -167,3 +167,4 @@ Api/.idea/
 
 # Environment variables — never commit real credentials
 .env
+settings.local.json
