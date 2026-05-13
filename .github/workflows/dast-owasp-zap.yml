@@ -64,7 +64,6 @@ jobs:
           target: "http://localhost:8080/actuator/health"
           fail_action: false
           allow_issue_writing: false
-          cmd_options: "-config api.disablekey=true"
           artifact_name: zap-report
 
       # Uploads ZAP HTML report as workflow artifact
