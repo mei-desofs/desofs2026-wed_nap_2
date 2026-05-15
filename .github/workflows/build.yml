@@ -54,3 +54,10 @@ jobs:
       # Lists all dependencies in the project and respective information
       - name: Generate SBOM
         run: ./mvnw -B cyclonedx:makeAggregateBom
+
+      #Uploads the generated SBOM as an artifact
+      - name: Upload SBOM (CycloneDX)
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: Api/target/bom.*

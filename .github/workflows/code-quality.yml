@@ -46,3 +46,10 @@ jobs:
       # Runs SpotBugs static analysis (potential bugs, unsafe code and code smells)
       - name: Run SpotBugs
         run: ./mvnw -B spotbugs:check
+
+      - name: Upload SpotBugs report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spotbugs-report
+          path: Api/target/spotbugsXml.xml

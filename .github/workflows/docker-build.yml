@@ -48,6 +48,11 @@ jobs:
         if: always()
         run: docker compose down
 
+      # Installs Docker Scout as a plugin
+      - name: Install Docker Scout
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh
+
       # Scan Docker image for known vulnerabilities (CVEs) using Docker Scout
       - name: Docker Scout CVE scan
         run: |
@@ -67,4 +72,12 @@ jobs:
       - name: Scan Docker image with Trivy
         run: |
           IMAGE=arcadehaven-api:latest
-          trivy image $IMAGE
+          trivy image --format json --output Api/trivy-report.json $IMAGE
+
+      # Upload Trivy report as an artifact
+      - name: Upload Trivy report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report
+          path: Api/trivy-report.json
