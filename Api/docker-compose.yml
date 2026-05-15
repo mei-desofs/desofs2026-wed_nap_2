@@ -7,26 +7,24 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/arcadehaven
-      - SPRING_DATASOURCE_USERNAME=arcadehaven
-      - SPRING_DATASOURCE_PASSWORD=secret
-      - JWT_SECRET=supersecretkey
-      - STORAGE_PATH=/app/storage
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      STORAGE_PATH: ${STORAGE_PATH}
+      KEYCLOAK_JWK_SET_URI: ${KEYCLOAK_JWK_SET_URI}
+      KEYCLOAK_SERVER_URL: ${KEYCLOAK_SERVER_URL}
+      KEYCLOAK_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SFTP_HOST: ${SFTP_HOST}
+      SFTP_PORT: ${SFTP_PORT}
+      SFTP_USERNAME: ${SFTP_USERNAME}
+      SFTP_PASSWORD: ${SFTP_PASSWORD}
+      SFTP_REMOTE_DIR: ${SFTP_REMOTE_DIR}
     volumes:
       - ./storage:/app/storage
-    depends_on:
-      - db
-
-  db:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=arcadehaven
-      - POSTGRES_USER=arcadehaven
-      - POSTGRES_PASSWORD=secret
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
 
 volumes:
   postgres_data:
