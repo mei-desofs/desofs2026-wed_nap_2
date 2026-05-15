@@ -40,11 +40,17 @@ jobs:
       - name: Fix Maven wrapper permissions
         run: chmod +x ./mvnw
 
-      - name: Clean project
-        run: ./mvnw -B clean
+      # Cleans, builds, tests and packages project
+      - name: Package project
+        run: ./mvnw -B clean package
 
-      - name: Build project
-        run: ./mvnw -B compile
+      - name: Check JAR exists
+        run: ls -lh target/*.jar
 
-      - name: Run tests
-        run: ./mvnw -B test
+      # Logs a table of contents inside the jar (compile application)
+      - name: Inspect JAR contents
+        run: jar tf target/*.jar | head -n 50
+
+      # Lists all dependencies in the project and respective information
+      - name: Generate SBOM
+        run: ./mvnw -B cyclonedx:makeAggregateBom

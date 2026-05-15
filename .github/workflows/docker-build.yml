@@ -1,0 +1,70 @@
+name: Build Docker Image
+
+on:
+  push:
+    branches: [ main, pipeline ]
+
+  pull_request:
+    branches: [ main, pipeline ]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker-build:
+    name: Build + Analyze Docker Image
+    runs-on: ubuntu-latest
+
+    # All commands run inside the Api folder
+    defaults:
+      run:
+        working-directory: Api
+
+    steps:
+      # Get repository source code
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      # Setup Docker Buildx for building imagee
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Verify Docker Compose is installed
+      - name: Verify Docker Compose
+        run: docker compose version
+
+      # Build Docker image using Docker Compose
+      - name: Build Docker image with Compose
+        run: docker compose build
+
+      # Start containers
+      - name: Start containers
+        run: docker compose up -d
+
+      # Stop containers
+      - name: Stop containers
+        if: always()
+        run: docker compose down
+
+      # Scan Docker image for known vulnerabilities (CVEs) using Docker Scout
+      - name: Docker Scout CVE scan
+        run: |
+          IMAGE=arcadehaven-api:latest
+          docker scout cves $IMAGE
+
+      # Install Trivy (deep vulnerability scanner)
+      - name: Install Trivy
+        run: |
+          sudo apt-get install -y wget
+          wget -qO- https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo "deb https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install -y trivy
+
+      # Run deep vulnerability scan on Docker image
+      - name: Scan Docker image with Trivy
+        run: |
+          IMAGE=arcadehaven-api:latest
+          trivy image $IMAGE
