@@ -115,6 +115,21 @@
             <artifactId>tika-core</artifactId>
             <version>3.2.2</version>
         </dependency>
+
+        <!-- SSHJ for SSH connectivity -->
+        <dependency>
+            <groupId>com.hierynomus</groupId>
+            <artifactId>sshj</artifactId>
+            <version>0.38.0</version>
+        </dependency>
+
+        <!-- Dotenv to load environment variables -->
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-java</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
 	</dependencies>
 
 	<build>
