@@ -11,35 +11,35 @@ on:
 
 permissions:
   contents: read
+  security-events: write
 
 jobs:
   docker-build:
     name: Build + Analyze Docker Image
     runs-on: ubuntu-latest
 
-    # All commands run inside the Api folder
     defaults:
       run:
         working-directory: Api
 
     steps:
-      # Get repository source code
+      # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      # Setup Docker Buildx for building imagee
+      # Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Verify Docker Compose is installed
+      # Verify Docker Compose
       - name: Verify Docker Compose
         run: docker compose version
 
-      # Build Docker image using Docker Compose
+      # Build Docker image
       - name: Build Docker image with Compose
         run: docker compose build
 
-      # Start containers
+      # Start containers (optional but kept as you had it)
       - name: Start containers
         run: docker compose up -d
 
@@ -48,22 +48,23 @@ jobs:
         if: always()
         run: docker compose down
 
-      # Install Trivy (deep vulnerability scanner)
+      # Install Trivy
       - name: Install Trivy
         run: |
+          sudo apt-get update
           sudo apt-get install -y wget
           wget -qO- https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
           echo "deb https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
           sudo apt-get update
           sudo apt-get install -y trivy
 
-      # Run deep vulnerability scan on Docker image
+      # Run Trivy scan
       - name: Scan Docker image with Trivy
         run: |
           IMAGE=arcadehaven-api:latest
-          trivy image --format json --output Api/trivy-report.json $IMAGE
+          trivy image --format json --output trivy-report.json $IMAGE
 
-      # Upload Trivy report as an artifact
+      # Upload Trivy report
       - name: Upload Trivy report
         if: always()
         uses: actions/upload-artifact@v4
