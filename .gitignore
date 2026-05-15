@@ -164,6 +164,9 @@ buildNumber.properties
 
 # API
 Api/.idea/
+Api/.env.local
+Api/set-env.ps1
+Api/set-env.sh
 
 # Environment variables — never commit real credentials
 .env
