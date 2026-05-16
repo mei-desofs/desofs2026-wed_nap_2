@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,49 +18,37 @@ import java.util.UUID;
 @Service
 public class FileStorageService {
 
-    private final Path rootLocation;
     private final InvoiceService invoiceService;
+    private final SftpStorageService sftpStorageService;
 
-    public FileStorageService(@Value("${storage.path:storage}") String storagePath,
+    public FileStorageService(SftpStorageService sftpStorageService,
                               InvoiceService invoiceService) {
-        this.rootLocation = Paths.get(storagePath);
+        this.sftpStorageService = sftpStorageService;
         this.invoiceService = invoiceService;
     }
 
-    @PostConstruct
-    public void init() {
-        try {
-            Files.createDirectories(rootLocation.resolve("games/images"));
-            Files.createDirectories(rootLocation.resolve("invoices"));
-            Files.createDirectories(rootLocation.resolve("activation-keys"));
-        } catch (IOException e) {
-            throw new RuntimeException("Could not initialize storage directories", e);
-        }
-    }
-
-    public String saveFile(MultipartFile file, String subdir) throws IOException {
+    public String saveFile(MultipartFile file, String subdir) throws Exception {
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null || originalFilename.isBlank()) {
             throw new IllegalArgumentException("Invalid file name");
         }
-        String cleanName = StringUtils.cleanPath(originalFilename);
-        if (cleanName.contains("..")) {
-            throw new IllegalArgumentException("Invalid file path sequence in filename");
-        }
-        String filename = UUID.randomUUID() + "_" + cleanName;
-        Path target = rootLocation.resolve(subdir).resolve(filename).normalize();
-        if (!target.startsWith(rootLocation.resolve(subdir).normalize())) {
-            throw new IllegalArgumentException("File path resolves outside allowed directory");
-        }
-        Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-        return target.toString();
+
+        return sftpStorageService.uploadFile(file, subdir);
     }
 
-    public void generateInvoice(Order order) throws IOException {
-        Path invoicePath = rootLocation
-                .resolve("invoices")
-                .resolve("invoice_" + order.getId() + ".txt");
+    public byte[] downloadFile(String remotePath) throws Exception {
+        return sftpStorageService.downloadFile(remotePath);
+    }
+
+    public void deleteFile(String remotePath) throws Exception {
+        sftpStorageService.deleteFile(remotePath);
+    }
+
+    public String generateInvoice(Order order) throws Exception {
         String content = invoiceService.buildInvoiceContent(order);
-        Files.writeString(invoicePath, content);
+
+        String filename = "invoice_" + order.getId() + "_" + UUID.randomUUID() + ".txt";
+
+        return sftpStorageService.uploadBytes(content.getBytes(StandardCharsets.UTF_8), filename, "invoices");
     }
 }

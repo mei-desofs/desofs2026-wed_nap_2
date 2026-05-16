@@ -12,6 +12,6 @@ import java.util.UUID;
 public interface GameRepository extends JpaRepository<Game, UUID> {
     List<Game> findByStatus(GameStatus status);
     List<Game> findByPublisher(User publisher);
-    List<Game> findByPublisherAndStatus(User publisher, GameStatus status);
+    List<Game> findByPublisherId(UUID publisherId);
     Optional<Game> findByIdAndPublisher(UUID id, User publisher);
 }

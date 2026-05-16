@@ -164,6 +164,7 @@ buildNumber.properties
 
 # API
 Api/.idea/
+Api/target/
 Api/.env
 Api/.env.*
 Api/set-env.ps1

@@ -10,6 +10,7 @@ import isep.desosfs.arcadehaven.Dto.Response.GameResponse;
 import isep.desosfs.arcadehaven.Exception.ResourceNotFoundException;
 import isep.desosfs.arcadehaven.Repository.GameRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
+import org.apache.tika.Tika;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,8 +87,40 @@ public class GameService {
         return GameResponse.from(gameRepository.save(game));
     }
 
+    private void validateMimeType(MultipartFile file, FileType fileType) throws IOException {
+        Tika tika = new Tika();
+
+        String detectedType = tika.detect(file.getInputStream());
+
+        if (detectedType == null) {
+            throw new IllegalArgumentException("Cannot detect file type");
+        }
+
+        switch (fileType) {
+            case IMAGE -> {
+                if (!detectedType.startsWith("image/")) {
+                    throw new IllegalArgumentException("Invalid image MIME type: " + detectedType);
+                }
+            }
+
+            case SCREENSHOT -> {
+                if (!detectedType.startsWith("image/")) {
+                    throw new IllegalArgumentException("Invalid screenshot MIME type: " + detectedType);
+                }
+            }
+
+            case COVER -> {
+                if (!detectedType.startsWith("image/")) {
+                    throw new IllegalArgumentException("Invalid cover MIME type: " + detectedType);
+                }
+            }
+        }
+    }
+
     @Transactional
-    public GameResponse uploadGameFile(UUID id, MultipartFile file, FileType fileType) throws IOException {
+    public GameResponse uploadGameFile(UUID id, MultipartFile file, FileType fileType) throws Exception {
+        validateMimeType(file, fileType);
+
         User publisher = getCurrentUser();
         Game game = gameRepository.findByIdAndPublisher(id, publisher)
                 .orElseThrow(() -> new ResourceNotFoundException("Game not found or not owned by you"));
@@ -95,6 +128,16 @@ public class GameService {
         String path = fileStorageService.saveFile(file, "games/images");
         game.addFile(file.getOriginalFilename(), path, fileType);
         return GameResponse.from(gameRepository.save(game));
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] downloadGameFile(UUID gameId, String remotePath) throws Exception {
+        User publisher = getCurrentUser();
+
+        Game game = gameRepository.findByIdAndPublisher(gameId, publisher)
+                .orElseThrow(() -> new ResourceNotFoundException("Game not found or not owned by you"));
+
+        return fileStorageService.downloadFile(remotePath);
     }
 
     @Transactional(readOnly = true)

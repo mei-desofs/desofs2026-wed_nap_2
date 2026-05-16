@@ -41,40 +41,26 @@ public class PublisherController {
         return ResponseEntity.ok(gameService.updateGame(id, request));
     }
 
+    @GetMapping("/games/{gameId}/files")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable UUID gameId,
+                                               @RequestParam String path) throws Exception {
+
+        byte[] fileData = gameService.downloadGameFile(gameId, path);
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=\"" + extractFilename(path) + "\"")
+                .body(fileData);
+    }
+
     @PostMapping("/games/{id}/files")
     public ResponseEntity<GameResponse> uploadFile(@PathVariable UUID id,
                                                     @RequestParam MultipartFile file,
-                                                    @RequestParam(defaultValue = "IMAGE") FileType fileType) throws IOException {
-        validateMimeType(file, fileType);
-
+                                                    @RequestParam(defaultValue = "IMAGE") FileType fileType) throws Exception {
         return ResponseEntity.ok(gameService.uploadGameFile(id, file, fileType));
     }
 
-    private void validateMimeType(MultipartFile file, FileType fileType) {
-        String mimeType = file.getContentType();
-
-        if (mimeType == null) {
-            throw new IllegalArgumentException("Missing MIME type");
-        }
-
-        switch (fileType) {
-            case IMAGE -> {
-                if (!mimeType.startsWith("image/")) {
-                    throw new IllegalArgumentException("Invalid image MIME type: " + mimeType);
-                }
-            }
-
-            case SCREENSHOT -> {
-                if (!mimeType.startsWith("image/")) {
-                    throw new IllegalArgumentException("Invalid screenshot MIME type: " + mimeType);
-                }
-            }
-
-            case COVER -> {
-                if (!mimeType.startsWith("image/")) {
-                    throw new IllegalArgumentException("Invalid cover MIME type: " + mimeType);
-                }
-            }
-        }
+    private String extractFilename(String path) {
+        if (path == null) return "file";
+        return path.substring(path.lastIndexOf("/") + 1);
     }
 }
