@@ -49,4 +49,15 @@ public class AuthServiceTest {
         assertThrows(BusinessException.class,
                 () -> authService.register(request));
     }
+
+    @Test
+    void shouldRejectDuplicateEmail() {
+        RegisterRequest request =
+                new RegisterRequest("john", "mail@mail.com", "password", Role.BUYER);
+
+        when(userRepository.existsByEmail("mail@mail.com")).thenReturn(true);
+
+        assertThrows(BusinessException.class,
+                () -> authService.register(request));
+    }
 }

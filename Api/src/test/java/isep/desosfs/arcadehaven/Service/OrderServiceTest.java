@@ -1,8 +1,10 @@
 package isep.desosfs.arcadehaven.Service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -112,18 +114,106 @@ public class OrderServiceTest {
     }
 
     @Test
-void shouldCancelOrder() {
-    UUID buyerId = UUID.randomUUID();
-    User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
-    ReflectionTestUtils.setField(buyer, "id", buyerId);
-    Order order = Order.create(buyer);
-    ReflectionTestUtils.setField(order.getBuyer(), "id", buyerId);
+    void shouldCancelOrder() {
+        UUID buyerId = UUID.randomUUID();
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+        Order order = Order.create(buyer);
+        ReflectionTestUtils.setField(order.getBuyer(), "id", buyerId);
 
-    when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
-    when(orderRepository.findById(any())).thenReturn(Optional.of(order));
-    when(orderRepository.save(any())).thenReturn(order);
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+        when(orderRepository.save(any())).thenReturn(order);
 
-    orderService.cancelOrder(UUID.randomUUID());
-    assertEquals(OrderStatus.CANCELLED, order.getStatus());
-}
+        orderService.cancelOrder(UUID.randomUUID());
+        assertEquals(OrderStatus.CANCELLED, order.getStatus());
+    }
+
+    @Test
+    void shouldCalculateTotalWithMultipleItems() {
+        User buyer = User.create("b","e","p", Role.BUYER);
+        Order order = Order.create(buyer);
+
+        Game g1 = Game.create("g1","d",BigDecimal.TEN,"r",buyer);
+        Game g2 = Game.create("g2","d",BigDecimal.valueOf(20),"r",buyer);
+
+        order.addItem(OrderItem.of(g1, BigDecimal.TEN));
+        order.addItem(OrderItem.of(g2, BigDecimal.valueOf(20)));
+
+        assertEquals(BigDecimal.valueOf(30), order.calculateTotal());
+    }
+
+    @Test
+    void shouldThrowWhenCancelNonPendingOrder() {
+        User buyer = User.create("b","e","p", Role.BUYER);
+        Order order = Order.create(buyer);
+
+        order.cancel();
+
+        assertThrows(IllegalStateException.class, order::cancel);
+    }
+
+    @Test
+    void shouldThrowWhenCompleteNonPendingOrder() {
+        User buyer = User.create("b","e","p", Role.BUYER);
+        Order order = Order.create(buyer);
+
+        order.cancel();
+
+        assertThrows(IllegalStateException.class,
+                () -> order.complete("path"));
+    }
+
+    @Test
+    void shouldReturnFalseWhenGameNotOwned() {
+        User user = User.create("u","e","p", Role.BUYER);
+        Library library = Library.create(user);
+
+        assertFalse(library.ownsGame(UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldReturnUserOrders() {
+        User buyer = User.create("buyer","mail","pass",Role.BUYER);
+
+        when(userRepository.findByUsername(any())).thenReturn(Optional.of(buyer));
+        when(orderRepository.findByBuyerOrderByCreatedAtDesc(buyer))
+                .thenReturn(List.of());
+
+        var result = orderService.getMyOrders();
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void shouldGetOrderById() {
+        UUID buyerId = UUID.randomUUID();
+
+        User buyer = User.create("buyer","mail","pass",Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Order order = Order.create(buyer);
+        ReflectionTestUtils.setField(order, "buyer", buyer);
+
+        when(userRepository.findByUsername(any())).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+
+        var result = orderService.getOrderById(UUID.randomUUID());
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void shouldThrowWhenOrderNotOwned() {
+        User buyer = User.create("buyer","mail","pass",Role.BUYER);
+        User other = User.create("other","mail","pass",Role.BUYER);
+
+        Order order = Order.create(other);
+
+        when(userRepository.findByUsername(any())).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+
+        assertThrows(NullPointerException.class,
+                () -> orderService.getOrderById(UUID.randomUUID()));
+    }
 }

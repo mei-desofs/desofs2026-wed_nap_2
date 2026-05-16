@@ -3,6 +3,7 @@ package isep.desosfs.arcadehaven.Service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -29,7 +30,6 @@ import isep.desosfs.arcadehaven.Domain.Enums.GameStatus;
 import isep.desosfs.arcadehaven.Domain.Enums.Role;
 import isep.desosfs.arcadehaven.Dto.Request.CreateGameRequest;
 import isep.desosfs.arcadehaven.Dto.Request.UpdateGameRequest;
-import isep.desosfs.arcadehaven.Dto.Response.GameResponse;
 import isep.desosfs.arcadehaven.Exception.ResourceNotFoundException;
 import isep.desosfs.arcadehaven.Repository.GameRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
@@ -144,5 +144,76 @@ public class GameServiceTest {
         var result = gameService.uploadGameFile(UUID.randomUUID(), file, FileType.IMAGE);
 
         assertNotNull(result);
+    }
+
+    @Test
+    void shouldThrowWhenApproveNonPendingGame() {
+        Game game = Game.create("t", "d", BigDecimal.TEN, "r", user);
+        game.approve();
+
+        assertThrows(IllegalStateException.class, game::approve);
+    }
+
+    @Test
+    void shouldRejectInvalidPrice() {
+        Game game = Game.create("t", "d", BigDecimal.TEN, "r", user);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> game.updatePrice(BigDecimal.ZERO));
+    }
+
+    @Test
+    void shouldChangeRoleSuccessfully() {
+        User user = User.create("u","e","p", Role.BUYER);
+
+        user.changeRole(Role.PUBLISHER);
+
+        assertEquals(Role.PUBLISHER, user.getRole());
+    }
+
+    @Test
+    void shouldThrowWhenChangingAdminRole() {
+        User admin = User.create("a","e","p", Role.ADMIN);
+
+        assertThrows(IllegalStateException.class,
+                () -> admin.changeRole(Role.BUYER));
+    }
+
+    @Test
+    void shouldGetAllActiveGames() {
+        when(gameRepository.findByStatus(GameStatus.ACTIVE))
+                .thenReturn(List.of());
+
+        var result = gameService.getAllActiveGames();
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void shouldThrowWhenGameNotFound() {
+        when(gameRepository.findById(any()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> gameService.getGameById(UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldReturnAllGames() {
+        when(gameRepository.findAll()).thenReturn(List.of());
+
+        var result = gameService.getAllGames();
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void shouldReturnActiveGames() {
+        when(gameRepository.findByStatus(GameStatus.ACTIVE))
+                .thenReturn(List.of());
+
+        var result = gameService.getAllActiveGames();
+
+        assertTrue(result.isEmpty());
     }
 }
