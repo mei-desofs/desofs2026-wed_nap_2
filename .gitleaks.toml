@@ -1,0 +1,8 @@
+title = "ArcadeHaven Gitleaks config"
+
+[allowlist]
+description = "Ignore known safe environment variables and secrets used in development and testing."
+
+regexes = [
+    '''jdbc:postgresql://keycloak-db:5432/keycloak'''
+]
