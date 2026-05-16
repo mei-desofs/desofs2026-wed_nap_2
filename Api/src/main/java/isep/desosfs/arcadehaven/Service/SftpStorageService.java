@@ -1,10 +1,13 @@
 package isep.desosfs.arcadehaven.Service;
 
+import isep.desosfs.arcadehaven.Exception.StorageException;
 import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.sftp.OpenMode;
 import net.schmizz.sshj.sftp.RemoteFile;
 import net.schmizz.sshj.sftp.SFTPClient;
-import net.schmizz.sshj.sftp.OpenMode;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +19,8 @@ import java.util.UUID;
 
 @Service
 public class SftpStorageService {
+
+    private static final Logger log = LoggerFactory.getLogger(SftpStorageService.class);
 
     private final String host;
     private final int port;
@@ -37,108 +42,116 @@ public class SftpStorageService {
         this.baseRemoteDir = baseRemoteDir;
     }
 
-    //Used for short lived connections
-    private SSHClient createClient() throws Exception {
-        SSHClient ssh = new SSHClient();
-        ssh.addHostKeyVerifier(new PromiscuousVerifier());
-
-        ssh.connect(host, port);
-        ssh.authPassword(username, password);
-
-        return ssh;
+    private SSHClient createClient() throws StorageException {
+        try {
+            SSHClient ssh = new SSHClient();
+            ssh.addHostKeyVerifier(new PromiscuousVerifier());
+            ssh.connect(host, port);
+            ssh.authPassword(username, password);
+            return ssh;
+        } catch (Exception e) {
+            throw new StorageException("Cannot connect to SFTP server at " + host + ":" + port, e);
+        }
     }
 
-    private void ensureDirExists(SFTPClient sftp, String path) throws Exception {
+    private void ensureDirExists(SFTPClient sftp, String path) {
         String[] folders = path.split("/");
         StringBuilder current = new StringBuilder();
-
         for (String folder : folders) {
-            if (folder.isBlank()) {
-                continue;
-            }
-
+            if (folder.isBlank()) continue;
             current.append("/").append(folder);
-
             try {
                 sftp.stat(current.toString());
             } catch (Exception e) {
                 try {
                     sftp.mkdir(current.toString());
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    log.warn("Could not create remote directory '{}': {}", current, ex.getMessage());
                 }
             }
         }
     }
 
-    public String uploadFile(MultipartFile file, String subDir) throws Exception {
+    public String uploadFile(MultipartFile file, String subDir) throws StorageException {
         SSHClient ssh = createClient();
-
         try (SFTPClient sftp = ssh.newSFTPClient();
-            InputStream input = file.getInputStream()) {
-            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+             InputStream input = file.getInputStream()) {
 
+            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
             String folder = baseRemoteDir + "/" + subDir;
             String remotePath = folder + "/" + filename;
             ensureDirExists(sftp, folder);
 
-            try (RemoteFile remoteFile = sftp.open(
-                    remotePath,
-                    EnumSet.of(OpenMode.WRITE, OpenMode.CREAT, OpenMode.TRUNC)
-            );
+            try (RemoteFile remoteFile = sftp.open(remotePath,
+                         EnumSet.of(OpenMode.WRITE, OpenMode.CREAT, OpenMode.TRUNC));
                  OutputStream out = remoteFile.new RemoteFileOutputStream()) {
-
                 input.transferTo(out);
                 out.flush();
             }
-
             return remotePath;
+        } catch (StorageException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new StorageException("Failed to upload file to SFTP: " + e.getMessage(), e);
         } finally {
-            try {
-                ssh.disconnect();
-            } catch (Exception ignored) {}
+            disconnectQuietly(ssh);
         }
     }
 
-    public String uploadBytes(byte[] data, String filename, String subDir) throws Exception {
+    public String uploadBytes(byte[] data, String filename, String subDir) throws StorageException {
         SSHClient ssh = createClient();
-
         try (SFTPClient sftp = ssh.newSFTPClient()) {
             String folder = baseRemoteDir + "/" + subDir;
             String remotePath = folder + "/" + filename;
-
             ensureDirExists(sftp, folder);
 
-            try (var remoteFile = sftp.open(remotePath, EnumSet.of(OpenMode.WRITE, OpenMode.CREAT, OpenMode.TRUNC))) {
-                remoteFile.new RemoteFileOutputStream().write(data);
+            try (RemoteFile remoteFile = sftp.open(remotePath,
+                         EnumSet.of(OpenMode.WRITE, OpenMode.CREAT, OpenMode.TRUNC));
+                 OutputStream out = remoteFile.new RemoteFileOutputStream()) {
+                out.write(data);
+                out.flush();
             }
-
             return remotePath;
+        } catch (StorageException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new StorageException("Failed to upload bytes to SFTP: " + e.getMessage(), e);
         } finally {
-            ssh.disconnect();
+            disconnectQuietly(ssh);
         }
     }
 
-    public byte[] downloadFile(String remotePath) throws Exception {
+    public byte[] downloadFile(String remotePath) throws StorageException {
         SSHClient ssh = createClient();
-
         try (SFTPClient sftp = ssh.newSFTPClient();
-             var remoteFile = sftp.open(remotePath);
+             RemoteFile remoteFile = sftp.open(remotePath);
              InputStream in = remoteFile.new RemoteFileInputStream()) {
-
             return in.readAllBytes();
+        } catch (StorageException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new StorageException("Failed to download file from SFTP: " + remotePath, e);
         } finally {
-            ssh.disconnect();
+            disconnectQuietly(ssh);
         }
     }
 
-    public void deleteFile(String remotePath) throws Exception {
+    public void deleteFile(String remotePath) throws StorageException {
         SSHClient ssh = createClient();
-
         try (SFTPClient sftp = ssh.newSFTPClient()) {
             sftp.rm(remotePath);
+        } catch (StorageException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new StorageException("Failed to delete file from SFTP: " + remotePath, e);
         } finally {
-            ssh.disconnect();
+            disconnectQuietly(ssh);
         }
+    }
+
+    private void disconnectQuietly(SSHClient ssh) {
+        try {
+            ssh.disconnect();
+        } catch (Exception ignored) {}
     }
 }

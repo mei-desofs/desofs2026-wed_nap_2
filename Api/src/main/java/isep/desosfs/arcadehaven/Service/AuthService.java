@@ -14,6 +14,8 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,8 @@ import java.util.List;
 
 @Service
 public class AuthService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final UserRepository userRepository;
     private final LibraryRepository libraryRepository;
@@ -78,14 +82,30 @@ public class AuthService {
 
         try (Response response = keycloak.realm(realm).users().create(kcUser)) {
             if (response.getStatus() != 201) {
-                throw new BusinessException("Failed to create user in Keycloak: " + response.getStatus());
+                log.error("Keycloak user creation failed with status {}", response.getStatus());
+                throw new BusinessException("Failed to create user in Keycloak (status " + response.getStatus() + ")");
             }
             return CreatedResponseUtil.getCreatedId(response);
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Keycloak connection error during user creation", e);
+            throw new BusinessException("Identity provider is unavailable. Please try again later.");
         }
     }
 
     private void assignKeycloakRole(String keycloakUserId, String roleName) {
-        RoleRepresentation role = keycloak.realm(realm).roles().get(roleName).toRepresentation();
-        keycloak.realm(realm).users().get(keycloakUserId).roles().realmLevel().add(List.of(role));
+        try {
+            RoleRepresentation role = keycloak.realm(realm).roles().get(roleName).toRepresentation();
+            if (role == null) {
+                throw new BusinessException("Role '" + roleName + "' does not exist in Keycloak");
+            }
+            keycloak.realm(realm).users().get(keycloakUserId).roles().realmLevel().add(List.of(role));
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to assign role '{}' to Keycloak user '{}'", roleName, keycloakUserId, e);
+            throw new BusinessException("Failed to assign role. Please try again later.");
+        }
     }
 }
