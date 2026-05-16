@@ -29,7 +29,19 @@ public class FileStorageService {
     }
 
     public byte[] downloadFile(String remotePath) throws StorageException {
+        validateRemotePath(remotePath);
         return sftpStorageService.downloadFile(remotePath);
+    }
+
+    private void validateRemotePath(String path) {
+        if (path == null || path.isBlank()) {
+            throw new IllegalArgumentException("File path must not be empty");
+        }
+        // Prevent path traversal: reject any sequence that navigates up directories
+        String normalized = path.replace("\\", "/");
+        if (normalized.contains("/../") || normalized.endsWith("/..") || normalized.startsWith("../") || normalized.equals("..")) {
+            throw new IllegalArgumentException("Invalid file path: directory traversal is not allowed");
+        }
     }
 
     public void deleteFile(String remotePath) throws StorageException {

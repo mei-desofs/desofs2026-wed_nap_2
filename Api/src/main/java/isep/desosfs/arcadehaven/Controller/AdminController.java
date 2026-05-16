@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
@@ -61,8 +62,28 @@ public class AdminController {
         return ResponseEntity.ok(gameService.approveGame(id));
     }
 
+    @PatchMapping("/games/{id}/reject")
+    public ResponseEntity<GameResponse> rejectGame(@PathVariable UUID id) {
+        return ResponseEntity.ok(gameService.rejectGame(id));
+    }
+
     @PatchMapping("/games/{id}/remove")
     public ResponseEntity<GameResponse> removeGame(@PathVariable UUID id) {
         return ResponseEntity.ok(gameService.removeGame(id));
+    }
+
+    // RF-30: Library entry management
+    @PatchMapping("/users/{userId}/library/{entryId}/suspend")
+    public ResponseEntity<Void> suspendLibraryEntry(@PathVariable UUID userId,
+                                                     @PathVariable UUID entryId) {
+        adminService.suspendLibraryEntry(userId, entryId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/users/{userId}/library/{entryId}/revoke")
+    public ResponseEntity<Void> revokeLibraryEntry(@PathVariable UUID userId,
+                                                    @PathVariable UUID entryId) {
+        adminService.revokeLibraryEntry(userId, entryId);
+        return ResponseEntity.noContent().build();
     }
 }

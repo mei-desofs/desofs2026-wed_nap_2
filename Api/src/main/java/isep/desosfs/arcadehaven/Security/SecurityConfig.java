@@ -28,6 +28,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/publisher/**").hasRole("PUBLISHER")
                         .requestMatchers("/api/orders/**").hasRole("BUYER")
                         .requestMatchers("/api/library/**").hasRole("BUYER")
+                        .requestMatchers("/api/profile/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

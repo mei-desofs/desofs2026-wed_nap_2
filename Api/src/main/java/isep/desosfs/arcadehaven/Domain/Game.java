@@ -65,6 +65,13 @@ public class Game {
         this.status = GameStatus.ACTIVE;
     }
 
+    public void reject() {
+        if (status != GameStatus.PENDING) {
+            throw new IllegalStateException("Only pending games can be rejected");
+        }
+        this.status = GameStatus.REJECTED;
+    }
+
     public void remove() {
         this.status = GameStatus.REMOVED;
     }

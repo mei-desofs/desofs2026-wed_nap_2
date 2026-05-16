@@ -48,7 +48,20 @@ public class Order {
     }
 
     public void addItem(OrderItem item) {
+        if (this.status != OrderStatus.PENDING) {
+            throw new IllegalStateException("Cannot modify a non-pending order");
+        }
         this.items.add(item);
+    }
+
+    public void removeItem(UUID gameId) {
+        if (this.status != OrderStatus.PENDING) {
+            throw new IllegalStateException("Cannot modify a non-pending order");
+        }
+        boolean removed = this.items.removeIf(i -> i.getGame().getId().equals(gameId));
+        if (!removed) {
+            throw new IllegalArgumentException("Game not found in this order");
+        }
     }
 
     public void complete(String invoicePath) {

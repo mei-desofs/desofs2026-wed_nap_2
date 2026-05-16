@@ -10,13 +10,14 @@
     ]
   },
   "variable": [
-    { "key": "baseUrl",      "value": "http://localhost:8080",  "type": "string" },
-    { "key": "keycloakUrl", "value": "http://localhost:8180",  "type": "string" },
-    { "key": "realm",        "value": "arcadehaven",            "type": "string" },
-    { "key": "token",        "value": "",                       "type": "string" },
-    { "key": "gameId",       "value": "",                       "type": "string" },
-    { "key": "orderId",      "value": "",                       "type": "string" },
-    { "key": "userId",       "value": "",                       "type": "string" }
+    { "key": "baseUrl",     "value": "http://localhost:8080", "type": "string" },
+    { "key": "keycloakUrl", "value": "http://localhost:8180", "type": "string" },
+    { "key": "realm",       "value": "arcadehaven",           "type": "string" },
+    { "key": "token",       "value": "",                      "type": "string" },
+    { "key": "gameId",      "value": "",                      "type": "string" },
+    { "key": "orderId",     "value": "",                      "type": "string" },
+    { "key": "userId",      "value": "",                      "type": "string" },
+    { "key": "entryId",     "value": "",                      "type": "string" }
   ],
   "item": [
     {
@@ -29,7 +30,7 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
                   "pm.test('Returns username and role', () => {",
                   "  var json = pm.response.json();",
                   "  pm.expect(json.username).to.eql('buyer1');",
@@ -57,7 +58,7 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
                   "pm.test('Returns username and role', () => {",
                   "  var json = pm.response.json();",
                   "  pm.expect(json.username).to.eql('publisher1');",
@@ -79,13 +80,14 @@
           }
         },
         {
-          "name": "Register – Admin (Expects 400)",
+          "name": "Register – Admin (Expects 409)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('ADMIN registration is forbidden', () => pm.response.to.have.status(400));"
+                  "pm.test('ADMIN registration is forbidden (409 Conflict)', () => pm.response.to.have.status(409));",
+                  "pm.test('Error message present', () => pm.expect(pm.response.json().message).to.be.a('string'));"
                 ]
               }
             }
@@ -102,6 +104,53 @@
           }
         },
         {
+          "name": "Register – Duplicate Username (Expects 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Duplicate username returns 409 Conflict', () => pm.response.to.have.status(409));",
+                  "pm.test('Error message mentions username', () => pm.expect(pm.response.json().message).to.include('taken'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"buyer1\",\n  \"email\": \"buyer1other@arcadehaven.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"BUYER\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] }
+          }
+        },
+        {
+          "name": "Register – Invalid Body (Expects 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Malformed body returns 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{ not valid json }"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] }
+          }
+        },
+        {
           "name": "Login – Admin",
           "event": [
             {
@@ -111,7 +160,7 @@
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
                   "var json = pm.response.json();",
                   "pm.test('Returns access_token', () => pm.expect(json.access_token).to.be.a('string'));",
-                  "if (json.access_token) { pm.environment.set('token', json.access_token); }"
+                  "if (json.access_token) { pm.collectionVariables.set('token', json.access_token); }"
                 ]
               }
             }
@@ -146,7 +195,7 @@
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
                   "var json = pm.response.json();",
                   "pm.test('Returns access_token', () => pm.expect(json.access_token).to.be.a('string'));",
-                  "if (json.access_token) { pm.environment.set('token', json.access_token); }"
+                  "if (json.access_token) { pm.collectionVariables.set('token', json.access_token); }"
                 ]
               }
             }
@@ -181,7 +230,7 @@
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
                   "var json = pm.response.json();",
                   "pm.test('Returns access_token', () => pm.expect(json.access_token).to.be.a('string'));",
-                  "if (json.access_token) { pm.environment.set('token', json.access_token); }"
+                  "if (json.access_token) { pm.collectionVariables.set('token', json.access_token); }"
                 ]
               }
             }
@@ -204,6 +253,99 @@
               "host": ["{{keycloakUrl}}"],
               "path": ["realms","{{realm}}","protocol","openid-connect","token"]
             }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has username and email', () => {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.username).to.be.a('string');",
+                  "  pm.expect(json.email).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/profile", "host": ["{{baseUrl}}"], "path": ["api","profile"] }
+          }
+        },
+        {
+          "name": "Update My Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Email updated', () => {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.email).to.eql('buyer1updated@arcadehaven.com');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"buyer1updated@arcadehaven.com\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/profile", "host": ["{{baseUrl}}"], "path": ["api","profile"] }
+          }
+        },
+        {
+          "name": "Update Profile – Invalid Email (Expects 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Invalid email returns 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"not-an-email\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/profile", "host": ["{{baseUrl}}"], "path": ["api","profile"] }
+          }
+        },
+        {
+          "name": "Get Profile – Unauthenticated (Expects 401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unauthenticated returns 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/profile", "host": ["{{baseUrl}}"], "path": ["api","profile"] }
           }
         }
       ]
@@ -248,6 +390,24 @@
             "method": "GET",
             "url": { "raw": "{{baseUrl}}/api/games/{{gameId}}", "host": ["{{baseUrl}}"], "path": ["api","games","{{gameId}}"] }
           }
+        },
+        {
+          "name": "Get Game by ID – Invalid UUID (Expects 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Bad UUID returns 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/games/not-a-uuid", "host": ["{{baseUrl}}"], "path": ["api","games","not-a-uuid"] }
+          }
         }
       ]
     },
@@ -279,12 +439,13 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
                   "var json = pm.response.json();",
                   "pm.test('Has id and title', () => {",
                   "  pm.expect(json.id).to.exist;",
                   "  pm.expect(json.title).to.eql('Space Rangers');",
                   "});",
+                  "pm.test('Status is PENDING', () => pm.expect(json.status).to.eql('PENDING'));",
                   "if (json.id) { pm.collectionVariables.set('gameId', json.id); }"
                 ]
               }
@@ -296,6 +457,29 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Space Rangers\",\n  \"description\": \"An epic space adventure game.\",\n  \"price\": 19.99,\n  \"rawgApiId\": \"space-rangers-2002\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/publisher/games", "host": ["{{baseUrl}}"], "path": ["api","publisher","games"] }
+          }
+        },
+        {
+          "name": "Create Game – Missing Required Fields (Expects 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Missing fields returns 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Validation errors returned', () => pm.expect(pm.response.json().errors).to.exist);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Missing title and price\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/publisher/games", "host": ["{{baseUrl}}"], "path": ["api","publisher","games"] }
           }
@@ -340,11 +524,36 @@
             "body": {
               "mode": "formdata",
               "formdata": [
-                { "key": "file",     "type": "file",  "src": "" },
-                { "key": "fileType", "type": "text",  "value": "IMAGE" }
+                { "key": "file",     "type": "file", "src": "" },
+                { "key": "fileType", "type": "text", "value": "IMAGE" }
               ]
             },
             "url": { "raw": "{{baseUrl}}/api/publisher/games/{{gameId}}/files", "host": ["{{baseUrl}}"], "path": ["api","publisher","games","{{gameId}}","files"] }
+          }
+        },
+        {
+          "name": "Download Game File",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Content-Disposition header present', () => {",
+                  "  pm.expect(pm.response.headers.get('Content-Disposition')).to.include('attachment');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/publisher/games/{{gameId}}/files?path=images/cover.png",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","publisher","games","{{gameId}}","files"],
+              "query": [{ "key": "path", "value": "images/cover.png" }]
+            }
           }
         }
       ]
@@ -395,9 +604,10 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
                   "var json = pm.response.json();",
                   "pm.test('Has id field', () => pm.expect(json.id).to.exist);",
+                  "pm.test('Status is PENDING', () => pm.expect(json.status).to.eql('PENDING'));",
                   "if (json.id) { pm.collectionVariables.set('orderId', json.id); }"
                 ]
               }
@@ -414,6 +624,73 @@
           }
         },
         {
+          "name": "Add Item to Order (RF-15)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Order still PENDING', () => pm.expect(pm.response.json().status).to.eql('PENDING'));",
+                  "pm.test('Items list contains the added game', () => {",
+                  "  var items = pm.response.json().items;",
+                  "  pm.expect(items).to.be.an('array').that.is.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gameId\": \"{{gameId}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/items", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","items"] }
+          }
+        },
+        {
+          "name": "Add Item – Already in Order (Expects 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Duplicate game in order returns 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gameId\": \"{{gameId}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/items", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","items"] }
+          }
+        },
+        {
+          "name": "Remove Item from Order (RF-16)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Order still PENDING', () => pm.expect(pm.response.json().status).to.eql('PENDING'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/items/{{gameId}}", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","items","{{gameId}}"] }
+          }
+        },
+        {
           "name": "Complete Order (Pay)",
           "event": [
             {
@@ -421,7 +698,8 @@
               "script": {
                 "exec": [
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Status is COMPLETED', () => pm.expect(pm.response.json().status).to.eql('COMPLETED'));"
+                  "pm.test('Status is COMPLETED', () => pm.expect(pm.response.json().status).to.eql('COMPLETED'));",
+                  "pm.test('Invoice path is set', () => pm.expect(pm.response.json().invoicePath).to.be.a('string'));"
                 ]
               }
             }
@@ -429,6 +707,68 @@
           "request": {
             "method": "POST",
             "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/complete", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","complete"] }
+          }
+        },
+        {
+          "name": "Download Invoice (RF-25)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Content-Disposition is attachment', () => {",
+                  "  pm.expect(pm.response.headers.get('Content-Disposition')).to.include('attachment');",
+                  "  pm.expect(pm.response.headers.get('Content-Disposition')).to.include('invoice_');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/invoice", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","invoice"] }
+          }
+        },
+        {
+          "name": "Download Key Card (RF-26)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Content-Disposition is attachment', () => {",
+                  "  pm.expect(pm.response.headers.get('Content-Disposition')).to.include('attachment');",
+                  "  pm.expect(pm.response.headers.get('Content-Disposition')).to.include('keycard_');",
+                  "});",
+                  "pm.test('Body contains ArcadeHaven header', () => {",
+                  "  pm.expect(pm.response.text()).to.include('ArcadeHaven');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/keycard", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","keycard"] }
+          }
+        },
+        {
+          "name": "Download Key Card – Pending Order (Expects 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Key card on non-completed order returns 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/keycard", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","keycard"] }
           }
         },
         {
@@ -440,6 +780,23 @@
                 "exec": [
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
                   "pm.test('Status is CANCELLED', () => pm.expect(pm.response.json().status).to.eql('CANCELLED'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/cancel", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","cancel"] }
+          }
+        },
+        {
+          "name": "Cancel Already-Cancelled Order (Expects 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Re-cancel returns 409', () => pm.response.to.have.status(409));"
                 ]
               }
             }
@@ -462,12 +819,32 @@
               "script": {
                 "exec": [
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Has games list', () => pm.expect(pm.response.json().games).to.be.an('array'));"
+                  "pm.test('Has games list', () => pm.expect(pm.response.json().games).to.be.an('array'));",
+                  "var games = pm.response.json().games;",
+                  "if (games && games.length > 0) { pm.collectionVariables.set('entryId', games[0].id); }"
                 ]
               }
             }
           ],
           "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/library", "host": ["{{baseUrl}}"], "path": ["api","library"] }
+          }
+        },
+        {
+          "name": "Get Library – Unauthenticated (Expects 401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unauthenticated returns 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
             "method": "GET",
             "url": { "raw": "{{baseUrl}}/api/library", "host": ["{{baseUrl}}"], "path": ["api","library"] }
           }
@@ -516,6 +893,23 @@
           }
         },
         {
+          "name": "Get User – Not Found (Expects 404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unknown user returns 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/admin/users/00000000-0000-0000-0000-000000000000", "host": ["{{baseUrl}}"], "path": ["api","admin","users","00000000-0000-0000-0000-000000000000"] }
+          }
+        },
+        {
           "name": "Deactivate User",
           "event": [
             {
@@ -558,7 +952,8 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Role changed', () => pm.expect(pm.response.json().role).to.be.a('string'));"
                 ]
               }
             }
@@ -592,7 +987,7 @@
           }
         },
         {
-          "name": "Approve Game",
+          "name": "Approve Game (RF-08)",
           "event": [
             {
               "listen": "test",
@@ -607,6 +1002,41 @@
           "request": {
             "method": "PATCH",
             "url": { "raw": "{{baseUrl}}/api/admin/games/{{gameId}}/approve", "host": ["{{baseUrl}}"], "path": ["api","admin","games","{{gameId}}","approve"] }
+          }
+        },
+        {
+          "name": "Reject Game (RF-09)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status is REJECTED', () => pm.expect(pm.response.json().status).to.eql('REJECTED'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/api/admin/games/{{gameId}}/reject", "host": ["{{baseUrl}}"], "path": ["api","admin","games","{{gameId}}","reject"] }
+          }
+        },
+        {
+          "name": "Reject Already-Active Game (Expects 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Rejecting non-pending game returns 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/api/admin/games/{{gameId}}/reject", "host": ["{{baseUrl}}"], "path": ["api","admin","games","{{gameId}}","reject"] }
           }
         },
         {
@@ -625,6 +1055,57 @@
           "request": {
             "method": "PATCH",
             "url": { "raw": "{{baseUrl}}/api/admin/games/{{gameId}}/remove", "host": ["{{baseUrl}}"], "path": ["api","admin","games","{{gameId}}","remove"] }
+          }
+        },
+        {
+          "name": "Suspend Library Entry (RF-30)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/api/admin/users/{{userId}}/library/{{entryId}}/suspend", "host": ["{{baseUrl}}"], "path": ["api","admin","users","{{userId}}","library","{{entryId}}","suspend"] }
+          }
+        },
+        {
+          "name": "Revoke Library Entry (RF-30)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/api/admin/users/{{userId}}/library/{{entryId}}/revoke", "host": ["{{baseUrl}}"], "path": ["api","admin","users","{{userId}}","library","{{entryId}}","revoke"] }
+          }
+        },
+        {
+          "name": "Admin Endpoint – Buyer Forbidden (Expects 403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Buyer accessing admin endpoint returns 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/admin/users", "host": ["{{baseUrl}}"], "path": ["api","admin","users"] }
           }
         }
       ]

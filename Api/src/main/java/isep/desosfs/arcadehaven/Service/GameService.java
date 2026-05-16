@@ -81,6 +81,14 @@ public class GameService {
     }
 
     @Transactional
+    public GameResponse rejectGame(UUID id) {
+        Game game = gameRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Game not found"));
+        game.reject();
+        return GameResponse.from(gameRepository.save(game));
+    }
+
+    @Transactional
     public GameResponse removeGame(UUID id) {
         Game game = gameRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Game not found"));

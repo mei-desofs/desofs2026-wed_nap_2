@@ -61,6 +61,10 @@ public class User {
         this.role = newRole;
     }
 
+    public void updateEmail(String newEmail) {
+        this.email = newEmail;
+    }
+
     public boolean isActive() {
         return active;
     }
