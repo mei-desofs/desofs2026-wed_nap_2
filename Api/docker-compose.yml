@@ -1,9 +1,11 @@
 # docker-compose.yml
 version: '3.8'
 services:
-  app:
+  api:
     image: arcadehaven-api:latest
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     environment:
@@ -46,7 +48,7 @@ services:
       KC_HTTP_ENABLED: ${KC_HTTP_ENABLED}
       KC_HEALTH_ENABLED: ${KC_HEALTH_ENABLED}
     volumes:
-      - ./keycloak:/opt/keycloak/data/import
+      - ../keycloak:/opt/keycloak/data/import
     depends_on:
       keycloak-db:
         condition: service_healthy
@@ -55,9 +57,9 @@ services:
   keycloak-db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: keycloak
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - keycloak_db_data:/var/lib/postgresql/data
     healthcheck:
