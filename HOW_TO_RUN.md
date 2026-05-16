@@ -135,9 +135,18 @@ docker-compose.yml
 curl -s -X POST http://localhost:8180/realms/arcadehaven/protocol/openid-connect/token \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "grant_type=password" \
-  -d "client_id=arcadehaven-client" \
+  -d "client_id=arcadehaven-public" \
   -d "username=admin" \
-  -d "password=admin" \
+  -d "password=Admin123!" \
+  | jq '.access_token'
+
+# Obter token como buyer (utilizador de teste)
+curl -s -X POST http://localhost:8180/realms/arcadehaven/protocol/openid-connect/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=password" \
+  -d "client_id=arcadehaven-public" \
+  -d "username=buyer1" \
+  -d "password=Password123!" \
   | jq '.access_token'
 ```
 
@@ -147,11 +156,13 @@ Usa o token obtido no header `Authorization: Bearer <token>` nas chamadas à API
 
 ## Importar a coleção Postman
 
-Na raiz do repositório existe um ficheiro de coleção Postman (`.json`). Para importar:
+Na raiz do repositório existe o ficheiro `ArcadeHaven.postman_collection.json`. Para importar:
 
 1. Abre o Postman
-2. **Import** → seleciona o ficheiro `.json`
-3. As variáveis de ambiente já estão configuradas para `http://localhost:8080`
+2. **Import** → seleciona `ArcadeHaven.postman_collection.json`
+3. As variáveis já estão configuradas: `baseUrl=http://localhost:8080` e `keycloakUrl=http://localhost:8180`
+
+A coleção inclui pedidos de autenticação para os três roles (admin, buyer1, publisher1) com a password `Password123!` (admin usa `Admin123!`).
 
 ---
 
