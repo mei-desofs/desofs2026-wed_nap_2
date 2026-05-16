@@ -8,6 +8,7 @@ import isep.desosfs.arcadehaven.Dto.Response.RegisterResponse;
 import isep.desosfs.arcadehaven.Exception.BusinessException;
 import isep.desosfs.arcadehaven.Repository.LibraryRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
+import org.keycloak.representations.idm.UserRepresentation;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
@@ -30,15 +31,17 @@ public class AuthService {
     private final UserRepository userRepository;
     private final LibraryRepository libraryRepository;
     private final Keycloak keycloak;
+    private final PasswordPolicyService passwordPolicyService;
 
     @Value("${keycloak.realm}")
     private String realm;
 
     public AuthService(UserRepository userRepository, LibraryRepository libraryRepository,
-                       Keycloak keycloak) {
+                       Keycloak keycloak, PasswordPolicyService passwordPolicyService) {
         this.userRepository = userRepository;
         this.libraryRepository = libraryRepository;
         this.keycloak = keycloak;
+        this.passwordPolicyService = passwordPolicyService;
     }
 
     @Transactional
@@ -53,6 +56,8 @@ public class AuthService {
             throw new BusinessException("Email already registered");
         }
 
+        passwordPolicyService.validate(request.password());
+
         String keycloakUserId = createKeycloakUser(request);
         assignKeycloakRole(keycloakUserId, request.role().name());
 
@@ -62,6 +67,26 @@ public class AuthService {
         libraryRepository.save(Library.create(user));
 
         return new RegisterResponse(user.getUsername(), user.getRole().name());
+    }
+
+    /**
+     * Revokes all active Keycloak sessions for the current user (ASVS V6.8.3 / V10.4.9 / RNF-03).
+     * Called from POST /api/auth/logout.
+     */
+    public void logout(String username) {
+        try {
+            java.util.List<UserRepresentation> users =
+                    keycloak.realm(realm).users().searchByUsername(username, true);
+            if (users.isEmpty()) {
+                log.warn("Logout requested for unknown Keycloak user: {}", username);
+                return;
+            }
+            keycloak.realm(realm).users().get(users.get(0).getId()).logout();
+            log.info("All Keycloak sessions revoked for user '{}'", username);
+        } catch (Exception e) {
+            log.error("Failed to revoke Keycloak sessions for user '{}'", username, e);
+            throw new BusinessException("Logout failed. Please try again.");
+        }
     }
 
     private String createKeycloakUser(RegisterRequest request) {

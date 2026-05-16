@@ -1,6 +1,0 @@
-INVOICE ID: 3198c0c8-fb2c-4de7-a882-9ecfb59ee9bf
-DATE: 2026-05-09T15:23:53.069215
-
-Space Rangers Remastered - 24.99
-
-TOTAL: 24.99
