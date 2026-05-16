@@ -97,6 +97,7 @@ public class GameService {
         return GameResponse.from(gameRepository.save(game));
     }
 
+    @Transactional(readOnly = true)
     public List<GameResponse> getMyGames() {
         User publisher = getCurrentUser();
         return gameRepository.findByPublisher(publisher)
