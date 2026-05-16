@@ -44,19 +44,27 @@ public class AdminInitializer implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        seedUser(defaultAdminUsername, defaultAdminEmail, Role.ADMIN);
-        DEFAULT_USERS.forEach(u -> seedUser(u.username(), u.email(), u.role()));
+        try {
+            seedUser(defaultAdminUsername, defaultAdminEmail, Role.ADMIN);
+            DEFAULT_USERS.forEach(u -> seedUser(u.username(), u.email(), u.role()));
+        } catch (Exception e) {
+            log.error("Failed to seed default users — application will continue without them", e);
+        }
     }
 
     private void seedUser(String username, String email, Role role) {
-        if (userRepository.existsByUsername(username)) {
-            return;
+        try {
+            if (userRepository.existsByUsername(username)) {
+                return;
+            }
+            User user = User.create(username, email, "", role);
+            userRepository.save(user);
+            if (role == Role.BUYER) {
+                libraryRepository.save(Library.create(user));
+            }
+            log.info("Default user created: '{}' [{}]", username, role);
+        } catch (Exception e) {
+            log.error("Failed to seed user '{}': {}", username, e.getMessage());
         }
-        User user = User.create(username, email, "", role);
-        userRepository.save(user);
-        if (role == Role.BUYER) {
-            libraryRepository.save(Library.create(user));
-        }
-        log.info("Default user created: '{}' [{}] — credentials managed by Keycloak", username, role);
     }
 }

@@ -1,9 +1,12 @@
 package isep.desosfs.arcadehaven.Service;
 
 import isep.desosfs.arcadehaven.Domain.Enums.Role;
+import isep.desosfs.arcadehaven.Domain.Library;
+import isep.desosfs.arcadehaven.Domain.LibraryEntry;
 import isep.desosfs.arcadehaven.Domain.User;
 import isep.desosfs.arcadehaven.Dto.Response.UserResponse;
 import isep.desosfs.arcadehaven.Exception.ResourceNotFoundException;
+import isep.desosfs.arcadehaven.Repository.LibraryRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +18,11 @@ import java.util.UUID;
 public class AdminService {
 
     private final UserRepository userRepository;
+    private final LibraryRepository libraryRepository;
 
-    public AdminService(UserRepository userRepository) {
+    public AdminService(UserRepository userRepository, LibraryRepository libraryRepository) {
         this.userRepository = userRepository;
+        this.libraryRepository = libraryRepository;
     }
 
     public List<UserResponse> getAllUsers() {
@@ -49,8 +54,39 @@ public class AdminService {
         return UserResponse.from(userRepository.save(user));
     }
 
+    // RF-30: Suspend a library entry (admin revokes access to a specific game)
+    @Transactional
+    public void suspendLibraryEntry(UUID userId, UUID entryId) {
+        Library library = findLibrary(userId);
+        LibraryEntry entry = findEntry(library, entryId);
+        entry.suspend();
+        libraryRepository.save(library);
+    }
+
+    // RF-30: Revoke a library entry (admin permanently removes the game from the library)
+    @Transactional
+    public void revokeLibraryEntry(UUID userId, UUID entryId) {
+        Library library = findLibrary(userId);
+        LibraryEntry entry = findEntry(library, entryId);
+        entry.refund();
+        libraryRepository.save(library);
+    }
+
     private User findUser(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    private Library findLibrary(UUID userId) {
+        User user = findUser(userId);
+        return libraryRepository.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException("Library not found for user"));
+    }
+
+    private LibraryEntry findEntry(Library library, UUID entryId) {
+        return library.getEntries().stream()
+                .filter(e -> e.getId().equals(entryId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Library entry not found"));
     }
 }
