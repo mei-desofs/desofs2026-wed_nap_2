@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.0...v1.0.1) (2026-05-16)
+
+
+### Bug Fixes
+
+* Correction of docker-compose to run the keycloak with the SFTP server working ([c3661fd](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/c3661fdda94583c1dba6aed6f5fb83f75c66aa39))
+* Modification of the JSON import for Postman and the realm of keycloak ([7e4736a](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/7e4736afe40c2f4b834e17f0820422f1fe850e3c))
+
 ## 1.0.0 (2026-05-16)
 
 
