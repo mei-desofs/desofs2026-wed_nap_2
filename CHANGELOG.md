@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.3](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.2...v1.0.3) (2026-05-16)
+
+
+### Features
+
+* Development of the Category and Metrics for the games [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#11](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/11) ([0816dd4](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/0816dd4abe9d042ed1584cbf05d744f84dd60e44))
+
+
+### Bug Fixes
+
+* Correction of Unit Tests of Domain [#12](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/12) ([9839491](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/98394918b7926f876b8530decfe9247219522220))
+
 ## [1.0.2](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.1...v1.0.2) (2026-05-16)
 
 
