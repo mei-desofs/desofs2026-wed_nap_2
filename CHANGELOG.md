@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.2](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.1...v1.0.2) (2026-05-16)
+
+
+### Bug Fixes
+
+* docker-compose.yml app name [#4](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/4) ([5c96214](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/5c962147ea500ab83ceb55fd9d9e977c4a121130))
+* remove context loading test ([5135f30](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/5135f305417585684928a4d60246c3cb786ea152))
+* replace secrets as vars in workflows [#4](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/4) ([7e2ad86](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/7e2ad863c93178db44964dd77150b7c44c2d2f8b))
+
 ## [1.0.1](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.0...v1.0.1) (2026-05-16)
 
 
