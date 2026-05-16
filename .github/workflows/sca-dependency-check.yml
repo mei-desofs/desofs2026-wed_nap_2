@@ -2,10 +2,10 @@ name: SCA - Dependency Check # Software Composition Analysis (SCA)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, pipeline ]
 
   pull_request:
-    branches: [ main ]
+    branches: [ main, pipeline ]
 
   workflow_dispatch:
 

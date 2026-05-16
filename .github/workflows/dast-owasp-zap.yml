@@ -2,10 +2,10 @@ name: DAST - OWASP ZAP # Dynamic Application Security Testing (DAST)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, pipeline ]
 
   pull_request:
-    branches: [ main ]
+    branches: [ main, pipeline ]
 
 # Read repo, write to security tab in github and read github actions
 permissions:
@@ -64,7 +64,6 @@ jobs:
           target: "http://localhost:8080/actuator/health"
           fail_action: false
           allow_issue_writing: false
-          cmd_options: "-config api.disablekey=true"
           artifact_name: zap-report
 
       # Uploads ZAP HTML report as workflow artifact
@@ -72,4 +71,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: zap-report
-          path: report_html.html
+          path: Api/target/report_html.html
