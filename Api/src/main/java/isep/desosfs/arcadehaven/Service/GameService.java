@@ -5,10 +5,12 @@ import isep.desosfs.arcadehaven.Domain.Game;
 import isep.desosfs.arcadehaven.Domain.User;
 import isep.desosfs.arcadehaven.Dto.Request.CreateGameRequest;
 import isep.desosfs.arcadehaven.Dto.Request.UpdateGameRequest;
+import isep.desosfs.arcadehaven.Dto.Response.GameMetricsResponse;
 import isep.desosfs.arcadehaven.Dto.Response.GameResponse;
 import isep.desosfs.arcadehaven.Exception.ResourceNotFoundException;
 import isep.desosfs.arcadehaven.Exception.StorageException;
 import isep.desosfs.arcadehaven.Repository.GameRepository;
+import isep.desosfs.arcadehaven.Repository.OrderRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
 import org.apache.tika.Tika;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,17 +29,19 @@ public class GameService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final FileStorageService fileStorageService;
+    private final OrderRepository orderRepository;
 
     public GameService(GameRepository gameRepository, UserRepository userRepository,
-                       FileStorageService fileStorageService) {
+                       FileStorageService fileStorageService, OrderRepository orderRepository) {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.fileStorageService = fileStorageService;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional(readOnly = true)
-    public List<GameResponse> getAllActiveGames(String title, BigDecimal minPrice, BigDecimal maxPrice) {
-        return gameRepository.findActiveWithFilters(title, minPrice, maxPrice)
+    public List<GameResponse> getAllActiveGames(String title, String category, BigDecimal minPrice, BigDecimal maxPrice) {
+        return gameRepository.findActiveWithFilters(title, category, minPrice, maxPrice)
                 .stream().map(GameResponse::from).toList();
     }
 
@@ -57,7 +61,7 @@ public class GameService {
     public GameResponse createGame(CreateGameRequest request) {
         User publisher = getCurrentUser();
         Game game = Game.create(request.title(), request.description(), request.price(),
-                request.rawgApiId(), publisher);
+                request.rawgApiId(), request.category(), publisher);
         return GameResponse.from(gameRepository.save(game));
     }
 
@@ -68,7 +72,7 @@ public class GameService {
                 .orElseThrow(() -> new ResourceNotFoundException("Game not found or not owned by you"));
 
         if (request.price() != null) game.updatePrice(request.price());
-        game.updateDetails(request.title(), request.description());
+        game.updateDetails(request.title(), request.description(), request.category());
         return GameResponse.from(gameRepository.save(game));
     }
 
@@ -122,6 +126,17 @@ public class GameService {
         User publisher = getCurrentUser();
         return gameRepository.findByPublisher(publisher)
                 .stream().map(GameResponse::from).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public GameMetricsResponse getGameMetrics(UUID gameId) {
+        User publisher = getCurrentUser();
+        Game game = gameRepository.findByIdAndPublisher(gameId, publisher)
+                .orElseThrow(() -> new ResourceNotFoundException("Game not found or not owned by you"));
+        Object[] row = orderRepository.findMetricsByGameId(gameId);
+        long unitsSold = row[0] != null ? ((Number) row[0]).longValue() : 0L;
+        BigDecimal totalRevenue = row[1] != null ? (BigDecimal) row[1] : BigDecimal.ZERO;
+        return new GameMetricsResponse(gameId, game.getTitle(), unitsSold, totalRevenue);
     }
 
     private void validateMimeType(MultipartFile file, FileType fileType) {

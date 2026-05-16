@@ -35,6 +35,9 @@ public class Game {
 
     private String rawgApiId;
 
+    @Column(length = 100)
+    private String category;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -48,12 +51,14 @@ public class Game {
 
     protected Game() {}
 
-    public static Game create(String title, String description, BigDecimal price, String rawgApiId, User publisher) {
+    public static Game create(String title, String description, BigDecimal price, String rawgApiId,
+                              String category, User publisher) {
         Game game = new Game();
         game.title = title;
         game.description = description;
         game.price = price;
         game.rawgApiId = rawgApiId;
+        game.category = category;
         game.publisher = publisher;
         return game;
     }
@@ -83,9 +88,10 @@ public class Game {
         this.price = newPrice;
     }
 
-    public void updateDetails(String title, String description) {
+    public void updateDetails(String title, String description, String category) {
         if (title != null && !title.isBlank()) this.title = title;
         if (description != null) this.description = description;
+        if (category != null && !category.isBlank()) this.category = category;
     }
 
     public void addFile(String filename, String path, FileType type) {

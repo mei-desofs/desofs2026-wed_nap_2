@@ -11,5 +11,6 @@ public record CreateGameRequest(
         @NoHtml @NotBlank String title,
         @NoHtml String description,
         @NotNull @DecimalMin("0.01") BigDecimal price,
-        @NoHtml String rawgApiId
+        @NoHtml String rawgApiId,
+        @NoHtml String category
 ) {}

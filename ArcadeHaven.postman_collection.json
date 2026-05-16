@@ -373,6 +373,122 @@
           }
         },
         {
+          "name": "Filter Games – By Title (RF-11)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));",
+                  "pm.test('All results contain title fragment', () => {",
+                  "  pm.response.json().forEach(g => pm.expect(g.title.toLowerCase()).to.include('space'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/games?title=space",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","games"],
+              "query": [{ "key": "title", "value": "space" }]
+            }
+          }
+        },
+        {
+          "name": "Filter Games – By Category (RF-11)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));",
+                  "pm.test('All results match category', () => {",
+                  "  pm.response.json().forEach(g => pm.expect(g.category.toLowerCase()).to.eql('action'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/games?category=Action",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","games"],
+              "query": [{ "key": "category", "value": "Action" }]
+            }
+          }
+        },
+        {
+          "name": "Filter Games – By Price Range (RF-11)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));",
+                  "pm.test('All results within price range', () => {",
+                  "  pm.response.json().forEach(g => {",
+                  "    pm.expect(g.price).to.be.at.least(5);",
+                  "    pm.expect(g.price).to.be.at.most(50);",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/games?minPrice=5&maxPrice=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","games"],
+              "query": [
+                { "key": "minPrice", "value": "5" },
+                { "key": "maxPrice", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Games – Combined Filters (RF-11)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/games?title=space&category=Action&minPrice=5&maxPrice=100",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","games"],
+              "query": [
+                { "key": "title",    "value": "space" },
+                { "key": "category", "value": "Action" },
+                { "key": "minPrice", "value": "5" },
+                { "key": "maxPrice", "value": "100" }
+              ]
+            }
+          }
+        },
+        {
           "name": "Get Game by ID",
           "event": [
             {
@@ -380,7 +496,8 @@
               "script": {
                 "exec": [
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Has id field', () => pm.expect(pm.response.json().id).to.exist);"
+                  "pm.test('Has id field', () => pm.expect(pm.response.json().id).to.exist);",
+                  "pm.test('Has category field', () => pm.expect(pm.response.json()).to.have.property('category'));"
                 ]
               }
             }
@@ -446,6 +563,7 @@
                   "  pm.expect(json.title).to.eql('Space Rangers');",
                   "});",
                   "pm.test('Status is PENDING', () => pm.expect(json.status).to.eql('PENDING'));",
+                  "pm.test('Category is set', () => pm.expect(json.category).to.eql('Action'));",
                   "if (json.id) { pm.collectionVariables.set('gameId', json.id); }"
                 ]
               }
@@ -456,7 +574,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Space Rangers\",\n  \"description\": \"An epic space adventure game.\",\n  \"price\": 19.99,\n  \"rawgApiId\": \"space-rangers-2002\"\n}"
+              "raw": "{\n  \"title\": \"Space Rangers\",\n  \"description\": \"An epic space adventure game.\",\n  \"price\": 19.99,\n  \"rawgApiId\": \"space-rangers-2002\",\n  \"category\": \"Action\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/publisher/games", "host": ["{{baseUrl}}"], "path": ["api","publisher","games"] }
           }
@@ -492,7 +610,8 @@
               "script": {
                 "exec": [
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Title updated', () => pm.expect(pm.response.json().title).to.eql('Space Rangers Remastered'));"
+                  "pm.test('Title updated', () => pm.expect(pm.response.json().title).to.eql('Space Rangers Remastered'));",
+                  "pm.test('Category updated', () => pm.expect(pm.response.json().category).to.eql('RPG'));"
                 ]
               }
             }
@@ -502,9 +621,48 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Space Rangers Remastered\",\n  \"description\": \"An epic space adventure game – now remastered.\",\n  \"price\": 24.99\n}"
+              "raw": "{\n  \"title\": \"Space Rangers Remastered\",\n  \"description\": \"An epic space adventure game – now remastered.\",\n  \"price\": 24.99,\n  \"category\": \"RPG\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/publisher/games/{{gameId}}", "host": ["{{baseUrl}}"], "path": ["api","publisher","games","{{gameId}}"] }
+          }
+        },
+        {
+          "name": "Get Game Metrics (RF-13)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "var json = pm.response.json();",
+                  "pm.test('Has gameId', () => pm.expect(json.gameId).to.exist);",
+                  "pm.test('Has gameTitle', () => pm.expect(json.gameTitle).to.be.a('string'));",
+                  "pm.test('Has unitsSold', () => pm.expect(json.unitsSold).to.be.a('number'));",
+                  "pm.test('Has totalRevenue', () => pm.expect(json.totalRevenue).to.exist);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/publisher/games/{{gameId}}/metrics", "host": ["{{baseUrl}}"], "path": ["api","publisher","games","{{gameId}}","metrics"] }
+          }
+        },
+        {
+          "name": "Get Game Metrics – Not Owned (Expects 404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unknown or unowned game returns 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/publisher/games/00000000-0000-0000-0000-000000000000/metrics", "host": ["{{baseUrl}}"], "path": ["api","publisher","games","00000000-0000-0000-0000-000000000000","metrics"] }
           }
         },
         {
@@ -832,6 +990,77 @@
           }
         },
         {
+          "name": "Import Game Key (RF-23)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has entries list', () => pm.expect(pm.response.json().entries).to.be.an('array'));",
+                  "pm.test('Game was added to library', () => {",
+                  "  var entries = pm.response.json().entries;",
+                  "  pm.expect(entries.length).to.be.greaterThan(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gameId\": \"{{gameId}}\",\n  \"activationKey\": \"ABCD-EFGH-IJKL-MNOP\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/library/import-key", "host": ["{{baseUrl}}"], "path": ["api","library","import-key"] }
+          }
+        },
+        {
+          "name": "Import Game Key – Game Not Active (Expects 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Inactive game import returns 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gameId\": \"00000000-0000-0000-0000-000000000000\",\n  \"activationKey\": \"ABCD-EFGH-IJKL-MNOP\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/library/import-key", "host": ["{{baseUrl}}"], "path": ["api","library","import-key"] }
+          }
+        },
+        {
+          "name": "Import Game Key – Already Owned (Expects 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Duplicate game key import returns 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gameId\": \"{{gameId}}\",\n  \"activationKey\": \"ABCD-EFGH-IJKL-MNOP\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/library/import-key", "host": ["{{baseUrl}}"], "path": ["api","library","import-key"] }
+          }
+        },
+        {
           "name": "Get Library – Unauthenticated (Expects 401)",
           "event": [
             {
@@ -987,7 +1216,7 @@
           }
         },
         {
-          "name": "Approve Game (RF-08)",
+          "name": "Approve Game (RF-09)",
           "event": [
             {
               "listen": "test",

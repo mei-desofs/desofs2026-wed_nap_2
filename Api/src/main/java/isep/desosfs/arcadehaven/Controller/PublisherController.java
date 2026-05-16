@@ -3,6 +3,7 @@ package isep.desosfs.arcadehaven.Controller;
 import isep.desosfs.arcadehaven.Domain.Enums.FileType;
 import isep.desosfs.arcadehaven.Dto.Request.CreateGameRequest;
 import isep.desosfs.arcadehaven.Dto.Request.UpdateGameRequest;
+import isep.desosfs.arcadehaven.Dto.Response.GameMetricsResponse;
 import isep.desosfs.arcadehaven.Dto.Response.GameResponse;
 import isep.desosfs.arcadehaven.Service.GameService;
 import jakarta.validation.Valid;
@@ -47,6 +48,11 @@ public class PublisherController {
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=\"" + extractFilename(path) + "\"")
                 .body(fileData);
+    }
+
+    @GetMapping("/games/{id}/metrics")
+    public ResponseEntity<GameMetricsResponse> getGameMetrics(@PathVariable UUID id) {
+        return ResponseEntity.ok(gameService.getGameMetrics(id));
     }
 
     @PostMapping("/games/{id}/files")

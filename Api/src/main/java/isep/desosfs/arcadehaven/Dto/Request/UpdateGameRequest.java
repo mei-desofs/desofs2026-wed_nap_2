@@ -8,5 +8,6 @@ import java.math.BigDecimal;
 public record UpdateGameRequest(
         @NoHtml String title,
         @NoHtml String description,
-        @DecimalMin("0.01") BigDecimal price
+        @DecimalMin("0.01") BigDecimal price,
+        @NoHtml String category
 ) {}

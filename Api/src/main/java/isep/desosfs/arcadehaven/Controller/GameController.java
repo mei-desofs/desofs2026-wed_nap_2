@@ -22,9 +22,10 @@ public class GameController {
     @GetMapping
     public ResponseEntity<List<GameResponse>> getAllGames(
             @RequestParam(required = false) String title,
+            @RequestParam(required = false) String category,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice) {
-        return ResponseEntity.ok(gameService.getAllActiveGames(title, minPrice, maxPrice));
+        return ResponseEntity.ok(gameService.getAllActiveGames(title, category, minPrice, maxPrice));
     }
 
     @GetMapping("/{id}")

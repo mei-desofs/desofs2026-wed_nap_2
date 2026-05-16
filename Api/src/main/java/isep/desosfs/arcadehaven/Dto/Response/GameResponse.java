@@ -13,6 +13,7 @@ public record GameResponse(
         BigDecimal price,
         String status,
         String rawgApiId,
+        String category,
         String publisherUsername,
         LocalDateTime createdAt
 ) {
@@ -24,6 +25,7 @@ public record GameResponse(
                 game.getPrice(),
                 game.getStatus().name(),
                 game.getRawgApiId(),
+                game.getCategory(),
                 game.getPublisher().getUsername(),
                 game.getCreatedAt()
         );
