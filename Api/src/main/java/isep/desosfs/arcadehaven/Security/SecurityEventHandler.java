@@ -23,11 +23,10 @@ import java.util.Map;
 public class SecurityEventHandler implements AuthenticationEntryPoint, AccessDeniedHandler {
 
     private final SecurityAuditService auditService;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public SecurityEventHandler(SecurityAuditService auditService, ObjectMapper objectMapper) {
+    public SecurityEventHandler(SecurityAuditService auditService) {
         this.auditService = auditService;
-        this.objectMapper = objectMapper;
     }
 
     /** 401 — no valid token present or token is expired/malformed. */
