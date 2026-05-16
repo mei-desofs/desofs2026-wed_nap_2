@@ -1,7 +1,6 @@
 package isep.desosfs.arcadehaven.Service;
 
 import isep.desosfs.arcadehaven.Domain.Enums.FileType;
-import isep.desosfs.arcadehaven.Domain.Enums.GameStatus;
 import isep.desosfs.arcadehaven.Domain.Game;
 import isep.desosfs.arcadehaven.Domain.User;
 import isep.desosfs.arcadehaven.Dto.Request.CreateGameRequest;
@@ -18,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,8 +36,8 @@ public class GameService {
     }
 
     @Transactional(readOnly = true)
-    public List<GameResponse> getAllActiveGames() {
-        return gameRepository.findByStatus(GameStatus.ACTIVE)
+    public List<GameResponse> getAllActiveGames(String title, BigDecimal minPrice, BigDecimal maxPrice) {
+        return gameRepository.findActiveWithFilters(title, minPrice, maxPrice)
                 .stream().map(GameResponse::from).toList();
     }
 

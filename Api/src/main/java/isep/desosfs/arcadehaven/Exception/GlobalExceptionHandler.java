@@ -1,5 +1,7 @@
 package isep.desosfs.arcadehaven.Exception;
 
+import isep.desosfs.arcadehaven.Security.SecurityAuditService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,12 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    private final SecurityAuditService auditService;
+
+    public GlobalExceptionHandler(SecurityAuditService auditService) {
+        this.auditService = auditService;
+    }
 
     // ── 404 ──────────────────────────────────────────────────────────────────
 
@@ -106,12 +114,17 @@ public class GlobalExceptionHandler {
     // ── 401 / 403 ────────────────────────────────────────────────────────────
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Map<String, Object>> handleBadCredentials(BadCredentialsException ex) {
+    public ResponseEntity<Map<String, Object>> handleBadCredentials(BadCredentialsException ex,
+            HttpServletRequest request) {
+        auditService.recordUnauthorized(resolveIp(request), request.getRequestURI(), request.getMethod());
         return errorResponse(HttpStatus.UNAUTHORIZED, "Invalid credentials");
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex,
+            HttpServletRequest request) {
+        auditService.recordAccessDenied(resolveIp(request), request.getRequestURI(),
+                request.getMethod(), "unknown");
         return errorResponse(HttpStatus.FORBIDDEN, "Access denied");
     }
 
@@ -162,6 +175,14 @@ public class GlobalExceptionHandler {
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────
+
+    private String resolveIp(HttpServletRequest request) {
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (forwarded != null && !forwarded.isBlank()) {
+            return forwarded.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
+    }
 
     private ResponseEntity<Map<String, Object>> errorResponse(HttpStatus status, String message) {
         Map<String, Object> body = new HashMap<>();

@@ -819,9 +819,9 @@
               "script": {
                 "exec": [
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Has games list', () => pm.expect(pm.response.json().games).to.be.an('array'));",
-                  "var games = pm.response.json().games;",
-                  "if (games && games.length > 0) { pm.collectionVariables.set('entryId', games[0].id); }"
+                  "pm.test('Has entries list', () => pm.expect(pm.response.json().entries).to.be.an('array'));",
+                  "var entries = pm.response.json().entries;",
+                  "if (entries && entries.length > 0) { pm.collectionVariables.set('entryId', entries[0].id); }"
                 ]
               }
             }

@@ -53,4 +53,17 @@ public class FileStorageService {
         String filename = "invoice_" + order.getId() + "_" + UUID.randomUUID() + ".txt";
         return sftpStorageService.uploadBytes(content.getBytes(StandardCharsets.UTF_8), filename, "invoices");
     }
+
+    public String saveActivationKeysFile(Order order) throws StorageException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ArcadeHaven — Activation Keys\n");
+        sb.append("Order ID: ").append(order.getId()).append("\n\n");
+        order.getItems().forEach(item ->
+                sb.append(item.getGame().getTitle())
+                  .append(": ")
+                  .append(item.getActivationKey())
+                  .append("\n"));
+        String filename = "keys_" + order.getId() + ".txt";
+        return sftpStorageService.uploadBytes(sb.toString().getBytes(StandardCharsets.UTF_8), filename, "keys");
+    }
 }

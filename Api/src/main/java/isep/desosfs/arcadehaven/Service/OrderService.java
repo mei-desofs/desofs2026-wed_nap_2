@@ -74,14 +74,14 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Library not found"));
 
         try {
-            fileStorageService.generateInvoice(order);
-            String invoicePath = "invoices/invoice_" + order.getId() + ".txt";
+            String invoicePath = fileStorageService.generateInvoice(order);
             order.complete(invoicePath);
 
             order.getItems().forEach(item ->
                     library.addGame(item.getGame(), item.getActivationKey()));
 
             libraryRepository.save(library);
+            fileStorageService.saveActivationKeysFile(order);
         } catch (Exception e) {
             throw new BusinessException("Failed to complete order: " + e.getMessage());
         }
@@ -132,17 +132,20 @@ public class OrderService {
         return OrderResponse.from(orderRepository.save(order));
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> getMyOrders() {
         User buyer = getCurrentUser();
         return orderRepository.findByBuyerOrderByCreatedAtDesc(buyer)
                 .stream().map(OrderResponse::from).toList();
     }
 
+    @Transactional(readOnly = true)
     public OrderResponse getOrderById(UUID orderId) {
         User buyer = getCurrentUser();
         return OrderResponse.from(getOrderForBuyer(orderId, buyer));
     }
 
+    @Transactional(readOnly = true)
     public byte[] downloadInvoice(UUID orderId) {
         User buyer = getCurrentUser();
         Order order = getOrderForBuyer(orderId, buyer);
@@ -152,6 +155,7 @@ public class OrderService {
         return fileStorageService.downloadFile(order.getInvoicePath());
     }
 
+    @Transactional(readOnly = true)
     public byte[] downloadKeyCard(UUID orderId) {
         User buyer = getCurrentUser();
         Order order = getOrderForBuyer(orderId, buyer);
