@@ -21,7 +21,7 @@ class GameDomainTest {
 
     @Test
     void create_startsAsPending() {
-        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, publisher);
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
         assertThat(game.getStatus()).isEqualTo(GameStatus.PENDING);
         assertThat(game.getTitle()).isEqualTo("Title");
         assertThat(game.getPrice()).isEqualByComparingTo(BigDecimal.TEN);
@@ -29,14 +29,14 @@ class GameDomainTest {
 
     @Test
     void approve_pendingGame_becomesActive() {
-        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, publisher);
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
         game.approve();
         assertThat(game.getStatus()).isEqualTo(GameStatus.ACTIVE);
     }
 
     @Test
     void approve_activeGame_throwsIllegalState() {
-        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, publisher);
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
         game.approve();
 
         assertThatThrownBy(game::approve)
@@ -46,14 +46,14 @@ class GameDomainTest {
 
     @Test
     void reject_pendingGame_becomesRejected() {
-        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, publisher);
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
         game.reject();
         assertThat(game.getStatus()).isEqualTo(GameStatus.REJECTED);
     }
 
     @Test
     void reject_activeGame_throwsIllegalState() {
-        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, publisher);
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
         game.approve();
 
         assertThatThrownBy(game::reject)
@@ -63,7 +63,7 @@ class GameDomainTest {
 
     @Test
     void remove_anyGame_becomesRemoved() {
-        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, publisher);
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
         game.approve();
         game.remove();
         assertThat(game.getStatus()).isEqualTo(GameStatus.REMOVED);
@@ -71,14 +71,14 @@ class GameDomainTest {
 
     @Test
     void updatePrice_validPrice_updatesPrice() {
-        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, publisher);
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
         game.updatePrice(new BigDecimal("25.99"));
         assertThat(game.getPrice()).isEqualByComparingTo(new BigDecimal("25.99"));
     }
 
     @Test
     void updatePrice_zero_throwsIllegalArgument() {
-        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, publisher);
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
         assertThatThrownBy(() -> game.updatePrice(BigDecimal.ZERO))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Price must be greater than zero");
@@ -86,23 +86,23 @@ class GameDomainTest {
 
     @Test
     void updatePrice_negative_throwsIllegalArgument() {
-        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, publisher);
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
         assertThatThrownBy(() -> game.updatePrice(new BigDecimal("-5")))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void updateDetails_updatesOnlyNonNullFields() {
-        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, publisher);
-        game.updateDetails("New Title", null);
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
+        game.updateDetails("New Title", null, null);
         assertThat(game.getTitle()).isEqualTo("New Title");
         assertThat(game.getDescription()).isEqualTo("desc");
     }
 
     @Test
     void updateDetails_blankTitle_doesNotChangeTitle() {
-        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, publisher);
-        game.updateDetails("  ", "new desc");
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
+        game.updateDetails("  ", "new desc", null);
         assertThat(game.getTitle()).isEqualTo("Title");
         assertThat(game.getDescription()).isEqualTo("new desc");
     }
