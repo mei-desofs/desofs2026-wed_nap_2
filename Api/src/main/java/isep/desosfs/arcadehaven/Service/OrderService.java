@@ -166,8 +166,9 @@ public class OrderService {
         sb.append("ArcadeHaven — Activation Key Card\n");
         sb.append("Order ID: ").append(order.getId()).append("\n");
         sb.append("Date: ").append(order.getCreatedAt()).append("\n\n");
+        // ASVS V1.1.2 — strip control chars before embedding user-controlled data in text file
         order.getItems().forEach(item ->
-                sb.append(item.getGame().getTitle())
+                sb.append(item.getGame().getTitle().replaceAll("[\\r\\n\\t]", " ").trim())
                   .append(": ")
                   .append(item.getActivationKey())
                   .append("\n"));

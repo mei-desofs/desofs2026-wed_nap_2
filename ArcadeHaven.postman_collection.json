@@ -46,7 +46,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"buyer1\",\n  \"email\": \"buyer1@arcadehaven.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"BUYER\"\n}"
+              "raw": "{\n  \"username\": \"buyer1\",\n  \"email\": \"buyer1@arcadehaven.com\",\n  \"password\": \"Xtr4Safe#2026XY\",\n  \"role\": \"BUYER\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] }
           }
@@ -74,7 +74,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"publisher1\",\n  \"email\": \"publisher1@arcadehaven.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"PUBLISHER\"\n}"
+              "raw": "{\n  \"username\": \"publisher1\",\n  \"email\": \"publisher1@arcadehaven.com\",\n  \"password\": \"Xtr4Safe#2026XY\",\n  \"role\": \"PUBLISHER\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] }
           }
@@ -98,7 +98,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"admin1\",\n  \"email\": \"admin1@arcadehaven.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"ADMIN\"\n}"
+              "raw": "{\n  \"username\": \"admin1\",\n  \"email\": \"admin1@arcadehaven.com\",\n  \"password\": \"Xtr4Safe#2026XY\",\n  \"role\": \"ADMIN\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] }
           }
@@ -122,7 +122,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"buyer1\",\n  \"email\": \"buyer1other@arcadehaven.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"BUYER\"\n}"
+              "raw": "{\n  \"username\": \"buyer1\",\n  \"email\": \"buyer1other@arcadehaven.com\",\n  \"password\": \"Xtr4Safe#2026XY\",\n  \"role\": \"BUYER\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] }
           }
@@ -210,7 +210,7 @@
                 { "key": "client_id",  "value": "arcadehaven-public", "type": "text" },
                 { "key": "grant_type", "value": "password",           "type": "text" },
                 { "key": "username",   "value": "buyer1",             "type": "text" },
-                { "key": "password",   "value": "Password123!",       "type": "text" }
+                { "key": "password",   "value": "Xtr4Safe#2026XY",       "type": "text" }
               ]
             },
             "url": {
@@ -245,7 +245,7 @@
                 { "key": "client_id",  "value": "arcadehaven-public", "type": "text" },
                 { "key": "grant_type", "value": "password",           "type": "text" },
                 { "key": "username",   "value": "publisher1",         "type": "text" },
-                { "key": "password",   "value": "Password123!",       "type": "text" }
+                { "key": "password",   "value": "Xtr4Safe#2026XY",       "type": "text" }
               ]
             },
             "url": {
@@ -253,6 +253,71 @@
               "host": ["{{keycloakUrl}}"],
               "path": ["realms","{{realm}}","protocol","openid-connect","token"]
             }
+          }
+        },
+        {
+          "name": "Logout (ASVS V6.8.3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204 No Content', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/auth/logout", "host": ["{{baseUrl}}"], "path": ["api","auth","logout"] }
+          }
+        },
+        {
+          "name": "Register – Blocked Term Password (Expects 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Blocked context term returns 409', () => pm.response.to.have.status(409));",
+                  "pm.test('Error message present', () => pm.expect(pm.response.json().message).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testblocked1\",\n  \"email\": \"testblocked1@example.com\",\n  \"password\": \"ArcadeHaven2024!\",\n  \"role\": \"BUYER\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] }
+          }
+        },
+        {
+          "name": "Register – Common Password (Expects 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Common password returns 409', () => pm.response.to.have.status(409));",
+                  "pm.test('Error message present', () => pm.expect(pm.response.json().message).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testcommon1\",\n  \"email\": \"testcommon1@example.com\",\n  \"password\": \"123456789012\",\n  \"role\": \"BUYER\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] }
           }
         }
       ]
