@@ -70,6 +70,10 @@ KEYCLOAK_REALM=arcadehaven
 KEYCLOAK_ADMIN_USERNAME=admin
 KEYCLOAK_ADMIN_PASSWORD=admin
 
+# ─── Backend service-account client secret (deve coincidir com realm-export.json em dev) ─
+# PRODUÇÃO: rodar via Keycloak Admin Console e actualizar este valor
+KEYCLOAK_BACKEND_CLIENT_SECRET=backend-secret-dev-CHANGE-IN-PRODUCTION
+
 # ─── Utilizador admin da aplicação (criado no primeiro arranque) ──────────────
 ADMIN_USERNAME=admin
 ADMIN_EMAIL=admin@arcadehaven.com

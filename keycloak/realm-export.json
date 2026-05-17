@@ -26,6 +26,16 @@
   "browserFlow": "browser",
   "directGrantFlow": "arcadehaven-direct-grant",
 
+  "accessCodeLifespan": 60,
+  "accessCodeLifespanLogin": 1800,
+  "accessCodeLifespanUserAction": 300,
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 604800,
+  "offlineSessionMaxLifespanEnabled": false,
+  "revokeRefreshToken": true,
+  "refreshTokenMaxReuse": 0,
+
   "roles": {
     "realm": [
       { "name": "ADMIN",     "composite": false, "clientRole": false },
@@ -38,13 +48,28 @@
     {
       "clientId": "arcadehaven-public",
       "name": "ArcadeHaven Public Client",
+      "description": "Public OIDC client used by browser clients and the API Direct Grant flow (grant_type=password). Direct Access Grants are retained for the current API login architecture (see V10.4.4 note in MISSING_REQUIREMENTS.md).",
       "enabled": true,
       "publicClient": true,
       "directAccessGrantsEnabled": true,
       "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
       "serviceAccountsEnabled": false,
-      "redirectUris": ["*"],
-      "webOrigins": ["*"],
+      "consentRequired": false,
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "http://localhost:5173"
+      ],
+      "defaultClientScopes": ["openid", "web-origins", "acr", "profile", "roles", "email", "basic"],
+      "optionalClientScopes": [],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:3000 http://localhost:5173"
+      },
       "protocolMappers": [
         {
           "name": "arcadehaven-api-audience",
@@ -58,6 +83,21 @@
           }
         }
       ]
+    },
+    {
+      "clientId": "arcadehaven-backend",
+      "name": "ArcadeHaven Backend Service",
+      "description": "Confidential service-account client used by Spring Boot for Keycloak Admin API operations (user creation, role assignment, session revocation). Authenticates via client_credentials — no user interaction (ASVS V10.4.10).",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "backend-secret-dev-CHANGE-IN-PRODUCTION",
+      "clientAuthenticatorType": "client-secret",
+      "directAccessGrantsEnabled": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "consentRequired": false
     }
   ],
 
@@ -212,6 +252,22 @@
         }
       ],
       "realmRoles": ["BUYER"]
+    },
+    {
+      "username": "service-account-arcadehaven-backend",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": false,
+      "serviceAccountClientId": "arcadehaven-backend",
+      "credentials": [],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": ["default-roles-arcadehaven"],
+      "clientRoles": {
+        "realm-management": ["realm-admin"]
+      },
+      "notBefore": 0,
+      "groups": []
     }
   ]
 }
