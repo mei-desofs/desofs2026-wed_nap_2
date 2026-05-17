@@ -19,32 +19,44 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const body = context.payload.pull_request.body || '';
             const prNumber = context.payload.pull_request.number;
 
-            // Match "closes #123", "fixes #123", "resolves #123" (case-insensitive)
-            const issueRefs = [...body.matchAll(/(?:closes?|fixes?|resolves?)\s+#(\d+)/gi)];
+            // Use GraphQL to fetch issues linked via the GitHub "Development" sidebar
+            // (closingIssuesReferences covers both sidebar links and "closes #X" in the body)
+            const query = `
+              query($owner: String!, $repo: String!, $pr: Int!) {
+                repository(owner: $owner, name: $repo) {
+                  pullRequest(number: $pr) {
+                    closingIssuesReferences(first: 25) {
+                      nodes {
+                        number
+                        labels(first: 20) {
+                          nodes { name }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
 
-            if (issueRefs.length === 0) {
-              console.log('No linked issues found in PR body.');
+            const result = await github.graphql(query, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pr: prNumber
+            });
+
+            const linkedIssues = result.repository.pullRequest.closingIssuesReferences.nodes;
+
+            if (linkedIssues.length === 0) {
+              console.log('No linked issues found.');
               return;
             }
 
             const labelSet = new Set();
-
-            for (const match of issueRefs) {
-              const issueNumber = parseInt(match[1]);
-              try {
-                const { data: issue } = await github.rest.issues.get({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: issueNumber
-                });
-                issue.labels.forEach(l => labelSet.add(l.name));
-                console.log(`Issue #${issueNumber} has labels: ${issue.labels.map(l => l.name).join(', ')}`);
-              } catch (e) {
-                console.log(`Could not fetch issue #${issueNumber}: ${e.message}`);
-              }
+            for (const issue of linkedIssues) {
+              issue.labels.nodes.forEach(l => labelSet.add(l.name));
+              console.log(`Issue #${issue.number} labels: ${issue.labels.nodes.map(l => l.name).join(', ')}`);
             }
 
             if (labelSet.size === 0) {
