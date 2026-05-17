@@ -1,0 +1,7 @@
+# Ensure Unix line endings for shell scripts used in Docker
+Api/mvnw text eol=lf
+*.sh text eol=lf
+
+# Windows scripts keep CRLF
+*.cmd text eol=crlf
+*.bat text eol=crlf

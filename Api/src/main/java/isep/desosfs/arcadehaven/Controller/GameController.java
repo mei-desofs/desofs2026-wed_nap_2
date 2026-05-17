@@ -5,6 +5,7 @@ import isep.desosfs.arcadehaven.Service.GameService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,8 +20,12 @@ public class GameController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GameResponse>> getAllGames() {
-        return ResponseEntity.ok(gameService.getAllActiveGames());
+    public ResponseEntity<List<GameResponse>> getAllGames(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
+        return ResponseEntity.ok(gameService.getAllActiveGames(title, category, minPrice, maxPrice));
     }
 
     @GetMapping("/{id}")

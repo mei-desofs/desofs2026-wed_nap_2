@@ -49,6 +49,38 @@
         }
       ],
       "realmRoles": ["ADMIN"]
+    },
+    {
+      "username": "publisher1",
+      "email": "publisher1@arcadehaven.com",
+      "firstName": "Publisher",
+      "lastName": "One",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Xtr4Safe#2026XY",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["PUBLISHER"]
+    },
+    {
+      "username": "buyer1",
+      "email": "buyer1@arcadehaven.com",
+      "firstName": "Buyer",
+      "lastName": "One",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Xtr4Safe#2026XY",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["BUYER"]
     }
   ]
 }
