@@ -15,7 +15,7 @@ ArcadeHaven is a digital game store with three user roles — **Admin**, **Publi
 ```
 ../
 ├── Overview/
-│   └── README.md                          
+│   └── README.md                          ← You are here                  
 ├── Requirements/
 │   └── requirements.md
 ├── Architecture/
@@ -29,7 +29,7 @@ ArcadeHaven is a digital game store with three user roles — **Admin**, **Publi
 │       ├── Level-1/                       ← System, Auth API, Database, RAWG API
 │       └── Level-2/                       ← Game management detail
 ├── ThreatModeling/
-    ├── ThreatModel.md
+│   ├── ThreatModel.md
 │   ├── AbuseCases/                        ← Abuse case diagrams (PNG + PlantUML)
 │   ├── AttackTrees/                       ← Attack trees
 │   ├── RiskAssessment/
@@ -41,11 +41,12 @@ ArcadeHaven is a digital game store with three user roles — **Admin**, **Publi
 ├── SSDLC/
 │   ├── SSDLC.md
 │   └── DREAD.md
-└── SecurityTesting/
-    ├── securityTesting.md
-    ├── TraceabilityMatrix.md
-    ├── ThreatModelReviewWorkflow.md
-    └── ASVS/                              ← V1–V17 individual assessments
+├── SecurityTesting/
+│   ├── securityTesting.md
+│   ├── TraceabilityMatrix.md
+│   ├── ThreatModelReviewWorkflow.md
+│   └── ASVS/                              ← V1–V17 individual assessments
+└── KeyManagementPolicy.md
 ```
 
 ---

@@ -17,7 +17,137 @@ Key achievements:
 - Conducted code reviews on every PR merged to `main`
 - Maintained traceability between ASVS controls, security tests, and implementation evidence
 
+### Project Structure
+
+```
+├── .github/
+├── Api/
+│   ├── .mvn/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/isep/desosfs/arcadehaven/
+│   │   │   │   ├── Config/
+│   │   │   │   ├── Controller/
+│   │   │   │   ├── Domain/
+│   │   │   │   ├── Dto/
+│   │   │   │   ├── Exception/
+│   │   │   │   ├── Repository/
+│   │   │   │   ├── Security/
+│   │   │   │   ├── Service/
+│   │   │   │   ├── Validation/
+│   │   │   │   └── ArcadehavenApplication.java
+│   │   │   └── resources/
+│   │   └── tests/
+│   │       ├── java/isep/desofs/arcadehaven/
+│   │       │   ├── Controller/
+│   │       │   ├── Domain/
+│   │       │   ├── Dto/
+│   │       │   ├── Exception/
+│   │       │   ├── Security/
+│   │       │   ├── Service/
+│   │       │   └── ArcadehavenApplicationTests.java
+│   │       └── resources/
+│   ├── docker-compose.yml
+│   ├── Dockerfile
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   └── pom.xml
+├── Deliverables/
+│   ├── Phase1/
+│   │   └── Part_1.md
+│   ├── Phase2/
+│   │   └── Sprint1/
+│   │       └── deliverable_sprint1.md      ← You are here
+│   └── ASVS_5.0_Tracker.xlsx
+├── Documentation/
+│   ├── Analysis/
+│   ├── Architecture/
+│   ├── Mitigations/
+│   ├── Overview/
+│   │   └── README.md
+│   ├── Requirements/
+│   ├── SecurityTesting/
+│   ├── SSDLC/
+│   └── Project.pdf
+├── keycloak/
+│   └── realm-export.json
+├── .gitleaks.toml
+├── CHANGELOG.md
+├── HOW_TO_RUN.md
+├── qodana.yaml
+├── report.md
+├── zap.yaml
+└── README.md
+```
+
+### Documentation Index
+
+#### Backend implementation
+
+| Artefact | Description |
+|---|---|
+| [API source code](../../../Api/src/main/java/isep/desosfs/arcadehaven/) | Main backend implementation containing controllers, services, repositories, security, validation, DTOs, and domain entities |
+| [Controllers](../../../Api/src/main/java/isep/desosfs/arcadehaven/Controller/) | REST API endpoints and request handling |
+| [Domain model implementation](../../../Api/src/main/java/isep/desosfs/arcadehaven/Domain/) | Core domain entities and business objects |
+| [Services](../../../Api/src/main/java/isep/desosfs/arcadehaven/Service/) | Business logic layer and application services |
+| [Repositories](../../../Api/src/main/java/isep/desosfs/arcadehaven/Repository/) | Persistence layer and database interaction |
+| [Security](../../../Api/src/main/java/isep/desosfs/arcadehaven/Security/) | JWT authentication, authorization, filters, and security configuration |
+| [Validation](../../../Api/src/main/java/isep/desosfs/arcadehaven/Validation/) | Custom validation rules and input validation |
+| [Exceptions](../../../Api/src/main/java/isep/desosfs/arcadehaven/Exception/) | Exception handling and error responses |
+| [DTOs](../../../Api/src/main/java/isep/desosfs/arcadehaven/Dto/) | Request/response data transfer objects |
+
 ---
+
+#### Testing
+
+| Artefact | Description |
+|---|---|
+| [Test](../../../Api/src/test/java/isep/desosfs/arcadehaven/) | Unit and integration tests for backend components |
+| [Controller tests](../../../Api/src/test/java/isep/desosfs/arcadehaven/Controller/) | API endpoint and request validation tests |
+| [Security tests](../../../Api/src/test/java/isep/desosfs/arcadehaven/Security/) | Authentication, authorization, and access-control testing |
+| [Service tests](../../../Api/src/test/java/isep/desosfs/arcadehaven/Service/) | Business logic validation and service-layer testing |
+| [Domain tests](../../../Api/src/test/java/isep/desosfs/arcadehaven/Domain/) | Domain model validation tests |
+| [DTO tests](../../../Api/src/test/java/isep/desosfs/arcadehaven/Dto/) | DTO structure and mapping tests |
+| [Exception tests](../../../Api/src/test/java/isep/desosfs/arcadehaven/Exception/) | Exception handling tests |
+
+---
+
+#### Infrastructure & deployment
+
+| Artefact | Description |
+|---|---|
+| [Docker configuration](../../../Api/docker-compose.yml) | Multi-container environment configuration |
+| [Dockerfile](../../../Api/Dockerfile) | Backend container build definition |
+| [Maven project](../../../Api/pom.xml) | Dependencies, plugins, and project build configuration |
+| [Maven wrapper (Linux/Mac)](../../../Api/mvnw) | Maven execution script for Unix systems |
+| [Maven wrapper (Windows)](../../../Api/mvnw.cmd) | Maven execution script for Windows |
+| [Keycloak realm](../../../keycloak/realm-export.json) | Authentication and authorization configuration |
+---
+
+#### Documentation
+
+| Artefact | Description |
+|---|---|
+| [Overview](../../../Documentation/Overview/overview.md) | High-level project documentation overview and navigation |
+
+---
+
+#### Deliverables
+
+| File | Description |
+|---|---|
+| [ASVS_5.0_Tracker.xlsx](../../ASVS_5.0_Tracker.xlsx) | OWASP ASVS 5.0 tracking and assessment spreadsheet |
+
+#### Root Configuration & Tools
+
+| Artefact | Description |
+|---|---|
+| [README](../../../README.md) | Main project overview |
+| [CHANGELOG](../../../CHANGELOG.md) | Project change history |
+| [HOW TO RUN](../../../HOW_TO_RUN.md) | Setup and execution instructions |
+| [ZAP config](../../../zap.yaml) | OWASP ZAP security configuration |
+| [Qodana config](../../../qodana.yaml) | Static code analysis configuration |
+| [Gitleaks config](../../../.gitleaks.toml) | Secrets detection configuration |
 
 ## Development
 
