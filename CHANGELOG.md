@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.3](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.1.2...v1.1.3) (2026-05-17)
+
+
+### Bug Fixes
+
+* Change the Tests to be adapted to the new API code [#12](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/12) ([06c8fc0](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/06c8fc081d4925e829a2933c88d6ff938c045efd))
+* Development of more tests for Service,Controller, Validators,Exceptions, Security and Config classes [#12](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/12) ([5c350c3](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/5c350c327ead77c7d254ea203cf57b5c8ffc6ffa))
+
 ## [1.1.2](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.1.1...v1.1.2) (2026-05-17)
 
 
