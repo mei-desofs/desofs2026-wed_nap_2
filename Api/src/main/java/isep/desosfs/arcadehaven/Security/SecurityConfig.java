@@ -48,6 +48,8 @@ public class SecurityConfig {
                         // ASVS V3.4.4 — prevent MIME-type sniffing
                         .contentTypeOptions(Customizer.withDefaults())
                         .frameOptions(Customizer.withDefaults())
+                        // ASVS V14.2.2 / V14.3.2 — prevent caching of sensitive responses in browsers and intermediaries
+                        .cacheControl(Customizer.withDefaults())
                 )
                 // ASVS V3.4.2 — CORS restricted to explicit origin allowlist
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))

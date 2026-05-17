@@ -3,6 +3,8 @@ package isep.desosfs.arcadehaven.Security;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.web.header.writers.CacheControlHeadersWriter;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -97,6 +99,36 @@ class SecurityHeadersTest {
         MockHttpServletRequest req = new MockHttpServletRequest();
         req.setRequestURI("/api/publisher/games");
         assertThat(source.getCorsConfiguration(req)).isNotNull();
+    }
+
+    // ── ASVS V14.2.2 / V14.3.2 — Cache-Control ──────────────────────────────────
+
+    @Test
+    void cacheControl_setsNoCacheHeader() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        new CacheControlHeadersWriter().writeHeaders(new MockHttpServletRequest(), response);
+        assertThat(response.getHeader("Cache-Control")).contains("no-cache");
+    }
+
+    @Test
+    void cacheControl_setsNoStoreHeader() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        new CacheControlHeadersWriter().writeHeaders(new MockHttpServletRequest(), response);
+        assertThat(response.getHeader("Cache-Control")).contains("no-store");
+    }
+
+    @Test
+    void cacheControl_setsPragmaNoCache() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        new CacheControlHeadersWriter().writeHeaders(new MockHttpServletRequest(), response);
+        assertThat(response.getHeader("Pragma")).isEqualTo("no-cache");
+    }
+
+    @Test
+    void cacheControl_setsMaxAgeZero() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        new CacheControlHeadersWriter().writeHeaders(new MockHttpServletRequest(), response);
+        assertThat(response.getHeader("Cache-Control")).contains("max-age=0");
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────────
