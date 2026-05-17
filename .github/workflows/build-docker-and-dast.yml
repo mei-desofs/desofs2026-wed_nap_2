@@ -14,8 +14,8 @@ permissions:
 
 jobs:
 
-  build:
-    name: Build Docker Image
+  build-and-scan:
+    name: Docker Build, Scan and DAST
     runs-on: ubuntu-latest
 
     defaults:
@@ -64,46 +64,6 @@ jobs:
       - name: Build images
         run: docker compose build
 
-      # Start containers
-      - name: Start Docker containers
-        run: docker compose up -d
-
-      # Application health check
-      - name: Wait for app
-        run: |
-          for i in {1..30}; do
-            if curl -fs http://localhost:8080/actuator/health; then
-              echo "App ready"
-              exit 0
-            fi
-          
-            echo $i ": Waiting for app..."
-            sleep 5
-          done
-          
-          echo "App failed to start"
-          docker compose logs
-          
-          exit 1
-
-      - name: Stop Docker containers
-        if: always()
-        run: docker compose down
-
-  image-scan:
-    name: Docker Image Scan (Trivy + Scout)
-    runs-on: ubuntu-latest
-    needs: build
-
-    defaults:
-      run:
-        working-directory: Api
-
-    steps:
-      # IMPORTANT: no rebuild here — reuse image from build job context
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       # Installs Docker Scout as a plugin
       - name: Install Docker Scout
         run: |
@@ -146,24 +106,31 @@ jobs:
           name: trivy-report
           path: Api/trivy-report.json
 
-  dast:
-    name: DAST Scan - OWASP ZAP
-    runs-on: ubuntu-latest
-    needs: build
-
-    defaults:
-      run:
-        working-directory: Api
-
-    steps:
-      # Restart containers
-      - name: Start stack
+      # Start docker containers
+      - name: Start containers
         run: docker compose up -d
+
+      # Keycloak health check
+      - name: Wait for Keycloak
+        run: |
+          for i in {1..60}; do
+            if curl -fs http://localhost:8180/realms/arcadehaven/.well-known/openid-configuration; then
+              echo "Keycloak ready"
+              exit 0
+            fi
+
+            sleep 5
+          done
+
+          echo "Keycloak failed"
+          docker compose logs
+
+          exit 1
 
       # Application health check
       - name: Wait for app
         run: |
-          for i in {1..30}; do
+          for i in {1..60}; do
             if curl -fs http://localhost:8080/actuator/health; then
               echo "App ready"
               exit 0
@@ -178,6 +145,7 @@ jobs:
 
           exit 1
 
+      # Run OWASP ZAP DAST scan
       - name: OWASP ZAP Scan
         uses: zaproxy/action-baseline@v0.14.0
         with:
