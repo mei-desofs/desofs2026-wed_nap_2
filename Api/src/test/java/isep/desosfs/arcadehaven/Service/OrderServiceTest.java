@@ -216,4 +216,134 @@ public class OrderServiceTest {
         assertThrows(Exception.class,
                 () -> orderService.getOrderById(UUID.randomUUID()));
     }
+
+    @Test
+    void shouldAddItemToOrder() {
+        UUID buyerId = UUID.randomUUID();
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Order order = Order.create(buyer);
+        Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, buyer);
+        game.approve();
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+        when(libraryRepository.findByUser(buyer)).thenReturn(Optional.of(library));
+        when(gameRepository.findById(any())).thenReturn(Optional.of(game));
+        when(orderRepository.save(any())).thenReturn(order);
+
+        var result = orderService.addItemToOrder(UUID.randomUUID(), UUID.randomUUID());
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void shouldThrowWhenAddingInactiveGameToOrder() {
+        UUID buyerId = UUID.randomUUID();
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Order order = Order.create(buyer);
+        Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, buyer);
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+        when(libraryRepository.findByUser(buyer)).thenReturn(Optional.of(library));
+        when(gameRepository.findById(any())).thenReturn(Optional.of(game));
+
+        assertThrows(BusinessException.class,
+                () -> orderService.addItemToOrder(UUID.randomUUID(), UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldRemoveItemFromOrder() {
+        UUID buyerId = UUID.randomUUID();
+        UUID gameId = UUID.randomUUID();
+
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, buyer);
+        game.approve();
+        ReflectionTestUtils.setField(game, "id", gameId);
+
+        Order order = Order.create(buyer);
+        order.addItem(OrderItem.of(game, BigDecimal.TEN));
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+        when(orderRepository.save(any())).thenReturn(order);
+
+        var result = orderService.removeItemFromOrder(UUID.randomUUID(), gameId);
+
+        assertNotNull(result);
+        assertTrue(order.getItems().isEmpty());
+    }
+
+    @Test
+    void shouldDownloadInvoice() {
+        UUID buyerId = UUID.randomUUID();
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Order order = Order.create(buyer);
+        ReflectionTestUtils.setField(order, "invoicePath", "invoices/inv.txt");
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+        when(fileStorageService.downloadFile("invoices/inv.txt")).thenReturn("data".getBytes());
+
+        byte[] result = orderService.downloadInvoice(UUID.randomUUID());
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void shouldThrowWhenInvoiceNotYetGenerated() {
+        UUID buyerId = UUID.randomUUID();
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Order order = Order.create(buyer);
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+
+        assertThrows(BusinessException.class,
+                () -> orderService.downloadInvoice(UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldDownloadKeyCard() {
+        UUID buyerId = UUID.randomUUID();
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Order order = Order.create(buyer);
+        order.complete("invoices/inv.txt");
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+
+        byte[] result = orderService.downloadKeyCard(UUID.randomUUID());
+
+        assertNotNull(result);
+        assertTrue(result.length > 0);
+    }
+
+    @Test
+    void shouldThrowWhenKeyCardRequestedForNonCompletedOrder() {
+        UUID buyerId = UUID.randomUUID();
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Order order = Order.create(buyer);
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+
+        assertThrows(BusinessException.class,
+                () -> orderService.downloadKeyCard(UUID.randomUUID()));
+    }
 }

@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import isep.desosfs.arcadehaven.Dto.Request.ImportKeyRequest;
 import isep.desosfs.arcadehaven.Dto.Response.LibraryResponse;
 import isep.desosfs.arcadehaven.Service.LibraryService;
 
@@ -40,5 +41,25 @@ public class LibraryControllerTest {
         assertEquals(library, response.getBody());
 
         verify(libraryService).getMyLibrary();
+    }
+
+    @Test
+    void shouldImportGameKey() {
+        UUID gameId = UUID.randomUUID();
+        ImportKeyRequest request = new ImportKeyRequest(gameId, "KEY-XYZ-123");
+
+        LibraryResponse library = new LibraryResponse(
+                UUID.randomUUID(),
+                List.of(),
+                LocalDateTime.now()
+        );
+
+        when(libraryService.importGameKey(request)).thenReturn(library);
+
+        var response = controller.importGameKey(request);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(library, response.getBody());
+        verify(libraryService).importGameKey(request);
     }
 }

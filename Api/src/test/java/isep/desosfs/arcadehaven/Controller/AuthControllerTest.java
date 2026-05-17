@@ -11,7 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import isep.desosfs.arcadehaven.Domain.Enums.Role;
+import isep.desosfs.arcadehaven.Dto.Request.LoginRequest;
 import isep.desosfs.arcadehaven.Dto.Request.RegisterRequest;
+import isep.desosfs.arcadehaven.Dto.Response.LoginResponse;
 import isep.desosfs.arcadehaven.Dto.Response.RegisterResponse;
 import isep.desosfs.arcadehaven.Service.AuthService;
 
@@ -22,6 +24,20 @@ public class AuthControllerTest {
 
     @InjectMocks
     private AuthController controller;
+
+    @Test
+    void shouldLogin() {
+        LoginRequest request = new LoginRequest("user", "password123456");
+        LoginResponse responseDto = new LoginResponse("token", "refresh", "Bearer", 3600L);
+
+        when(authService.login(request)).thenReturn(responseDto);
+
+        var response = controller.login(request);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(responseDto, response.getBody());
+        verify(authService).login(request);
+    }
 
     @Test
     void shouldRegisterUser() {
