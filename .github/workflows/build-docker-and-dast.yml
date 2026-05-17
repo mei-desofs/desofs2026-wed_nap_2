@@ -119,6 +119,7 @@ jobs:
               exit 0
             fi
 
+            echo $i ": Waiting for Keycloak..."
             sleep 5
           done
 
