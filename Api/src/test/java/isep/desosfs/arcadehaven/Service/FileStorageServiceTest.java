@@ -63,4 +63,52 @@ public class FileStorageServiceTest {
 
         assertNotNull(result);
     }
+
+    @Test
+    void shouldDownloadFileSuccessfully() {
+        when(storageService.downloadFile("invoices/a.txt"))
+                .thenReturn("data".getBytes());
+
+        byte[] result = service.downloadFile("invoices/a.txt");
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void shouldDeleteFileSuccessfully() {
+        service.deleteFile("invoices/a.txt");
+    }
+
+    @Test
+    void shouldRejectEmptyPath() {
+        assertThrows(IllegalArgumentException.class,
+                () -> service.downloadFile(""));
+    }
+
+    @Test
+    void shouldRejectNullPath() {
+        assertThrows(IllegalArgumentException.class,
+                () -> service.downloadFile(null));
+    }
+
+    @Test
+    void shouldRejectTraversalPath() {
+        assertThrows(IllegalArgumentException.class,
+                () -> service.downloadFile("../evil.txt"));
+    }
+
+    @Test
+    void shouldSaveActivationKeysFileSuccessfully() {
+        Order order = mock(Order.class);
+
+        when(order.getId()).thenReturn(UUID.randomUUID());
+        when(order.getItems()).thenReturn(java.util.List.of());
+
+        when(storageService.uploadBytes(any(), any(), eq("keys")))
+                .thenReturn("keys/file.txt");
+
+        String result = service.saveActivationKeysFile(order);
+
+        assertNotNull(result);
+    }
 }

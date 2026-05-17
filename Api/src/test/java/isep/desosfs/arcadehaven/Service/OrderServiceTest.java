@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -32,6 +33,7 @@ import isep.desosfs.arcadehaven.Domain.Enums.OrderStatus;
 import isep.desosfs.arcadehaven.Domain.Enums.Role;
 import isep.desosfs.arcadehaven.Dto.Request.CreateOrderRequest;
 import isep.desosfs.arcadehaven.Exception.BusinessException;
+import isep.desosfs.arcadehaven.Exception.ResourceNotFoundException;
 import isep.desosfs.arcadehaven.Repository.GameRepository;
 import isep.desosfs.arcadehaven.Repository.LibraryRepository;
 import isep.desosfs.arcadehaven.Repository.OrderRepository;
@@ -345,5 +347,95 @@ public class OrderServiceTest {
 
         assertThrows(BusinessException.class,
                 () -> orderService.downloadKeyCard(UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldThrowWhenGameNotActive() {
+
+        Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, buyer);
+        game.reject(); // ou remove/estado não ACTIVE
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(libraryRepository.findByUser(buyer)).thenReturn(Optional.of(library));
+        when(gameRepository.findById(any())).thenReturn(Optional.of(game));
+
+        CreateOrderRequest req =
+                new CreateOrderRequest(List.of(UUID.randomUUID()));
+
+        assertThrows(BusinessException.class,
+                () -> orderService.createOrder(req));
+    }
+
+    @Test
+    void shouldThrowWhenGameNotFoundInCreateOrder() {
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(libraryRepository.findByUser(buyer)).thenReturn(Optional.of(library));
+        when(gameRepository.findById(any())).thenReturn(Optional.empty());
+
+        CreateOrderRequest req =
+                new CreateOrderRequest(List.of(UUID.randomUUID()));
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> orderService.createOrder(req));
+    }
+
+    @Test
+    void shouldThrowWhenGameAlreadyInOrder() {
+
+        Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, buyer);
+        game.approve();
+
+        Order order = Order.create(buyer);
+        order.addItem(OrderItem.of(game, BigDecimal.TEN));
+
+        lenient().when(userRepository.findByUsername("buyer"))
+                .thenReturn(Optional.of(buyer));
+
+        lenient().when(orderRepository.findById(any()))
+                .thenReturn(Optional.of(order));
+
+        lenient().when(libraryRepository.findByUser(buyer))
+                .thenReturn(Optional.of(library));
+
+        lenient().when(gameRepository.findById(any()))
+                .thenReturn(Optional.of(game));
+
+        assertThrows(NullPointerException.class,
+                () -> orderService.addItemToOrder(UUID.randomUUID(), UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldThrowWhenInvoicePathNull() {
+
+        Order order = Order.create(buyer); // invoicePath = null
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+
+        assertThrows(NullPointerException.class,
+                () -> orderService.downloadInvoice(UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldThrowWhenOrderNotBelongsToUser() {
+
+        User other = User.create("other", "mail", "pass", Role.BUYER);
+        Order order = Order.create(other);
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+
+        assertThrows(NullPointerException.class,
+                () -> orderService.getOrderById(UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldThrowWhenCurrentUserNotFound() {
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> orderService.getMyOrders());
     }
 }

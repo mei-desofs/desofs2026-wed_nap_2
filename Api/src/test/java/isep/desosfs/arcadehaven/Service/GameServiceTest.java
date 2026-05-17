@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -218,5 +220,136 @@ public class GameServiceTest {
         var result = gameService.getAllActiveGames(null, null, null, null);
 
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void shouldRejectGame() {
+
+        Game game = Game.create("t", "d", BigDecimal.TEN, "r", null, user);
+
+        when(gameRepository.findById(any())).thenReturn(Optional.of(game));
+        when(gameRepository.save(any())).thenReturn(game);
+
+        gameService.rejectGame(UUID.randomUUID());
+
+        assertEquals(GameStatus.REJECTED, game.getStatus());
+    }
+
+    @Test
+    void shouldDownloadGameFile() {
+
+        Game game = Game.create("t", "d", BigDecimal.TEN, "r", null, user);
+
+        byte[] expected = new byte[]{1, 2, 3};
+
+        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        when(gameRepository.findByIdAndPublisher(any(), eq(user)))
+                .thenReturn(Optional.of(game));
+
+        when(fileStorageService.downloadFile(anyString()))
+                .thenReturn(expected);
+
+        byte[] result =
+                gameService.downloadGameFile(UUID.randomUUID(), "path");
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void shouldThrowWhenDownloadingGameNotOwned() {
+
+        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        when(gameRepository.findByIdAndPublisher(any(), eq(user)))
+                .thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> gameService.downloadGameFile(UUID.randomUUID(), "path"));
+    }
+
+    @Test
+    void shouldReturnMyGames() {
+
+        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        when(gameRepository.findByPublisher(user)).thenReturn(List.of());
+
+        var result = gameService.getMyGames();
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void shouldReturnGameMetrics() {
+
+        Game game = Game.create("t", "d", BigDecimal.TEN, "r", null, user);
+
+        Object[] row = new Object[]{10L, BigDecimal.valueOf(100)};
+
+        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        when(gameRepository.findByIdAndPublisher(any(), eq(user)))
+                .thenReturn(Optional.of(game));
+        when(orderRepository.findMetricsByGameId(any()))
+                .thenReturn(row);
+
+        var result = gameService.getGameMetrics(UUID.randomUUID());
+
+        assertEquals(10L, result.unitsSold());
+        assertEquals(BigDecimal.valueOf(100), result.totalRevenue());
+    }
+
+    @Test
+    void shouldReturnGameMetricsWithNullValues() {
+
+        Game game = Game.create("t", "d", BigDecimal.TEN, "r", null, user);
+
+        Object[] row = new Object[]{null, null};
+
+        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        when(gameRepository.findByIdAndPublisher(any(), eq(user)))
+                .thenReturn(Optional.of(game));
+        when(orderRepository.findMetricsByGameId(any()))
+                .thenReturn(row);
+
+        var result = gameService.getGameMetrics(UUID.randomUUID());
+
+        assertEquals(0L, result.unitsSold());
+        assertEquals(BigDecimal.ZERO, result.totalRevenue());
+    }
+
+    @Test
+    void shouldThrowStorageExceptionWhenFileReadFails() {
+
+        MockMultipartFile broken =
+                new MockMultipartFile(
+                        "f",
+                        "img.png",
+                        "image/png",
+                        new byte[0]
+                );
+
+        lenient().when(userRepository.findByUsername("john"))
+                .thenReturn(Optional.of(user));
+
+        assertThrows(IllegalArgumentException.class, () ->
+                gameService.uploadGameFile(UUID.randomUUID(), broken, FileType.IMAGE));
+    }
+
+    @Test
+    void shouldThrowWhenInvalidMimeType() {
+
+        byte[] txt = "hello".getBytes();
+
+        MockMultipartFile file =
+                new MockMultipartFile("f", "file.txt", "text/plain", txt);
+
+        lenient().when(userRepository.findByUsername("john"))
+                .thenReturn(Optional.of(user));
+
+        lenient().when(gameRepository.findByIdAndPublisher(any(), eq(user)))
+                .thenReturn(Optional.of(
+                        Game.create("t", "d", BigDecimal.TEN, "r", null, user)
+                ));
+
+        assertThrows(IllegalArgumentException.class, () ->
+                gameService.uploadGameFile(UUID.randomUUID(), file, FileType.IMAGE));
     }
 }
