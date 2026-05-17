@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Covers correct invoice formatting and ASVS V1.1.2 output-encoding
  * (control-character sanitization in user-controlled data).
  */
-class InvoiceServiceTest {
+class InvoiceServiceTest2 {
 
     private InvoiceService invoiceService;
     private User buyer;
