@@ -166,6 +166,103 @@ A coleção inclui pedidos de autenticação para os três roles (admin, buyer1,
 
 ---
 
+## Cobertura de Testes — JaCoCo
+
+O JaCoCo está configurado no `Api/pom.xml` como plugin Maven — não é necessário instalar nada manualmente. Basta ter o Maven disponível (incluído via `mvnw`).
+
+### Gerar o relatório
+
+```bash
+cd Api
+
+# Corre todos os testes E gera o relatório HTML de cobertura
+mvn verify
+
+# Ou com o wrapper (sem Maven instalado localmente)
+./mvnw verify        # Linux / macOS / Git Bash
+.\mvnw.cmd verify    # Windows PowerShell
+```
+
+O relatório é gerado em:
+
+```
+Api/target/site/jacoco/index.html
+```
+
+Abre esse ficheiro no browser para ver a cobertura por pacote, classe e método.
+
+### O que o relatório mostra
+
+| Coluna | Significado |
+|---|---|
+| **Instructions** | Bytecode coberto/total — métrica principal do JaCoCo |
+| **Branches** | Ramificações `if`/`switch` cobertas |
+| **Lines** | Linhas de código executadas |
+| **Methods** | Métodos chamados por pelo menos um teste |
+| **Classes** | Classes instanciadas por pelo menos um teste |
+
+Clica numa classe para ver exactamente quais linhas foram executadas (verde) ou não (vermelho/amarelo para branches parciais).
+
+### Cobertura actual (115 testes, unit tests apenas)
+
+```
+INSTRUCTION:  24%  (1197 / 4983)
+BRANCH:       25%  (47 / 190)
+LINE:         26%  (284 / 1091)
+METHOD:       22%  (69 / 314)
+CLASS:        36%  (23 / 64)
+```
+
+> **Porquê tão baixo?** Os 115 testes são todos *unit tests* que não precisam de Spring context — cobrem bem domínio, serviços e segurança. Os controllers, repositórios JPA e serviços com dependências externas (Keycloak, SFTP) não têm testes porque requerem mocking ou uma base de dados real. Para aumentar a cobertura, é necessário adicionar testes de integração com `@SpringBootTest` e uma base de dados H2/Testcontainers.
+
+### Adicionar threshold mínimo de 80% (RNF-31)
+
+Para forçar o build a falhar se a cobertura de instruções for inferior a 80%, adiciona uma execution `check` ao plugin JaCoCo no `pom.xml` (após a execution `report`):
+
+```xml
+<execution>
+    <id>check</id>
+    <phase>verify</phase>
+    <goals>
+        <goal>check</goal>
+    </goals>
+    <configuration>
+        <rules>
+            <rule>
+                <element>BUNDLE</element>
+                <limits>
+                    <limit>
+                        <counter>INSTRUCTION</counter>
+                        <value>COVEREDRATIO</value>
+                        <minimum>0.80</minimum>
+                    </limit>
+                </limits>
+            </rule>
+        </rules>
+    </configuration>
+</execution>
+```
+
+Depois de adicionar, `mvn verify` falhará com `BUILD FAILURE` se a cobertura for inferior ao mínimo definido.
+
+### Excluir classes do relatório
+
+Para excluir classes que não fazem sentido cobrir (DTOs, configuração, entidades JPA):
+
+```xml
+<configuration>
+    <excludes>
+        <exclude>isep/desosfs/arcadehaven/Dto/**</exclude>
+        <exclude>isep/desosfs/arcadehaven/Config/**</exclude>
+        <exclude>isep/desosfs/arcadehaven/Domain/Enums/**</exclude>
+    </excludes>
+</configuration>
+```
+
+Adiciona esta `<configuration>` à execution `report` no `pom.xml`.
+
+---
+
 ## Resolução de problemas
 
 | Sintoma | Causa provável | Solução |

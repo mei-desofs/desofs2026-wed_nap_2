@@ -5,6 +5,7 @@ import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.OpenMode;
 import net.schmizz.sshj.sftp.RemoteFile;
 import net.schmizz.sshj.sftp.SFTPClient;
+import net.schmizz.sshj.transport.verification.OpenSSHKnownHosts;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.EnumSet;
@@ -32,19 +35,23 @@ public class SftpStorageService implements StorageService {
     private final String username;
     private final String password;
     private final String baseRemoteDir;
+    private final String knownHostsPath;
 
     public SftpStorageService(
             @Value("${sftp.host}") String host,
             @Value("${sftp.port}") int port,
             @Value("${sftp.username}") String username,
             @Value("${sftp.password}") String password,
-            @Value("${sftp.remote-dir}") String baseRemoteDir
+            @Value("${sftp.remote-dir}") String baseRemoteDir,
+            // ASVS V12.3.4 — path to SSH known_hosts file; blank = dev-only PromiscuousVerifier
+            @Value("${sftp.known-hosts-path:}") String knownHostsPath
     ) {
         this.host = host;
         this.port = port;
         this.username = username;
         this.password = password;
         this.baseRemoteDir = baseRemoteDir;
+        this.knownHostsPath = knownHostsPath;
     }
 
     // RF-31 / RF-32 — verify SFTP connectivity and pre-create required directories at startup
@@ -72,10 +79,20 @@ public class SftpStorageService implements StorageService {
     private SSHClient createClient() throws StorageException {
         try {
             SSHClient ssh = new SSHClient();
-            ssh.addHostKeyVerifier(new PromiscuousVerifier());
+            // ASVS V12.3.4 — use known-hosts file when configured; PromiscuousVerifier is
+            // only acceptable inside a trusted Docker-internal network (dev / CI).
+            if (knownHostsPath != null && !knownHostsPath.isBlank()) {
+                ssh.addHostKeyVerifier(new OpenSSHKnownHosts(new File(knownHostsPath)));
+            } else {
+                log.warn("SFTP host-key verification is DISABLED (PromiscuousVerifier). " +
+                         "Set sftp.known-hosts-path for production deployments.");
+                ssh.addHostKeyVerifier(new PromiscuousVerifier());
+            }
             ssh.connect(host, port);
             ssh.authPassword(username, password);
             return ssh;
+        } catch (IOException e) {
+            throw new StorageException("Cannot load SFTP known-hosts from " + knownHostsPath, e);
         } catch (Exception e) {
             throw new StorageException("Cannot connect to SFTP server at " + host + ":" + port, e);
         }
