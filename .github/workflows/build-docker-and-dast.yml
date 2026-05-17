@@ -1,4 +1,4 @@
-name: Build Docker Image
+name: Docker Build, Scan & DAST # Dynamic Application Security Testing (DAST)
 
 on:
   push:
@@ -7,15 +7,15 @@ on:
   pull_request:
     branches: [ main, pipeline ]
 
-  workflow_dispatch:
-
 permissions:
   contents: read
   security-events: write
+  actions: read
 
 jobs:
-  docker-build:
-    name: Build + Analyze Docker Image
+
+  build-and-scan:
+    name: Docker Build, Scan and DAST
     runs-on: ubuntu-latest
 
     defaults:
@@ -26,19 +26,23 @@ jobs:
       SPRING_DATASOURCE_URL: ${{ vars.SPRING_DATASOURCE_URL }}
       SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
       SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+
       KEYCLOAK_JWK_SET_URI: ${{ vars.KEYCLOAK_JWK_SET_URI }}
       KEYCLOAK_SERVER_URL: ${{ vars.KEYCLOAK_SERVER_URL }}
       KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
       KEYCLOAK_ADMIN_USERNAME: ${{ secrets.KEYCLOAK_ADMIN_USERNAME }}
       KEYCLOAK_ADMIN_PASSWORD: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
+
       ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
       ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+
       SFTP_HOST: ${{ vars.SFTP_HOST }}
       SFTP_PORT: ${{ vars.SFTP_PORT }}
       SFTP_USERNAME: ${{ secrets.SFTP_USERNAME }}
       SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
       SFTP_REMOTE_DIR: ${{ vars.SFTP_REMOTE_DIR }}
+
       KC_DB: ${{ vars.KC_DB }}
       KC_DB_URL: ${{ vars.KC_DB_URL }}
       KC_DB_USERNAME: ${{ secrets.POSTGRES_USER }}
@@ -46,35 +50,23 @@ jobs:
       KC_HOSTNAME_STRICT: ${{ vars.KC_HOSTNAME_STRICT }}
       KC_HTTP_ENABLED: ${{ vars.KC_HTTP_ENABLED }}
       KC_HEALTH_ENABLED: ${{ vars.KC_HEALTH_ENABLED }}
+
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
     steps:
       # Checkout repository
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v5
 
       # Set up Docker Buildx
-      - name: Set up Docker Buildx
+      - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Verify Docker Compose
-      - name: Verify Docker Compose
-        run: docker compose version
-
       # Build Docker image
-      - name: Build Docker image with Compose
+      - name: Build images
         run: docker compose build
-
-      # Start containers (optional but kept as you had it)
-      - name: Start containers
-        run: docker compose up -d
-
-      # Stop containers
-      - name: Stop containers
-        if: always()
-        run: docker compose down
 
       # Installs Docker Scout as a plugin
       - name: Install Docker Scout
@@ -117,3 +109,62 @@ jobs:
         with:
           name: trivy-report
           path: Api/trivy-report.json
+
+      # Start docker containers
+      - name: Start containers
+        run: docker compose up -d
+
+      # Keycloak health check
+      - name: Wait for Keycloak
+        run: |
+          for i in {1..60}; do
+            if curl -fs http://localhost:8180/realms/arcadehaven/.well-known/openid-configuration; then
+              echo "Keycloak ready"
+              exit 0
+            fi
+
+            echo $i ": Waiting for Keycloak..."
+            sleep 5
+          done
+
+          echo "Keycloak failed"
+          docker compose logs
+
+          exit 1
+
+      # Application health check
+      - name: Wait for app
+        run: |
+          for i in {1..60}; do
+            if curl -fs http://localhost:8080/actuator/health; then
+              echo "App ready"
+              exit 0
+            fi
+
+            echo $i ": Waiting for app..."
+            sleep 5
+          done
+
+          echo "App failed to start"
+          docker compose logs
+
+          exit 1
+
+      # Run OWASP ZAP DAST scan
+      - name: OWASP ZAP Scan
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: "http://localhost:8080"
+          fail_action: false
+          allow_issue_writing: false
+          artifact_name: zap-report
+
+      - name: Upload ZAP report
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: Api/target/report_html.html
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down
