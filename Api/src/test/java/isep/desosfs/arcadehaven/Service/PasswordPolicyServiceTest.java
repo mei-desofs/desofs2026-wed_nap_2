@@ -125,4 +125,24 @@ class PasswordPolicyServiceTest {
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining("too easy to guess");
     }
+
+    @Test
+    void validate_hibpEnabled_triggersCheck() {
+        ReflectionTestUtils.setField(service, "hibpEnabled", true);
+
+        assertThatCode(() -> service.validate("Xtr4SafeUnique2026!QZ\""))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void validate_emptyPassword_doesNotThrow() {
+        assertThatCode(() -> service.validate(""))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void validate_nullPassword_throwsException() {
+        assertThatThrownBy(() -> service.validate(null))
+                .isInstanceOf(NullPointerException.class);
+    }
 }
