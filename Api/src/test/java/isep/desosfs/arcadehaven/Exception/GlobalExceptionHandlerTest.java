@@ -2,22 +2,31 @@ package isep.desosfs.arcadehaven.Exception;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 
 import isep.desosfs.arcadehaven.Security.SecurityAuditService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 
 public class GlobalExceptionHandlerTest {
     GlobalExceptionHandler handler;
@@ -148,5 +157,108 @@ public class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("An unexpected error occurred", response.getBody().get("message"));
+    }
+
+    @Test
+    void shouldHandleConstraintViolation() {
+        ConstraintViolationException ex = new ConstraintViolationException(Set.of());
+
+        ResponseEntity<Map<String, Object>> response =
+                handler.handleConstraintViolation(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Validation failed", response.getBody().get("error"));
+    }
+
+    @Test
+    void shouldHandleUnreadableBody() {
+        HttpMessageNotReadableException ex = mock(HttpMessageNotReadableException.class);
+
+        ResponseEntity<Map<String, Object>> response =
+                handler.handleUnreadableBody(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Malformed or missing request body", response.getBody().get("message"));
+    }
+
+    @Test
+    void shouldHandleMissingParam() {
+        MissingServletRequestParameterException ex =
+                new MissingServletRequestParameterException("title", "String");
+
+        ResponseEntity<Map<String, Object>> response =
+                handler.handleMissingParam(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Required parameter 'title' is missing", response.getBody().get("message"));
+    }
+
+    @Test
+    void shouldHandleTypeMismatch() {
+        MethodArgumentTypeMismatchException ex = mock(MethodArgumentTypeMismatchException.class);
+        when(ex.getRequiredType()).thenReturn((Class) String.class);
+        when(ex.getValue()).thenReturn("bad-value");
+        when(ex.getName()).thenReturn("id");
+
+        ResponseEntity<Map<String, Object>> response =
+                handler.handleTypeMismatch(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void shouldHandleFileTooLarge() {
+        MaxUploadSizeExceededException ex = new MaxUploadSizeExceededException(1024);
+
+        ResponseEntity<Map<String, Object>> response =
+                handler.handleFileTooLarge(ex);
+
+        assertEquals(HttpStatus.CONTENT_TOO_LARGE, response.getStatusCode());
+        assertEquals("File size exceeds the maximum allowed limit", response.getBody().get("message"));
+    }
+
+    @Test
+    void shouldHandleMultipartException() {
+        MultipartException ex = new MultipartException("bad multipart");
+
+        ResponseEntity<Map<String, Object>> response =
+                handler.handleMultipart(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void shouldHandleStorageException() {
+        StorageException ex = new StorageException("disk full");
+
+        ResponseEntity<Map<String, Object>> response =
+                handler.handleStorage(ex);
+
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
+    }
+
+    @Test
+    void shouldHandleDataAccessException() {
+        DataIntegrityViolationException ex = new DataIntegrityViolationException("constraint violation");
+
+        ResponseEntity<Map<String, Object>> response =
+                handler.handleDataAccess(ex);
+
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.getStatusCode());
+        assertEquals("Database operation failed", response.getBody().get("message"));
+    }
+
+    @Test
+    void shouldResolveIpFromXForwardedForHeader() {
+        BadCredentialsException ex = new BadCredentialsException("Bad");
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getHeader("X-Forwarded-For")).thenReturn("1.2.3.4, 5.6.7.8");
+        when(request.getRequestURI()).thenReturn("/api/auth/login");
+        when(request.getMethod()).thenReturn("POST");
+
+        ResponseEntity<Map<String, Object>> response =
+                handler.handleBadCredentials(ex, request);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 }

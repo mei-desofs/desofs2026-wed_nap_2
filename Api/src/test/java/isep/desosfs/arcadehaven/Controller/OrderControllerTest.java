@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import isep.desosfs.arcadehaven.Dto.Request.AddOrderItemRequest;
 import isep.desosfs.arcadehaven.Dto.Request.CreateOrderRequest;
 import isep.desosfs.arcadehaven.Dto.Response.OrderResponse;
 import isep.desosfs.arcadehaven.Service.OrderService;
@@ -100,6 +101,67 @@ public class OrderControllerTest {
         assertEquals(order, response.getBody());
 
         verify(orderService).cancelOrder(id);
+    }
+
+    @Test
+    void shouldAddItemToOrder() {
+        UUID id = UUID.randomUUID();
+        UUID gameId = UUID.randomUUID();
+        AddOrderItemRequest request = new AddOrderItemRequest(gameId);
+
+        OrderResponse order = createOrderResponse();
+
+        when(orderService.addItemToOrder(id, gameId)).thenReturn(order);
+
+        var response = controller.addItem(id, request);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(order, response.getBody());
+        verify(orderService).addItemToOrder(id, gameId);
+    }
+
+    @Test
+    void shouldRemoveItemFromOrder() {
+        UUID id = UUID.randomUUID();
+        UUID gameId = UUID.randomUUID();
+
+        OrderResponse order = createOrderResponse();
+
+        when(orderService.removeItemFromOrder(id, gameId)).thenReturn(order);
+
+        var response = controller.removeItem(id, gameId);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(order, response.getBody());
+        verify(orderService).removeItemFromOrder(id, gameId);
+    }
+
+    @Test
+    void shouldDownloadInvoice() {
+        UUID id = UUID.randomUUID();
+        byte[] data = "invoice content".getBytes();
+
+        when(orderService.downloadInvoice(id)).thenReturn(data);
+
+        var response = controller.downloadInvoice(id);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(data, response.getBody());
+        verify(orderService).downloadInvoice(id);
+    }
+
+    @Test
+    void shouldDownloadKeyCard() {
+        UUID id = UUID.randomUUID();
+        byte[] data = "keycard content".getBytes();
+
+        when(orderService.downloadKeyCard(id)).thenReturn(data);
+
+        var response = controller.downloadKeyCard(id);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(data, response.getBody());
+        verify(orderService).downloadKeyCard(id);
     }
 
     private OrderResponse createOrderResponse() {

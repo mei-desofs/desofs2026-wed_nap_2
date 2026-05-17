@@ -16,20 +16,30 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import java.math.BigDecimal;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import isep.desosfs.arcadehaven.Domain.Game;
+import isep.desosfs.arcadehaven.Domain.Library;
+import isep.desosfs.arcadehaven.Domain.LibraryEntry;
 import isep.desosfs.arcadehaven.Domain.User;
 import isep.desosfs.arcadehaven.Domain.Enums.Role;
 import isep.desosfs.arcadehaven.Dto.Response.UserResponse;
 import isep.desosfs.arcadehaven.Exception.ResourceNotFoundException;
+import isep.desosfs.arcadehaven.Repository.LibraryRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class AdminServiceTest {
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private LibraryRepository libraryRepository;
 
     @InjectMocks
     private AdminService adminService;
@@ -125,5 +135,63 @@ public class AdminServiceTest {
 
         assertNotNull(response);
         verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    void shouldSuspendLibraryEntry() {
+        UUID entryId = UUID.randomUUID();
+
+        Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, user);
+        Library library = Library.create(user);
+        library.addGame(game, "key-abc");
+
+        LibraryEntry entry = library.getEntries().get(0);
+        ReflectionTestUtils.setField(entry, "id", entryId);
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        when(libraryRepository.findByUser(user)).thenReturn(Optional.of(library));
+
+        adminService.suspendLibraryEntry(id, entryId);
+
+        verify(libraryRepository).save(library);
+    }
+
+    @Test
+    void shouldRevokeLibraryEntry() {
+        UUID entryId = UUID.randomUUID();
+
+        Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, user);
+        Library library = Library.create(user);
+        library.addGame(game, "key-abc");
+
+        LibraryEntry entry = library.getEntries().get(0);
+        ReflectionTestUtils.setField(entry, "id", entryId);
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        when(libraryRepository.findByUser(user)).thenReturn(Optional.of(library));
+
+        adminService.revokeLibraryEntry(id, entryId);
+
+        verify(libraryRepository).save(library);
+    }
+
+    @Test
+    void shouldThrowWhenLibraryNotFound() {
+        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        when(libraryRepository.findByUser(user)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> adminService.suspendLibraryEntry(id, UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldThrowWhenEntryNotFoundInLibrary() {
+        Library library = Library.create(user);
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        when(libraryRepository.findByUser(user)).thenReturn(Optional.of(library));
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> adminService.suspendLibraryEntry(id, UUID.randomUUID()));
     }
 }
