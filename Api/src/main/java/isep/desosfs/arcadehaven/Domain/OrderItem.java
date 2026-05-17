@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
+import java.util.HexFormat;
 import java.util.UUID;
 
 @Entity
@@ -34,6 +36,9 @@ public class OrderItem {
     }
 
     public void generateActivationKey() {
-        this.activationKey = UUID.randomUUID().toString().replace("-", "").toUpperCase();
+        // ASVS V11.5.1 — 128-bit CSPRNG entropy; UUID.randomUUID() does not satisfy this requirement
+        byte[] bytes = new byte[16];
+        new SecureRandom().nextBytes(bytes);
+        this.activationKey = HexFormat.of().formatHex(bytes).toUpperCase();
     }
 }
