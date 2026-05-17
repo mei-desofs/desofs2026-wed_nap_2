@@ -25,6 +25,8 @@ services:
       SFTP_USERNAME: ${SFTP_USERNAME}
       SFTP_PASSWORD: ${SFTP_PASSWORD}
       SFTP_REMOTE_DIR: ${SFTP_REMOTE_DIR}
+      # TLS terminated at the reverse proxy; disable Spring Boot SSL to avoid missing-keystore error
+      SERVER_SSL_ENABLED: "false"
     volumes:
       - ./storage:/app/storage
     # RNF-26 — restart on crash; healthcheck via Spring Boot Actuator
@@ -56,9 +58,9 @@ services:
       KC_HEALTH_ENABLED: ${KC_HEALTH_ENABLED}
     volumes:
       - ../keycloak:/opt/keycloak/data/import
-    # RNF-26 — app depends on keycloak being healthy before starting
+    # RNF-26 — management interface is on port 9000; no curl in the image, use /dev/tcp
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8080/health/ready || exit 1"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && printf 'GET /health/ready HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n' >&3 && grep -q UP <&3"]
       interval: 15s
       timeout: 10s
       retries: 20
