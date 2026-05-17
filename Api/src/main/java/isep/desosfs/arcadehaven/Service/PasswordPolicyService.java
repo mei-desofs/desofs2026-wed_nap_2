@@ -81,6 +81,8 @@ public class PasswordPolicyService {
 
     private void checkHibp(String password) {
         try {
+            // SHA-1 is mandated by the HIBP k-anonymity API protocol and is not used as a security primitive.
+            // codeql[java/use-of-a-potentially-broken-or-risky-cryptographic-algorithm]
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             byte[] hashBytes = digest.digest(password.getBytes(StandardCharsets.UTF_8));
             String hex = HexFormat.of().formatHex(hashBytes).toUpperCase();
