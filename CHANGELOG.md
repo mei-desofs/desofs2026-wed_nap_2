@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.4](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.3...v1.0.4) (2026-05-17)
+
+
+### Features
+
+* Configuration of the HSTS, CORS allowlist, X-Content-Type-Options and Output encoding in files. Implementations of tests for these functionalities [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#12](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/12) [#13](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/13) ([c46dea0](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/c46dea0780fd9d774042eb198d4df5af78407455))
+* Implementation of Context-specific password blocklist, common password list check and HIBP breached password check [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#13](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/13) ([fafedff](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/fafedffb19c47d48a2c83b24dca1e5dd69dcae0f))
+
+
+### Bug Fixes
+
+* Correction of the SHA-1 of PasswordPolicyService [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#13](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/13) ([8659723](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/8659723389794c96534cd71e12269c8538817d92))
+
 ## [1.0.3](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.2...v1.0.3) (2026-05-16)
 
 
