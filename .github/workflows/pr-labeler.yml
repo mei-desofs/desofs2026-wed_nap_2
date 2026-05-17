@@ -20,9 +20,9 @@ jobs:
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
+            const body = context.payload.pull_request.body || '';
 
-            // Use GraphQL to fetch issues linked via the GitHub "Development" sidebar
-            // (closingIssuesReferences covers both sidebar links and "closes #X" in the body)
+            // Source 1: closing references via GraphQL (covers "closes #X" keywords + sidebar links)
             const query = `
               query($owner: String!, $repo: String!, $pr: Int!) {
                 repository(owner: $owner, name: $repo) {
@@ -46,21 +46,43 @@ jobs:
               pr: prNumber
             });
 
-            const linkedIssues = result.repository.pullRequest.closingIssuesReferences.nodes;
+            const closingIssues = result.repository.pullRequest.closingIssuesReferences.nodes;
 
-            if (linkedIssues.length === 0) {
-              console.log('No linked issues found.');
-              return;
+            // Source 2: any bare #number mention in the PR body (associate without closing)
+            const mentionedNumbers = [...body.matchAll(/#(\d+)/g)].map(m => parseInt(m[1]));
+            const closingNumbers = new Set(closingIssues.map(i => i.number));
+
+            // Fetch labels for mentioned issues not already covered by closingIssuesReferences
+            const mentionedIssues = [];
+            for (const num of [...new Set(mentionedNumbers)]) {
+              if (closingNumbers.has(num)) continue;
+              try {
+                const { data: issue } = await github.rest.issues.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: num
+                });
+                // Skip PRs (GitHub issues and PRs share the same number space)
+                if (!issue.pull_request) mentionedIssues.push(issue);
+              } catch (e) {
+                console.log(`Could not fetch #${num}: ${e.message}`);
+              }
             }
 
             const labelSet = new Set();
-            for (const issue of linkedIssues) {
+
+            for (const issue of closingIssues) {
               issue.labels.nodes.forEach(l => labelSet.add(l.name));
-              console.log(`Issue #${issue.number} labels: ${issue.labels.nodes.map(l => l.name).join(', ')}`);
+              console.log(`Closing issue #${issue.number} labels: ${issue.labels.nodes.map(l => l.name).join(', ')}`);
+            }
+
+            for (const issue of mentionedIssues) {
+              issue.labels.forEach(l => labelSet.add(l.name));
+              console.log(`Mentioned issue #${issue.number} labels: ${issue.labels.map(l => l.name).join(', ')}`);
             }
 
             if (labelSet.size === 0) {
-              console.log('Linked issues have no labels to copy.');
+              console.log('No labels found from linked or mentioned issues.');
               return;
             }
 
