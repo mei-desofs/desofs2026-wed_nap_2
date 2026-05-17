@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.5](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.4...v1.0.5) (2026-05-17)
+
+
+### Bug Fixes
+
+* DAST scan endpoint. Merged docker build and DAST workflows into a workflow with 3 jobs ([b19546d](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/b19546d6cbb86c07ce0da54f7ceb0acf5440d4ce))
+* environment variables in the docker build, scan and DAST workflow [#5](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/5) ([77219e1](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/77219e174d80d1b67adb04469b6a688c75ee9aec))
+* Increase health check waiting time for github actions [#5](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/5) ([2d5dc60](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/2d5dc60182ca4e7b277be9936f45dd57f9e75a8c))
+* keycloak health check step [#5](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/5) ([59ea8ca](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/59ea8ca04a623f989fd30087ba271c051aadabae))
+* Merge build, scan and DAST jobs [#5](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/5) ([0889e76](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/0889e76f5c15be813bbaccbe0d746556c10c451e))
+* Merge build, scan and DAST jobs [#5](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/5) ([6d6730f](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/6d6730f7f46b58d4ff37790aa383ac6d14b610d1))
+
 ## [1.0.4](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.3...v1.0.4) (2026-05-17)
 
 
