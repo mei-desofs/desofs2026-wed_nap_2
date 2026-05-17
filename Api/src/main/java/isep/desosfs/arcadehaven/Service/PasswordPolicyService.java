@@ -116,7 +116,7 @@ public class PasswordPolicyService {
     }
 
     private Set<String> loadCommonPasswords() {
-        try (InputStream is = getClass().getResourceAsStream("/security/common-passwords.txt")) {
+        try (InputStream is = PasswordPolicyService.class.getResourceAsStream("/security/common-passwords.txt")) {
             if (is == null) {
                 log.warn("common-passwords.txt not found — common password check disabled");
                 return Set.of();
