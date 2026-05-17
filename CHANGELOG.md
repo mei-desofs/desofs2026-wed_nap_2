@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.1.0...v1.1.1) (2026-05-17)
+
+
+### Bug Fixes
+
+* testing the PR label method and the release [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) ([b43684c](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/b43684cfd8e5b3a84ff271274394f208d0b6656f))
+
 ## [1.1.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.6...v1.1.0) (2026-05-17)
 
 
