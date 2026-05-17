@@ -13,6 +13,8 @@ import java.util.UUID;
 @Getter
 public class OrderItem {
 
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -38,7 +40,7 @@ public class OrderItem {
     public void generateActivationKey() {
         // ASVS V11.5.1 — 128-bit CSPRNG entropy; UUID.randomUUID() does not satisfy this requirement
         byte[] bytes = new byte[16];
-        new SecureRandom().nextBytes(bytes);
+        SECURE_RANDOM.nextBytes(bytes);
         this.activationKey = HexFormat.of().formatHex(bytes).toUpperCase();
     }
 }
