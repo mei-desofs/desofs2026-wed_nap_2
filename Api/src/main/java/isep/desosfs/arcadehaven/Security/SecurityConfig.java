@@ -39,19 +39,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(h -> h
-                        // ASVS V3.4.1 — HSTS max-age ≥ 1 year; sent on all requests (proxy terminates TLS)
+                        // HSTS max-age ≥ 1 year; sent on all requests (proxy terminates TLS)
                         .httpStrictTransportSecurity(hsts -> hsts
                                 .includeSubDomains(true)
                                 .maxAgeInSeconds(31_536_000)
                                 .requestMatcher(request -> true)
                         )
-                        // ASVS V3.4.4 — prevent MIME-type sniffing
+                        // Prevent MIME-type sniffing
                         .contentTypeOptions(Customizer.withDefaults())
                         .frameOptions(Customizer.withDefaults())
-                        // ASVS V14.2.2 / V14.3.2 — prevent caching of sensitive responses in browsers and intermediaries
+                        // Prevent caching of sensitive responses in browsers and intermediaries
                         .cacheControl(Customizer.withDefaults())
                 )
-                // ASVS V3.4.2 — CORS restricted to explicit origin allowlist
+                //CORS restricted to explicit origin allowlist
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
