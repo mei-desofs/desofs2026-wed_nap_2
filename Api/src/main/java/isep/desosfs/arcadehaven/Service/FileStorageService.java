@@ -12,11 +12,11 @@ import java.util.UUID;
 public class FileStorageService {
 
     private final InvoiceService invoiceService;
-    private final SftpStorageService sftpStorageService;
+    private final StorageService storageService;
 
-    public FileStorageService(SftpStorageService sftpStorageService,
+    public FileStorageService(StorageService storageService,
                               InvoiceService invoiceService) {
-        this.sftpStorageService = sftpStorageService;
+        this.storageService = storageService;
         this.invoiceService = invoiceService;
     }
 
@@ -25,12 +25,12 @@ public class FileStorageService {
         if (originalFilename == null || originalFilename.isBlank()) {
             throw new IllegalArgumentException("Invalid file name");
         }
-        return sftpStorageService.uploadFile(file, subdir);
+        return storageService.uploadFile(file, subdir);
     }
 
     public byte[] downloadFile(String remotePath) throws StorageException {
         validateRemotePath(remotePath);
-        return sftpStorageService.downloadFile(remotePath);
+        return storageService.downloadFile(remotePath);
     }
 
     private void validateRemotePath(String path) {
@@ -45,13 +45,13 @@ public class FileStorageService {
     }
 
     public void deleteFile(String remotePath) throws StorageException {
-        sftpStorageService.deleteFile(remotePath);
+        storageService.deleteFile(remotePath);
     }
 
     public String generateInvoice(Order order) throws StorageException {
         String content = invoiceService.buildInvoiceContent(order);
         String filename = "invoice_" + order.getId() + "_" + UUID.randomUUID() + ".txt";
-        return sftpStorageService.uploadBytes(content.getBytes(StandardCharsets.UTF_8), filename, "invoices");
+        return storageService.uploadBytes(content.getBytes(StandardCharsets.UTF_8), filename, "invoices");
     }
 
     public String saveActivationKeysFile(Order order) throws StorageException {
@@ -64,6 +64,6 @@ public class FileStorageService {
                   .append(item.getActivationKey())
                   .append("\n"));
         String filename = "keys_" + order.getId() + ".txt";
-        return sftpStorageService.uploadBytes(sb.toString().getBytes(StandardCharsets.UTF_8), filename, "keys");
+        return storageService.uploadBytes(sb.toString().getBytes(StandardCharsets.UTF_8), filename, "keys");
     }
 }

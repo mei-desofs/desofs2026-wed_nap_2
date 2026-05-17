@@ -9,16 +9,21 @@ import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.UUID;
 
 @Service
-public class SftpStorageService {
+@ConditionalOnProperty(name = "storage.backend", havingValue = "sftp", matchIfMissing = true)
+public class SftpStorageService implements StorageService {
 
     private static final Logger log = LoggerFactory.getLogger(SftpStorageService.class);
 
@@ -40,6 +45,28 @@ public class SftpStorageService {
         this.username = username;
         this.password = password;
         this.baseRemoteDir = baseRemoteDir;
+    }
+
+    // RF-31 / RF-32 — verify SFTP connectivity and pre-create required directories at startup
+    @EventListener(ApplicationReadyEvent.class)
+    public void validateAndEnsureDirs() {
+        SSHClient ssh;
+        try {
+            ssh = createClient();
+        } catch (StorageException e) {
+            log.error("SFTP startup check FAILED — storage operations will fail at runtime: {}", e.getMessage());
+            return;
+        }
+        try (SFTPClient sftp = ssh.newSFTPClient()) {
+            for (String sub : List.of("invoices", "keys", "games/images")) {
+                ensureDirExists(sftp, baseRemoteDir + "/" + sub);
+            }
+            log.info("SFTP connectivity OK — required directories verified at {}", baseRemoteDir);
+        } catch (Exception e) {
+            log.error("SFTP directory setup FAILED: {}", e.getMessage());
+        } finally {
+            disconnectQuietly(ssh);
+        }
     }
 
     private SSHClient createClient() throws StorageException {
