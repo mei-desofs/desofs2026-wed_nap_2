@@ -27,9 +27,16 @@ services:
       SFTP_REMOTE_DIR: ${SFTP_REMOTE_DIR}
     volumes:
       - ./storage:/app/storage
+    # RNF-26 — restart on crash; healthcheck via Spring Boot Actuator
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q UP || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     depends_on:
       keycloak:
-        condition: service_started
+        condition: service_healthy
     restart: unless-stopped
 
   keycloak:
@@ -49,6 +56,13 @@ services:
       KC_HEALTH_ENABLED: ${KC_HEALTH_ENABLED}
     volumes:
       - ../keycloak:/opt/keycloak/data/import
+    # RNF-26 — app depends on keycloak being healthy before starting
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
     depends_on:
       keycloak-db:
         condition: service_healthy
