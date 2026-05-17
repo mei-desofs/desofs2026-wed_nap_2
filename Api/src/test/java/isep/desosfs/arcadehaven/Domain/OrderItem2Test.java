@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Verifies activation keys are generated with CSPRNG and >= 128-bit entropy,
  * not UUID (which does not satisfy the entropy requirement).
  */
-class OrderItemTest {
+class OrderItem2Test {
 
     private Game game;
 

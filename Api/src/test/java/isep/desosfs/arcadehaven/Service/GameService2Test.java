@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
  * which is backed by composite DB indexes (V4 migration) for < 500 ms response times.
  */
 @ExtendWith(MockitoExtension.class)
-class GameServiceTest {
+class GameService2Test {
 
     @Mock private GameRepository gameRepository;
     @Mock private UserRepository userRepository;
