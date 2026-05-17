@@ -85,7 +85,11 @@ public class AuthService {
                     (String) body.get("token_type"),
                     ((Number) body.get("expires_in")).longValue()
             );
-        } catch (HttpClientErrorException.Unauthorized e) {
+        } catch (HttpClientErrorException e) {
+            // Keycloak returns 4xx (401 invalid credentials, 400 account not set up, etc.)
+            // — all map to authentication failure from the client's perspective
+            log.warn("Keycloak rejected login for user '{}': {} {}", request.username(),
+                    e.getStatusCode(), e.getResponseBodyAsString());
             throw new BadCredentialsException("Invalid username or password");
         } catch (Exception e) {
             log.error("Login failed for user '{}'", request.username(), e);
