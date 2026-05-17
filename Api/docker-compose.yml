@@ -49,9 +49,11 @@ services:
       KC_HEALTH_ENABLED: ${KC_HEALTH_ENABLED}
     volumes:
       - ../keycloak:/opt/keycloak/data/import
-    depends_on:
-      keycloak-db:
-        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     restart: unless-stopped
 
   keycloak-db:
