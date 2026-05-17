@@ -281,7 +281,7 @@ class SecurityIntegrationTests {
                 .andExpect(status().is4xxClientError());
     }
 
-    // Security Test 1 - Duplicate purchase abuse
+    // Security Test 13 - Duplicate purchase abuse
     @Test
     void duplicatePurchaseOfSameGameShouldBeHandledSafely() throws Exception {
         UUID gameId = UUID.randomUUID();
