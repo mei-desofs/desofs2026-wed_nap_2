@@ -1,6 +1,8 @@
 package isep.desosfs.arcadehaven.Controller;
 
+import isep.desosfs.arcadehaven.Dto.Request.LoginRequest;
 import isep.desosfs.arcadehaven.Dto.Request.RegisterRequest;
+import isep.desosfs.arcadehaven.Dto.Response.LoginResponse;
 import isep.desosfs.arcadehaven.Dto.Response.RegisterResponse;
 import isep.desosfs.arcadehaven.Service.AuthService;
 import jakarta.validation.Valid;
@@ -18,6 +20,11 @@ public class AuthController {
 
     public AuthController(AuthService authService) {
         this.authService = authService;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/register")

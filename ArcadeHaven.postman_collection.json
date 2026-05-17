@@ -168,21 +168,12 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                { "key": "client_id",  "value": "arcadehaven-public", "type": "text" },
-                { "key": "grant_type", "value": "password",           "type": "text" },
-                { "key": "username",   "value": "admin",              "type": "text" },
-                { "key": "password",   "value": "Admin123!",          "type": "text" }
-              ]
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin123!\"\n}"
             },
-            "url": {
-              "raw": "{{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token",
-              "host": ["{{keycloakUrl}}"],
-              "path": ["realms","{{realm}}","protocol","openid-connect","token"]
-            }
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] }
           }
         },
         {
@@ -203,21 +194,12 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                { "key": "client_id",  "value": "arcadehaven-public", "type": "text" },
-                { "key": "grant_type", "value": "password",           "type": "text" },
-                { "key": "username",   "value": "buyer1",             "type": "text" },
-                { "key": "password",   "value": "Xtr4Safe#2026XY",       "type": "text" }
-              ]
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"buyer1\",\n  \"password\": \"Xtr4Safe#2026XY\"\n}"
             },
-            "url": {
-              "raw": "{{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token",
-              "host": ["{{keycloakUrl}}"],
-              "path": ["realms","{{realm}}","protocol","openid-connect","token"]
-            }
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] }
           }
         },
         {
@@ -238,21 +220,35 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                { "key": "client_id",  "value": "arcadehaven-public", "type": "text" },
-                { "key": "grant_type", "value": "password",           "type": "text" },
-                { "key": "username",   "value": "publisher1",         "type": "text" },
-                { "key": "password",   "value": "Xtr4Safe#2026XY",       "type": "text" }
-              ]
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"publisher1\",\n  \"password\": \"Xtr4Safe#2026XY\"\n}"
             },
-            "url": {
-              "raw": "{{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token",
-              "host": ["{{keycloakUrl}}"],
-              "path": ["realms","{{realm}}","protocol","openid-connect","token"]
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] }
+          }
+        },
+        {
+          "name": "Login – Invalid Credentials (Expects 401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Wrong password returns 401', () => pm.response.to.have.status(401));"
+                ]
+              }
             }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"WrongPassword!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] }
           }
         },
         {

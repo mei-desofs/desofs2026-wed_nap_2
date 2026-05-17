@@ -3,12 +3,13 @@ package isep.desosfs.arcadehaven.Service;
 import isep.desosfs.arcadehaven.Domain.Enums.Role;
 import isep.desosfs.arcadehaven.Domain.Library;
 import isep.desosfs.arcadehaven.Domain.User;
+import isep.desosfs.arcadehaven.Dto.Request.LoginRequest;
 import isep.desosfs.arcadehaven.Dto.Request.RegisterRequest;
+import isep.desosfs.arcadehaven.Dto.Response.LoginResponse;
 import isep.desosfs.arcadehaven.Dto.Response.RegisterResponse;
 import isep.desosfs.arcadehaven.Exception.BusinessException;
 import isep.desosfs.arcadehaven.Repository.LibraryRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
-import org.keycloak.representations.idm.UserRepresentation;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
@@ -18,10 +19,19 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AuthService {
@@ -32,16 +42,55 @@ public class AuthService {
     private final LibraryRepository libraryRepository;
     private final Keycloak keycloak;
     private final PasswordPolicyService passwordPolicyService;
+    private final RestTemplate restTemplate;
 
     @Value("${keycloak.realm}")
     private String realm;
 
+    @Value("${keycloak.server-url}")
+    private String keycloakServerUrl;
+
+    @Value("${keycloak.client-id}")
+    private String clientId;
+
     public AuthService(UserRepository userRepository, LibraryRepository libraryRepository,
-                       Keycloak keycloak, PasswordPolicyService passwordPolicyService) {
+                       Keycloak keycloak, PasswordPolicyService passwordPolicyService,
+                       RestTemplate restTemplate) {
         this.userRepository = userRepository;
         this.libraryRepository = libraryRepository;
         this.keycloak = keycloak;
         this.passwordPolicyService = passwordPolicyService;
+        this.restTemplate = restTemplate;
+    }
+
+    public LoginResponse login(LoginRequest request) {
+        String tokenUrl = keycloakServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+        form.add("grant_type", "password");
+        form.add("client_id", clientId);
+        form.add("username", request.username());
+        form.add("password", request.password());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> body = restTemplate.postForObject(
+                    tokenUrl, new HttpEntity<>(form, headers), Map.class);
+            return new LoginResponse(
+                    (String) body.get("access_token"),
+                    (String) body.get("refresh_token"),
+                    (String) body.get("token_type"),
+                    ((Number) body.get("expires_in")).longValue()
+            );
+        } catch (HttpClientErrorException.Unauthorized e) {
+            throw new BadCredentialsException("Invalid username or password");
+        } catch (Exception e) {
+            log.error("Login failed for user '{}'", request.username(), e);
+            throw new BusinessException("Authentication service is unavailable. Please try again later.");
+        }
     }
 
     @Transactional
