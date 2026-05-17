@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.6](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.5...v1.0.6) (2026-05-17)
+
+
+### Features
+
+* Development of Invoice generation / download and Directory structure / invoice storage [#6](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/6) [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) ([31a84cd](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/31a84cd9de6ecabfdd85eb12b7b912f588043368))
+* Enable TLS Protocol, Cache Control and Improvement of the cryptography of the activation keys and key management ([fa66b64](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/fa66b64e2aa55cb47ade91da0c34f84409216d92))
+* Testing of the implementation on the application to guarantee the 99% availability [#6](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/6) [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) ([0cdaa68](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/0cdaa6806d5f6d46daf2760b7330fbaa8328286c))
+
+
+### Bug Fixes
+
+* Changin docker compose to put the API work again [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) ([5744a20](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/5744a20bad1fc2c3c8484d8c99acc587b5f2c5fb))
+* Changing the startup time for the docker-compose to verify the healthy of it [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) ([c568e6c](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/c568e6c38e762bb0789431735cb15d825200a5b7))
+* SFTP Trusted Host Key Verification and TLS Protocol + Cipher Suites [#6](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/6) [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) ([2fe6b7a](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/2fe6b7adef27dcfa46494c6e51e995922538946e))
+
 ## [1.0.5](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.4...v1.0.5) (2026-05-17)
 
 
