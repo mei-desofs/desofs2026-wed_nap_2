@@ -71,7 +71,7 @@ jobs:
       # Application health check
       - name: Wait for app
         run: |
-          for i in {1..30}; do
+          for i in {1..60}; do
             if curl -fs http://localhost:8080/actuator/health; then
               echo "App ready"
               exit 0
@@ -163,7 +163,7 @@ jobs:
       # Application health check
       - name: Wait for app
         run: |
-          for i in {1..30}; do
+          for i in {1..60}; do
             if curl -fs http://localhost:8080/actuator/health; then
               echo "App ready"
               exit 0
