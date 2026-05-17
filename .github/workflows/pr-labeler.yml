@@ -19,36 +19,70 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const body = context.payload.pull_request.body || '';
             const prNumber = context.payload.pull_request.number;
+            const body = context.payload.pull_request.body || '';
 
-            // Match "closes #123", "fixes #123", "resolves #123" (case-insensitive)
-            const issueRefs = [...body.matchAll(/(?:closes?|fixes?|resolves?)\s+#(\d+)/gi)];
+            // Source 1: closing references via GraphQL (covers "closes #X" keywords + sidebar links)
+            const query = `
+              query($owner: String!, $repo: String!, $pr: Int!) {
+                repository(owner: $owner, name: $repo) {
+                  pullRequest(number: $pr) {
+                    closingIssuesReferences(first: 25) {
+                      nodes {
+                        number
+                        labels(first: 20) {
+                          nodes { name }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
 
-            if (issueRefs.length === 0) {
-              console.log('No linked issues found in PR body.');
-              return;
-            }
+            const result = await github.graphql(query, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pr: prNumber
+            });
 
-            const labelSet = new Set();
+            const closingIssues = result.repository.pullRequest.closingIssuesReferences.nodes;
 
-            for (const match of issueRefs) {
-              const issueNumber = parseInt(match[1]);
+            // Source 2: any bare #number mention in the PR body (associate without closing)
+            const mentionedNumbers = [...body.matchAll(/#(\d+)/g)].map(m => parseInt(m[1]));
+            const closingNumbers = new Set(closingIssues.map(i => i.number));
+
+            // Fetch labels for mentioned issues not already covered by closingIssuesReferences
+            const mentionedIssues = [];
+            for (const num of [...new Set(mentionedNumbers)]) {
+              if (closingNumbers.has(num)) continue;
               try {
                 const { data: issue } = await github.rest.issues.get({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  issue_number: issueNumber
+                  issue_number: num
                 });
-                issue.labels.forEach(l => labelSet.add(l.name));
-                console.log(`Issue #${issueNumber} has labels: ${issue.labels.map(l => l.name).join(', ')}`);
+                // Skip PRs (GitHub issues and PRs share the same number space)
+                if (!issue.pull_request) mentionedIssues.push(issue);
               } catch (e) {
-                console.log(`Could not fetch issue #${issueNumber}: ${e.message}`);
+                console.log(`Could not fetch #${num}: ${e.message}`);
               }
             }
 
+            const labelSet = new Set();
+
+            for (const issue of closingIssues) {
+              issue.labels.nodes.forEach(l => labelSet.add(l.name));
+              console.log(`Closing issue #${issue.number} labels: ${issue.labels.nodes.map(l => l.name).join(', ')}`);
+            }
+
+            for (const issue of mentionedIssues) {
+              issue.labels.forEach(l => labelSet.add(l.name));
+              console.log(`Mentioned issue #${issue.number} labels: ${issue.labels.map(l => l.name).join(', ')}`);
+            }
+
             if (labelSet.size === 0) {
-              console.log('Linked issues have no labels to copy.');
+              console.log('No labels found from linked or mentioned issues.');
               return;
             }
 
