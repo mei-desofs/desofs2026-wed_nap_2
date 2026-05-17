@@ -4,12 +4,16 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
+import java.util.HexFormat;
 import java.util.UUID;
 
 @Entity
 @Table(name = "order_items")
 @Getter
 public class OrderItem {
+
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,6 +38,9 @@ public class OrderItem {
     }
 
     public void generateActivationKey() {
-        this.activationKey = UUID.randomUUID().toString().replace("-", "").toUpperCase();
+        // ASVS V11.5.1 — 128-bit CSPRNG entropy; UUID.randomUUID() does not satisfy this requirement
+        byte[] bytes = new byte[16];
+        SECURE_RANDOM.nextBytes(bytes);
+        this.activationKey = HexFormat.of().formatHex(bytes).toUpperCase();
     }
 }
