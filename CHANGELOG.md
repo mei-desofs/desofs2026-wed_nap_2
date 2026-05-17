@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.6...v1.1.0) (2026-05-17)
+
+
+### Features
+
+* Modification of the login endpoint and method, changed the postman collection [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#10](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/10) ([6d4e938](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/6d4e9382262fa231b5513009237076a19a1c2a0d))
+
 ## [1.0.6](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.0.5...v1.0.6) (2026-05-17)
 
 
