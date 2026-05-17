@@ -15,7 +15,7 @@ public class OrderItemResponseTest {
     @Test
     void whenFromOrderItem_thenMappingCorrect() {
         User publisher = User.create("pub", "pub@example.com", "hash", Role.BUYER);
-        Game game = Game.create("Game", "Desc", BigDecimal.valueOf(15), null, publisher);
+        Game game = Game.create("Game", "Desc", BigDecimal.valueOf(15), null, null, publisher);
         OrderItem item = OrderItem.of(game, BigDecimal.valueOf(15));
 
         OrderItemResponse response = OrderItemResponse.from(item);

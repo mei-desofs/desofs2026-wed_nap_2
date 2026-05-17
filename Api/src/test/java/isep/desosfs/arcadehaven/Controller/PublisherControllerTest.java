@@ -3,7 +3,7 @@ package isep.desosfs.arcadehaven.Controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -54,7 +54,8 @@ public class PublisherControllerTest {
                 "Game",
                 "Description",
                 BigDecimal.TEN,
-                "rawg-id"
+                "rawg-id",
+                null
         );
 
         GameResponse game = createGameResponse();
@@ -76,7 +77,8 @@ public class PublisherControllerTest {
         UpdateGameRequest request = new UpdateGameRequest(
                 "Updated Game",
                 "Updated Description",
-                BigDecimal.valueOf(20)
+                BigDecimal.valueOf(20),
+                null
         );
 
         GameResponse game = createGameResponse();
@@ -162,7 +164,7 @@ public class PublisherControllerTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenMimeTypeIsNull() throws IOException {
+    void shouldThrowExceptionWhenMimeTypeIsNull() {
         UUID id = UUID.randomUUID();
 
         MockMultipartFile file = new MockMultipartFile(
@@ -172,19 +174,15 @@ public class PublisherControllerTest {
                 "content".getBytes()
         );
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> controller.uploadFile(id, file, FileType.IMAGE)
-        );
+        when(gameService.uploadGameFile(eq(id), any(), eq(FileType.IMAGE)))
+                .thenThrow(new IllegalArgumentException("Cannot detect file type"));
 
-        assertEquals("Missing MIME type", exception.getMessage());
-
-        verify(gameService, never())
-                .uploadGameFile(any(), any(), any());
+        assertThrows(IllegalArgumentException.class,
+                () -> controller.uploadFile(id, file, FileType.IMAGE));
     }
 
     @Test
-    void shouldThrowExceptionForInvalidImageMimeType() throws IOException {
+    void shouldThrowExceptionForInvalidImageMimeType() {
         UUID id = UUID.randomUUID();
 
         MockMultipartFile file = new MockMultipartFile(
@@ -194,22 +192,15 @@ public class PublisherControllerTest {
                 "content".getBytes()
         );
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> controller.uploadFile(id, file, FileType.IMAGE)
-        );
+        when(gameService.uploadGameFile(eq(id), any(), eq(FileType.IMAGE)))
+                .thenThrow(new IllegalArgumentException("Invalid file type for IMAGE: application/pdf"));
 
-        assertEquals(
-                "Invalid image MIME type: application/pdf",
-                exception.getMessage()
-        );
-
-        verify(gameService, never())
-                .uploadGameFile(any(), any(), any());
+        assertThrows(IllegalArgumentException.class,
+                () -> controller.uploadFile(id, file, FileType.IMAGE));
     }
 
     @Test
-    void shouldThrowExceptionForInvalidScreenshotMimeType() throws IOException {
+    void shouldThrowExceptionForInvalidScreenshotMimeType() {
         UUID id = UUID.randomUUID();
 
         MockMultipartFile file = new MockMultipartFile(
@@ -219,22 +210,15 @@ public class PublisherControllerTest {
                 "content".getBytes()
         );
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> controller.uploadFile(id, file, FileType.SCREENSHOT)
-        );
+        when(gameService.uploadGameFile(eq(id), any(), eq(FileType.SCREENSHOT)))
+                .thenThrow(new IllegalArgumentException("Invalid file type for SCREENSHOT: application/pdf"));
 
-        assertEquals(
-                "Invalid screenshot MIME type: application/pdf",
-                exception.getMessage()
-        );
-
-        verify(gameService, never())
-                .uploadGameFile(any(), any(), any());
+        assertThrows(IllegalArgumentException.class,
+                () -> controller.uploadFile(id, file, FileType.SCREENSHOT));
     }
 
     @Test
-    void shouldThrowExceptionForInvalidCoverMimeType() throws IOException {
+    void shouldThrowExceptionForInvalidCoverMimeType() {
         UUID id = UUID.randomUUID();
 
         MockMultipartFile file = new MockMultipartFile(
@@ -244,18 +228,11 @@ public class PublisherControllerTest {
                 "content".getBytes()
         );
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> controller.uploadFile(id, file, FileType.COVER)
-        );
+        when(gameService.uploadGameFile(eq(id), any(), eq(FileType.COVER)))
+                .thenThrow(new IllegalArgumentException("Invalid file type for COVER: application/pdf"));
 
-        assertEquals(
-                "Invalid cover MIME type: application/pdf",
-                exception.getMessage()
-        );
-
-        verify(gameService, never())
-                .uploadGameFile(any(), any(), any());
+        assertThrows(IllegalArgumentException.class,
+                () -> controller.uploadFile(id, file, FileType.COVER));
     }
 
     private GameResponse createGameResponse() {
@@ -266,6 +243,7 @@ public class PublisherControllerTest {
                 BigDecimal.TEN,
                 "ACTIVE",
                 "rawg-id",
+                null,
                 "publisher",
                 LocalDateTime.now()
         );

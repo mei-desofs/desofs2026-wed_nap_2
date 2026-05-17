@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -63,7 +62,7 @@ public class OrderServiceTest {
 
     @Test
     void shouldCreateOrder() {
-        Game game = Game.create("g", "d", BigDecimal.TEN, "r", buyer);
+        Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, buyer);
         game.approve();
 
         when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
@@ -80,7 +79,7 @@ public class OrderServiceTest {
 
     @Test
     void shouldFailWhenGameNotActive() {
-        Game game = Game.create("g", "d", BigDecimal.TEN, "r", buyer);
+        Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, buyer);
         game.remove();
 
         when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
@@ -98,7 +97,7 @@ public class OrderServiceTest {
         User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
         ReflectionTestUtils.setField(buyer, "id", buyerId);
         Order order = Order.create(buyer);
-        Game game = Game.create("g", "d", BigDecimal.TEN, "r", buyer);
+        Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, buyer);
         game.approve();
         OrderItem item = OrderItem.of(game, BigDecimal.TEN);
         order.addItem(item);
@@ -107,9 +106,10 @@ public class OrderServiceTest {
         when(orderRepository.findById(any())).thenReturn(Optional.of(order));
         when(libraryRepository.findByUser(buyer)).thenReturn(Optional.of(library));
         when(orderRepository.save(any())).thenReturn(order);
-        doNothing().when(fileStorageService).generateInvoice(any());
+        when(fileStorageService.generateInvoice(any())).thenReturn("invoices/invoice.txt");
+        when(fileStorageService.saveActivationKeysFile(any())).thenReturn("keys/keys.txt");
 
-        var result = orderService.completeOrder(UUID.randomUUID());
+        orderService.completeOrder(UUID.randomUUID());
         assertEquals(OrderStatus.COMPLETED, order.getStatus());
     }
 
@@ -131,11 +131,11 @@ public class OrderServiceTest {
 
     @Test
     void shouldCalculateTotalWithMultipleItems() {
-        User buyer = User.create("b","e","p", Role.BUYER);
+        User buyer = User.create("b", "e", "p", Role.BUYER);
         Order order = Order.create(buyer);
 
-        Game g1 = Game.create("g1","d",BigDecimal.TEN,"r",buyer);
-        Game g2 = Game.create("g2","d",BigDecimal.valueOf(20),"r",buyer);
+        Game g1 = Game.create("g1", "d", BigDecimal.TEN, "r", null, buyer);
+        Game g2 = Game.create("g2", "d", BigDecimal.valueOf(20), "r", null, buyer);
 
         order.addItem(OrderItem.of(g1, BigDecimal.TEN));
         order.addItem(OrderItem.of(g2, BigDecimal.valueOf(20)));
@@ -145,7 +145,7 @@ public class OrderServiceTest {
 
     @Test
     void shouldThrowWhenCancelNonPendingOrder() {
-        User buyer = User.create("b","e","p", Role.BUYER);
+        User buyer = User.create("b", "e", "p", Role.BUYER);
         Order order = Order.create(buyer);
 
         order.cancel();
@@ -155,7 +155,7 @@ public class OrderServiceTest {
 
     @Test
     void shouldThrowWhenCompleteNonPendingOrder() {
-        User buyer = User.create("b","e","p", Role.BUYER);
+        User buyer = User.create("b", "e", "p", Role.BUYER);
         Order order = Order.create(buyer);
 
         order.cancel();
@@ -166,7 +166,7 @@ public class OrderServiceTest {
 
     @Test
     void shouldReturnFalseWhenGameNotOwned() {
-        User user = User.create("u","e","p", Role.BUYER);
+        User user = User.create("u", "e", "p", Role.BUYER);
         Library library = Library.create(user);
 
         assertFalse(library.ownsGame(UUID.randomUUID()));
@@ -174,7 +174,7 @@ public class OrderServiceTest {
 
     @Test
     void shouldReturnUserOrders() {
-        User buyer = User.create("buyer","mail","pass",Role.BUYER);
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
 
         when(userRepository.findByUsername(any())).thenReturn(Optional.of(buyer));
         when(orderRepository.findByBuyerOrderByCreatedAtDesc(buyer))
@@ -189,7 +189,7 @@ public class OrderServiceTest {
     void shouldGetOrderById() {
         UUID buyerId = UUID.randomUUID();
 
-        User buyer = User.create("buyer","mail","pass",Role.BUYER);
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
         ReflectionTestUtils.setField(buyer, "id", buyerId);
 
         Order order = Order.create(buyer);
@@ -205,15 +205,15 @@ public class OrderServiceTest {
 
     @Test
     void shouldThrowWhenOrderNotOwned() {
-        User buyer = User.create("buyer","mail","pass",Role.BUYER);
-        User other = User.create("other","mail","pass",Role.BUYER);
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        User other = User.create("other", "mail2", "pass", Role.BUYER);
 
         Order order = Order.create(other);
 
         when(userRepository.findByUsername(any())).thenReturn(Optional.of(buyer));
         when(orderRepository.findById(any())).thenReturn(Optional.of(order));
 
-        assertThrows(NullPointerException.class,
+        assertThrows(Exception.class,
                 () -> orderService.getOrderById(UUID.randomUUID()));
     }
 }

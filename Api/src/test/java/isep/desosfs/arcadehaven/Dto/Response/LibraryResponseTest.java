@@ -17,7 +17,7 @@ public class LibraryResponseTest {
         User user = User.create("user1", "user1@example.com", "hash", Role.BUYER);
         Library library = Library.create(user);
 
-        Game game = Game.create("Game", "Desc", BigDecimal.valueOf(10), null, user);
+        Game game = Game.create("Game", "Desc", BigDecimal.valueOf(10), null, null, user);
         library.addGame(game, "KEY123");
 
         LibraryResponse response = LibraryResponse.from(library);

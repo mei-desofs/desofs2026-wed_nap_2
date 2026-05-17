@@ -3,14 +3,16 @@ package isep.desosfs.arcadehaven.Service;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,15 +21,9 @@ import isep.desosfs.arcadehaven.Domain.Order;
 
 @ExtendWith(MockitoExtension.class)
 public class FileStorageServiceTest {
+    @Mock StorageService storageService;
     @Mock InvoiceService invoiceService;
-
-    private FileStorageService service;
-
-    @BeforeEach
-    void setup() {
-        service = new FileStorageService("test-storage", invoiceService);
-        service.init();
-    }
+    @InjectMocks FileStorageService service;
 
     @Test
     void shouldRejectInvalidFilename() {
@@ -40,21 +36,15 @@ public class FileStorageServiceTest {
 
     @Test
     void shouldRejectPathTraversal() {
-        MultipartFile file = mock(MultipartFile.class);
-        when(file.getOriginalFilename()).thenReturn("../hack.png");
-
         assertThrows(IllegalArgumentException.class,
-                () -> service.saveFile(file, "games/images"));
+                () -> service.downloadFile("../hack.txt"));
     }
 
     @Test
     void shouldSaveFileSuccessfully() throws Exception {
         MultipartFile file = mock(MultipartFile.class);
-
         when(file.getOriginalFilename()).thenReturn("image.png");
-        when(file.getInputStream()).thenReturn(
-                new java.io.ByteArrayInputStream("data".getBytes())
-        );
+        when(storageService.uploadFile(file, "games/images")).thenReturn("games/images/image.png");
 
         String result = service.saveFile(file, "games/images");
 
@@ -63,17 +53,14 @@ public class FileStorageServiceTest {
     }
 
     @Test
-    void shouldInitializeDirectories() {
-        service.init();
-    }
-
-    @Test
     void shouldGenerateInvoiceFile() throws Exception {
         Order order = mock(Order.class);
-
         when(order.getId()).thenReturn(UUID.randomUUID());
-        when(invoiceService.buildInvoiceContent(order)).thenReturn("invoice");
+        when(invoiceService.buildInvoiceContent(order)).thenReturn("invoice content");
+        when(storageService.uploadBytes(any(), any(), eq("invoices"))).thenReturn("invoices/invoice.txt");
 
-        service.generateInvoice(order);
+        String result = service.generateInvoice(order);
+
+        assertNotNull(result);
     }
 }

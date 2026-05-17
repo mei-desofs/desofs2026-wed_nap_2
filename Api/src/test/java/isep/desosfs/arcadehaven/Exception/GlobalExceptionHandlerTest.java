@@ -1,6 +1,7 @@
 package isep.desosfs.arcadehaven.Exception;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import java.util.Map;
 
@@ -15,12 +16,17 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import isep.desosfs.arcadehaven.Security.SecurityAuditService;
+import jakarta.servlet.http.HttpServletRequest;
+
 public class GlobalExceptionHandlerTest {
-     GlobalExceptionHandler handler;
+    GlobalExceptionHandler handler;
+    SecurityAuditService auditService;
 
     @BeforeEach
     void setup() {
-        handler = new GlobalExceptionHandler();
+        auditService = mock(SecurityAuditService.class);
+        handler = new GlobalExceptionHandler(auditService);
     }
 
     @Test
@@ -83,25 +89,23 @@ public class GlobalExceptionHandlerTest {
 
     @Test
     void shouldHandleBadCredentials() {
-        BadCredentialsException ex =
-                new BadCredentialsException("Bad credentials");
+        BadCredentialsException ex = new BadCredentialsException("Bad credentials");
+        HttpServletRequest request = mock(HttpServletRequest.class);
 
         ResponseEntity<Map<String, Object>> response =
-                handler.handleBadCredentials(ex);
+                handler.handleBadCredentials(ex, request);
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-        assertEquals(
-                "Invalid username or password",
-                response.getBody().get("message")
-        );
+        assertEquals("Invalid credentials", response.getBody().get("message"));
     }
 
     @Test
     void shouldHandleAccessDenied() {
         AccessDeniedException ex = new AccessDeniedException("Denied");
+        HttpServletRequest request = mock(HttpServletRequest.class);
 
         ResponseEntity<Map<String, Object>> response =
-                handler.handleAccessDenied(ex);
+                handler.handleAccessDenied(ex, request);
 
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
         assertEquals("Access denied", response.getBody().get("message"));
@@ -128,13 +132,11 @@ public class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
+        @SuppressWarnings("unchecked")
         Map<String, String> errors =
                 (Map<String, String>) response.getBody().get("errors");
 
-        assertEquals(
-                "Username is required",
-                errors.get("username")
-        );
+        assertEquals("Username is required", errors.get("username"));
     }
 
     @Test
@@ -144,14 +146,7 @@ public class GlobalExceptionHandlerTest {
         ResponseEntity<Map<String, Object>> response =
                 handler.handleGeneric(ex);
 
-        assertEquals(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                response.getStatusCode()
-        );
-
-        assertEquals(
-                "An unexpected error occurred",
-                response.getBody().get("message")
-        );
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("An unexpected error occurred", response.getBody().get("message"));
     }
 }

@@ -14,7 +14,7 @@ public class GameResponseTest {
     @Test
     void whenFromGame_thenMappingCorrect() {
         User publisher = User.create("publisher", "pub@example.com", "hash", Role.BUYER);
-        Game game = Game.create("Game", "Desc", BigDecimal.valueOf(20), "RAWG123", publisher);
+        Game game = Game.create("Game", "Desc", BigDecimal.valueOf(20), "RAWG123", null, publisher);
 
         GameResponse response = GameResponse.from(game);
 

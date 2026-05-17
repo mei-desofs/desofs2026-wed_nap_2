@@ -64,6 +64,7 @@ public class LibraryTest {
                 "Desc",
                 BigDecimal.TEN,
                 "rawg",
+                null,
                 createUser()
         );
     }

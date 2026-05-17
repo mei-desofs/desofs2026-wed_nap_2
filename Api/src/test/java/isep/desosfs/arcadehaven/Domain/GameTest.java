@@ -30,6 +30,7 @@ public class GameTest {
                 "Description",
                 BigDecimal.valueOf(19.99),
                 "rawg123",
+                null,
                 publisher
         );
 
@@ -95,7 +96,7 @@ public class GameTest {
     void shouldUpdateDetails() {
         Game game = createGame();
 
-        game.updateDetails("New Title", "New Description");
+        game.updateDetails("New Title", "New Description", null);
 
         assertEquals("New Title", game.getTitle());
         assertEquals("New Description", game.getDescription());
@@ -132,6 +133,7 @@ public class GameTest {
                 "Description",
                 BigDecimal.valueOf(10),
                 "rawg",
+                null,
                 publisher
         );
     }

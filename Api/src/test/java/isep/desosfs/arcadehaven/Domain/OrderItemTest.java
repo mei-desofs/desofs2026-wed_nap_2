@@ -44,6 +44,7 @@ public class OrderItemTest {
                 "Desc",
                 BigDecimal.TEN,
                 "rawg",
+                null,
                 publisher
         );
     }

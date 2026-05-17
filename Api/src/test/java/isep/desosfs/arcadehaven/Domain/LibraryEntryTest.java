@@ -52,6 +52,7 @@ public class LibraryEntryTest {
                 "Desc",
                 BigDecimal.TEN,
                 "rawg",
+                null,
                 publisher
         );
     }

@@ -28,7 +28,8 @@ public class CreateGameRequestTest {
                 "Game Title",
                 "Description",
                 BigDecimal.valueOf(19.99),
-                "RAWG123"
+                "RAWG123",
+                null
         );
         Set<ConstraintViolation<CreateGameRequest>> violations = validator.validate(request);
         assertThat(violations).isEmpty();
@@ -40,7 +41,8 @@ public class CreateGameRequestTest {
                 "",
                 "Description",
                 BigDecimal.valueOf(19.99),
-                "RAWG123"
+                "RAWG123",
+                null
         );
         Set<ConstraintViolation<CreateGameRequest>> violations = validator.validate(request);
         assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("title"));
@@ -52,7 +54,8 @@ public class CreateGameRequestTest {
                 "Title",
                 "Desc",
                 BigDecimal.valueOf(0),
-                "RAWG123"
+                "RAWG123",
+                null
         );
         Set<ConstraintViolation<CreateGameRequest>> violations = validator.validate(request);
         assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("price"));

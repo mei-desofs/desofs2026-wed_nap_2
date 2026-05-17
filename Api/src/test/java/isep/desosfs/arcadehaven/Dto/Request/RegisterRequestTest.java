@@ -24,7 +24,7 @@ public class RegisterRequestTest {
 
     @Test
     void whenValidRequest_thenNoViolations() {
-        RegisterRequest request = new RegisterRequest("user123", "user@example.com", "password123", Role.BUYER);
+        RegisterRequest request = new RegisterRequest("user123", "user@example.com", "password12345", Role.BUYER);
         Set<ConstraintViolation<RegisterRequest>> violations = validator.validate(request);
         assertThat(violations).isEmpty();
     }

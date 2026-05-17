@@ -183,6 +183,7 @@ public class AdminControllerTest {
                 BigDecimal.TEN,
                 "ACTIVE",
                 "rawg-id",
+                null,
                 "publisher",
                 LocalDateTime.now()
         );

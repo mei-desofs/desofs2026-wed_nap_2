@@ -30,13 +30,13 @@ public class GameControllerTest {
     void shouldGetAllGames() {
         List<GameResponse> games = List.of(createGameResponse());
 
-        when(gameService.getAllActiveGames()).thenReturn(games);
+        when(gameService.getAllActiveGames(null, null, null, null)).thenReturn(games);
 
-        var response = controller.getAllGames();
+        var response = controller.getAllGames(null, null, null, null);
 
         assertEquals(games, response.getBody());
 
-        verify(gameService).getAllActiveGames();
+        verify(gameService).getAllActiveGames(null, null, null, null);
     }
 
     @Test
@@ -62,6 +62,7 @@ public class GameControllerTest {
                 BigDecimal.TEN,
                 "ACTIVE",
                 "rawg-id",
+                null,
                 "publisher",
                 LocalDateTime.now()
         );

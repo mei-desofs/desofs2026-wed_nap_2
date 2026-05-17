@@ -19,8 +19,8 @@ public class OrderResponseTest {
         Order order = Order.create(buyer);
 
         User publisher = User.create("pub", "pub@example.com", "hash", Role.PUBLISHER);
-        Game game1 = Game.create("Game1", "Desc1", BigDecimal.valueOf(10), null, publisher);
-        Game game2 = Game.create("Game2", "Desc2", BigDecimal.valueOf(20), null, publisher);
+        Game game1 = Game.create("Game1", "Desc1", BigDecimal.valueOf(10), null, null, publisher);
+        Game game2 = Game.create("Game2", "Desc2", BigDecimal.valueOf(20), null, null, publisher);
 
         OrderItem item1 = OrderItem.of(game1, BigDecimal.valueOf(10));
         OrderItem item2 = OrderItem.of(game2, BigDecimal.valueOf(20));
