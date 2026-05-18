@@ -266,10 +266,12 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.2</version>
                 <configuration>
-                    <excludedGroups>security-tests,smoke-tests</excludedGroups>
+                    <excludes>
+                        <exclude>**/SmokeTests.java</exclude>
+                        <exclude>**/SecurityIntegrationTests.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 		</plugins>
 	</build>
-
 </project>
