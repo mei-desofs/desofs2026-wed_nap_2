@@ -66,12 +66,7 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest request) {
-        URI tokenUri = UriComponentsBuilder
-                .fromUri(URI.create(keycloakServerUrl))
-                .pathSegment("realms", realm, "protocol", "openid-connect", "token")
-                .build()
-                .encode()
-                .toUri();
+        String tokenUrl = keycloakServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
 
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("grant_type", "password");
@@ -85,7 +80,7 @@ public class AuthService {
         try {
             @SuppressWarnings("unchecked")
             Map<String, Object> body = restTemplate.postForObject(
-                    tokenUri, new HttpEntity<>(form, headers), Map.class);
+                    tokenUrl, new HttpEntity<>(form, headers), Map.class);
             return new LoginResponse(
                     (String) body.get("access_token"),
                     (String) body.get("refresh_token"),
