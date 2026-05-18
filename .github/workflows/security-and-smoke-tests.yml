@@ -1,0 +1,142 @@
+name: Security Tests
+
+on:
+  push:
+    branches: [ main, pipeline ]
+
+  pull_request:
+    branches: [ main, pipeline ]
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+
+  build-and-scan:
+    name: Security Tests
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Api
+
+    env:
+      SPRING_DATASOURCE_URL: ${{ vars.SPRING_DATASOURCE_URL }}
+      SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+      SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+
+      KEYCLOAK_JWK_SET_URI: ${{ vars.KEYCLOAK_JWK_SET_URI }}
+      KEYCLOAK_SERVER_URL: ${{ vars.KEYCLOAK_SERVER_URL }}
+      KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
+      KEYCLOAK_CLIENT_ID: ${{ vars.KEYCLOAK_CLIENT_ID }}
+      KEYCLOAK_ADMIN_USERNAME: ${{ secrets.KEYCLOAK_ADMIN_USERNAME }}
+      KEYCLOAK_ADMIN_PASSWORD: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
+
+      ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+      ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+
+      SFTP_HOST: ${{ vars.SFTP_HOST }}
+      SFTP_PORT: ${{ vars.SFTP_PORT }}
+      SFTP_USERNAME: ${{ secrets.SFTP_USERNAME }}
+      SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+      SFTP_REMOTE_DIR: ${{ vars.SFTP_REMOTE_DIR }}
+
+      KC_DB: ${{ vars.KC_DB }}
+      KC_DB_URL: ${{ vars.KC_DB_URL }}
+      KC_DB_USERNAME: ${{ secrets.POSTGRES_USER }}
+      KC_DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      KC_HOSTNAME_STRICT: ${{ vars.KC_HOSTNAME_STRICT }}
+      KC_HTTP_ENABLED: ${{ vars.KC_HTTP_ENABLED }}
+      KC_HEALTH_ENABLED: ${{ vars.KC_HEALTH_ENABLED }}
+
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
+    steps:
+      # Checkout repository
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # Installs Java for GitHub Runner
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      # Set up Docker Buildx
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Build Docker image
+      - name: Build images
+        run: docker compose build
+
+      # Start docker containers
+      - name: Start Keycloak
+        run: docker compose up -d keycloak-db keycloak
+
+      # Keycloak health check
+      - name: Wait for Keycloak
+        run: |
+          for i in {1..60}; do
+            if curl -fs http://localhost:8180/realms/arcadehaven/.well-known/openid-configuration; then
+              echo "Keycloak ready"
+              exit 0
+            fi
+
+            echo $i ": Waiting for Keycloak..."
+            sleep 5
+          done
+
+          echo "Keycloak failed"
+          docker compose logs
+
+          exit 1
+
+      # Gives execution permissions to Maven wrapper
+      - name: Fix Maven wrapper permissions
+        run: chmod +x ./mvnw
+
+      # Run Security Tests
+      - name: Run Security Tests
+        run: ./mvnw test -Dtest=SecurityIntegrationTests
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down
+
+#      # Run app
+#      - name: Start app
+#        run: docker compose up -d app
+#
+#      # Application health check
+#      - name: Wait for app
+#        run: |
+#          for i in {1..60}; do
+#            if curl -fs http://localhost:8080/actuator/health; then
+#              echo "App ready"
+#              exit 0
+#            fi
+#
+#            echo $i ": Waiting for app..."
+#            sleep 5
+#          done
+#
+#          echo "App failed to start"
+#          docker compose logs
+#
+#          exit 1
+#
+#      # Run Smoke Tests
+#      - name: Run Smoke Tests
+#        run: ./mvnw test -Dtest=SmokeTests
+#
+#      - name: Cleanup
+#        if: always()
+#        run: docker compose down
