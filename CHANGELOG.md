@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.1.3...v1.1.4) (2026-05-18)
+
+
+### Bug Fixes
+
+* add KEYCLOAK_CLIENT_ID variable to pipeline workflows [#5](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/5) ([7d3dd31](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/7d3dd31dfadd0b59a9ba48b3d03b5612d7fa19de))
+
 ## [1.1.3](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.1.2...v1.1.3) (2026-05-17)
 
 
