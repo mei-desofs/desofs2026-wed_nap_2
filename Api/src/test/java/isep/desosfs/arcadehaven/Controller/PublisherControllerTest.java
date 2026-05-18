@@ -2,6 +2,7 @@ package isep.desosfs.arcadehaven.Controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -23,6 +24,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import isep.desosfs.arcadehaven.Domain.Enums.FileType;
 import isep.desosfs.arcadehaven.Dto.Request.CreateGameRequest;
 import isep.desosfs.arcadehaven.Dto.Request.UpdateGameRequest;
+import isep.desosfs.arcadehaven.Dto.Response.GameMetricsResponse;
 import isep.desosfs.arcadehaven.Dto.Response.GameResponse;
 import isep.desosfs.arcadehaven.Service.GameService;
 
@@ -233,6 +235,51 @@ public class PublisherControllerTest {
 
         assertThrows(IllegalArgumentException.class,
                 () -> controller.uploadFile(id, file, FileType.COVER));
+    }
+
+    @Test
+    void shouldDownloadFile_whenPathIsNull_returnsDefaultFilename() {
+        UUID gameId = UUID.randomUUID();
+        byte[] fileData = "data".getBytes();
+        when(gameService.downloadGameFile(gameId, null)).thenReturn(fileData);
+
+        var response = controller.downloadFile(gameId, null);
+
+        assertEquals(fileData, response.getBody());
+        assertTrue(response.getHeaders().getFirst("Content-Disposition").contains("file"));
+        verify(gameService).downloadGameFile(gameId, null);
+    }
+
+    @Test
+    void shouldDownloadFile_whenPathHasNoSlash_returnsFilenameAsPath() {
+        UUID gameId = UUID.randomUUID();
+        byte[] fileData = "data".getBytes();
+        String path = "filename.txt";
+        when(gameService.downloadGameFile(gameId, path)).thenReturn(fileData);
+
+        var response = controller.downloadFile(gameId, path);
+
+        assertEquals(fileData, response.getBody());
+        assertTrue(response.getHeaders().getFirst("Content-Disposition").contains("filename.txt"));
+        verify(gameService).downloadGameFile(gameId, path);
+    }
+
+    @Test
+    void shouldGetGameMetrics_returnsMetrics() {
+        UUID gameId = UUID.randomUUID();
+        GameMetricsResponse metrics = new GameMetricsResponse(
+                gameId,
+                "Test Game",  
+                10L,           
+                BigDecimal.TEN 
+        );
+
+        when(gameService.getGameMetrics(gameId)).thenReturn(metrics);
+
+        var response = controller.getGameMetrics(gameId);
+
+        assertEquals(metrics, response.getBody());
+        verify(gameService).getGameMetrics(gameId);
     }
 
     private GameResponse createGameResponse() {
