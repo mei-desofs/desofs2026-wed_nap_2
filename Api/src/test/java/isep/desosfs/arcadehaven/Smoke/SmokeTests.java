@@ -31,7 +31,7 @@ class SmokeTests {
 
     //Test register endpoint
     @Test
-    void registerEndpointShouldReturnCreatedOrConflict() throws Exception {
+    void registerEndpointShouldReturnCreatedOrAlreadyExists() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
 
         String body = """
@@ -66,21 +66,41 @@ class SmokeTests {
     void loginEndpointShouldReturnOk() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
 
-        String body = """
-        {
-          "username": "smokeuser",
-          "password": "Ztr4Safe#2620WZ"
-        }
+        String registerBody = """
+            {
+              "username": "smokeuser",
+              "email": "smoke@test.com",
+              "password": "Ztr4Safe#2620WZ",
+              "role": "BUYER"
+            }
         """;
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/api/auth/login"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(body))
-                .build();
+        //Ensures client exists before logging in
+        client.send(
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:8080/api/auth/register"))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(registerBody))
+                        .build(),
+                HttpResponse.BodyHandlers.ofString()
+        );
 
-        HttpResponse<String> response =
-                client.send(request, HttpResponse.BodyHandlers.ofString());
+        String loginBody = """
+            {
+              "username": "smokeuser",
+              "password": "Ztr4Safe#2620WZ"
+            }
+        """;
+
+        //Logs in
+        HttpResponse<String> response = client.send(
+                HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:8080/api/auth/login"))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(loginBody))
+                        .build(),
+                HttpResponse.BodyHandlers.ofString()
+        );
 
         assertEquals(200, response.statusCode());
     }
