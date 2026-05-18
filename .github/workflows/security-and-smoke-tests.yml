@@ -15,7 +15,7 @@ permissions:
 jobs:
 
   build-and-scan:
-    name: Docker Build, Scan and DAST
+    name: Security and Smoke Tests
     runs-on: ubuntu-latest
 
     defaults:
@@ -60,6 +60,14 @@ jobs:
       # Checkout repository
       - name: Checkout
         uses: actions/checkout@v5
+
+      # Installs Java for GitHub Runner
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
 
       # Set up Docker Buildx
       - name: Setup Docker Buildx
