@@ -16,6 +16,7 @@ import org.apache.tika.Tika;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -25,6 +26,8 @@ import java.util.UUID;
 
 @Service
 public class GameService {
+
+    private static final long MAX_FILE_SIZE = 25L * 1024 * 1024; // 25MB
 
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
@@ -102,6 +105,7 @@ public class GameService {
 
     @Transactional
     public GameResponse uploadGameFile(UUID id, MultipartFile file, FileType fileType) {
+        validateFileSize(file);
         validateMimeType(file, fileType);
 
         User publisher = getCurrentUser();
@@ -137,6 +141,12 @@ public class GameService {
         long unitsSold = row[0] != null ? ((Number) row[0]).longValue() : 0L;
         BigDecimal totalRevenue = row[1] != null ? (BigDecimal) row[1] : BigDecimal.ZERO;
         return new GameMetricsResponse(gameId, game.getTitle(), unitsSold, totalRevenue);
+    }
+
+    private void validateFileSize(MultipartFile file) {
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new MaxUploadSizeExceededException(25);
+        }
     }
 
     private void validateMimeType(MultipartFile file, FileType fileType) {

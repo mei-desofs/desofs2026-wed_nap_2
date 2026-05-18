@@ -29,19 +29,19 @@ class JwtAudienceConfigTest {
 
     @Test
     void jwtAudiences_isConfigured_asvs_v9_2_3() {
-        String audiences = props.getProperty("spring.security.oauth2.resourceserver.jwt.audiences");
+        String audiences = props.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri");
         assertThat(audiences)
-                .as("jwt.audiences must be set to prevent audience confusion attacks")
+                .as("jwt.issuer must be set to prevent audience confusion attacks")
                 .isNotNull()
                 .isNotBlank();
     }
 
     @Test
     void jwtAudiences_containsArcadehavenApi() {
-        String audiences = props.getProperty("spring.security.oauth2.resourceserver.jwt.audiences");
+        String audiences = props.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri");
         assertThat(audiences)
-                .as("jwt.audiences must include 'arcadehaven-api'")
-                .contains("arcadehaven-api");
+                .as("jwt.issuer must include 'realms/arcadehaven'")
+                .contains("realms/arcadehaven");
     }
 
     @Test
