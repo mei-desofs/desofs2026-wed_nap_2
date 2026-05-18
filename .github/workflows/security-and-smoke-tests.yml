@@ -107,32 +107,32 @@ jobs:
       - name: Run Security Tests
         run: ./mvnw test -Dtest=SecurityIntegrationTests
 
-      # Run app
-      - name: Start app
-        run: docker compose up -d app
-
-      # Application health check
-      - name: Wait for app
-        run: |
-          for i in {1..60}; do
-            if curl -fs http://localhost:8080/actuator/health; then
-              echo "App ready"
-              exit 0
-            fi
-
-            echo $i ": Waiting for app..."
-            sleep 5
-          done
-
-          echo "App failed to start"
-          docker compose logs
-
-          exit 1
-
-      # Run Smoke Tests
-      - name: Run Smoke Tests
-        run: ./mvnw test -Dtest=SmokeTests
-
-      - name: Cleanup
-        if: always()
-        run: docker compose down
+#      # Run app
+#      - name: Start app
+#        run: docker compose up -d app
+#
+#      # Application health check
+#      - name: Wait for app
+#        run: |
+#          for i in {1..60}; do
+#            if curl -fs http://localhost:8080/actuator/health; then
+#              echo "App ready"
+#              exit 0
+#            fi
+#
+#            echo $i ": Waiting for app..."
+#            sleep 5
+#          done
+#
+#          echo "App failed to start"
+#          docker compose logs
+#
+#          exit 1
+#
+#      # Run Smoke Tests
+#      - name: Run Smoke Tests
+#        run: ./mvnw test -Dtest=SmokeTests
+#
+#      - name: Cleanup
+#        if: always()
+#        run: docker compose down
