@@ -123,7 +123,7 @@ jobs:
 
       # Run Security Tests
       - name: Run Security Tests
-        run: ./mvnw test -Dtest=SecurityIntegrationTest
+        run: ./mvnw test -Dtest=SecurityIntegrationTests
 
       # Run Smoke Tests
       - name: Run Smoke Tests
