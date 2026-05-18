@@ -1,4 +1,4 @@
-name: Docker Build, Scan & DAST # Dynamic Application Security Testing (DAST)
+name: Security Tests
 
 on:
   push:
@@ -15,7 +15,7 @@ permissions:
 jobs:
 
   build-and-scan:
-    name: Docker Build, Scan and DAST
+    name: Security Tests
     runs-on: ubuntu-latest
 
     defaults:
@@ -61,6 +61,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      # Installs Java for GitHub Runner
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
       # Set up Docker Buildx
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -69,51 +77,9 @@ jobs:
       - name: Build images
         run: docker compose build
 
-      # Installs Docker Scout as a plugin
-      - name: Install Docker Scout
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh
-
-      # Login to Docker Hub using PAT
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # Scan Docker image for known vulnerabilities (CVEs) using Docker Scout
-      - name: Docker Scout CVE scan
-        run: |
-          IMAGE=arcadehaven-api:latest
-          docker scout cves $IMAGE
-
-      # Install Trivy
-      - name: Install Trivy
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget -qO- https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo "deb https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update
-          sudo apt-get install -y trivy
-
-      # Run Trivy scan
-      - name: Scan Docker image with Trivy
-        run: |
-          IMAGE=arcadehaven-api:latest
-          trivy image --format json --output trivy-report.json $IMAGE
-
-      # Upload Trivy report
-      - name: Upload Trivy report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-report
-          path: Api/trivy-report.json
-
       # Start docker containers
-      - name: Start containers
-        run: docker compose up -d
+      - name: Start Keycloak
+        run: docker compose up -d keycloak-db keycloak
 
       # Keycloak health check
       - name: Wait for Keycloak
@@ -133,39 +99,44 @@ jobs:
 
           exit 1
 
-      # Application health check
-      - name: Wait for app
-        run: |
-          for i in {1..60}; do
-            if curl -fs http://localhost:8080/actuator/health; then
-              echo "App ready"
-              exit 0
-            fi
+      # Gives execution permissions to Maven wrapper
+      - name: Fix Maven wrapper permissions
+        run: chmod +x ./mvnw
 
-            echo $i ": Waiting for app..."
-            sleep 5
-          done
-
-          echo "App failed to start"
-          docker compose logs
-
-          exit 1
-
-      # Run OWASP ZAP DAST scan
-      - name: OWASP ZAP Scan
-        uses: zaproxy/action-baseline@v0.14.0
-        with:
-          target: "http://localhost:8080"
-          fail_action: false
-          allow_issue_writing: false
-          artifact_name: zap-report
-
-      - name: Upload ZAP report
-        uses: actions/upload-artifact@v4
-        with:
-          name: zap-report
-          path: Api/target/report_html.html
+      # Run Security Tests
+      - name: Run Security Tests
+        run: ./mvnw test -Dtest=SecurityIntegrationTests
 
       - name: Cleanup
         if: always()
         run: docker compose down
+
+#      # Run app
+#      - name: Start app
+#        run: docker compose up -d app
+#
+#      # Application health check
+#      - name: Wait for app
+#        run: |
+#          for i in {1..60}; do
+#            if curl -fs http://localhost:8080/actuator/health; then
+#              echo "App ready"
+#              exit 0
+#            fi
+#
+#            echo $i ": Waiting for app..."
+#            sleep 5
+#          done
+#
+#          echo "App failed to start"
+#          docker compose logs
+#
+#          exit 1
+#
+#      # Run Smoke Tests
+#      - name: Run Smoke Tests
+#        run: ./mvnw test -Dtest=SmokeTests
+#
+#      - name: Cleanup
+#        if: always()
+#        run: docker compose down
