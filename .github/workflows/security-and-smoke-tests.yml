@@ -1,4 +1,4 @@
-name: Security and Smoke Tests
+name: Security Tests
 
 on:
   push:
@@ -15,7 +15,7 @@ permissions:
 jobs:
 
   build-and-scan:
-    name: Security and Smoke Tests
+    name: Security Tests
     runs-on: ubuntu-latest
 
     defaults:
@@ -106,6 +106,10 @@ jobs:
       # Run Security Tests
       - name: Run Security Tests
         run: ./mvnw test -Dtest=SecurityIntegrationTests
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down
 
 #      # Run app
 #      - name: Start app
