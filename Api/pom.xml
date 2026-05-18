@@ -146,6 +146,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Test utilities for smoke tests -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>5.4.0</version>
+            <scope>test</scope>
+        </dependency>
+
 	</dependencies>
 
 	<build>
@@ -258,7 +266,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.2</version>
                 <configuration>
-                    <excludedGroups>security-tests</excludedGroups>
+                    <excludedGroups>security-tests,smoke-tests</excludedGroups>
                 </configuration>
             </plugin>
 		</plugins>
