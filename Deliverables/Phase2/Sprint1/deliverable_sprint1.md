@@ -122,6 +122,8 @@ Key achievements:
 | [Maven wrapper (Linux/Mac)](../../../Api/mvnw) | Maven execution script for Unix systems |
 | [Maven wrapper (Windows)](../../../Api/mvnw.cmd) | Maven execution script for Windows |
 | [Keycloak realm](../../../keycloak/realm-export.json) | Authentication and authorization configuration |
+| [Environment setup script](../../../Api/set-env.ps1) | PowerShell script that exports all required environment variables for `docker-compose` (mirrors `.env`); updated during Sprint 1 to include `KEYCLOAK_CLIENT_ID`, `KEYCLOAK_BACKEND_CLIENT_SECRET`, and corrected SFTP connection details (`SFTP_HOST`, `SFTP_PORT`) |
+| [Environment file](../../../Api/.env) | Docker Compose `.env` file consumed automatically by `docker-compose`; source of truth for all service credentials and URLs |
 ---
 
 #### Documentation
@@ -375,6 +377,89 @@ SpotBugs report uploaded as `spotbugs-report` artifact on every run.
 **Tool:** Gitleaks with custom `.gitleaks.toml` configuration
 
 Gitleaks scans the entire repository on every push/PR to detect accidentally committed secrets, API keys, passwords, or tokens. No secrets were detected during Sprint 1.
+
+---
+
+## Database Migration
+
+### Migration History
+
+The application uses Flyway for schema versioning. Four migration scripts are bundled inside the JAR under `BOOT-INF/classes/db/migration/`:
+
+| Version | Script | Description |
+|---|---|---|
+| V1 | `V1__create_tables.sql` | Initial schema: `users`, `games`, `game_files`, `orders`, `order_items`, `libraries`, `library_entries` |
+| V2 | `V2__fix_status_constraints.sql` | Adds `CHECK` constraints on `status` columns in `games`, `library_entries`, `orders` |
+| V3 | `V3__add_game_category.sql` | Adds `category VARCHAR(100)` column to `games` and a supporting index |
+| V4 | `V4__add_performance_indexes.sql` | Adds composite indexes for query performance (RNF-23) |
+
+### Issue: Flyway Auto-Migration Not Running
+
+During Sprint 1 a defect was identified: Spring Boot 4.0.6 with Flyway 11.14.1 did not automatically apply pending migrations on startup. The absence of any Flyway log output (despite `logging.level.org.flywaydb=INFO` in `application.properties`) confirmed that `FlywayAutoConfiguration` was not invoking `migrate()`.
+
+**Symptom:** `GET /api/admin/games`, `GET /api/orders`, and `GET /api/library` returned HTTP 500 with the PostgreSQL error `column g1_0.category does not exist`. Migration V3 (which adds the `category` column) had never been applied to the external database. Migrations V2 and V4 were also missing — the `flyway_schema_history` table contained only V1.
+
+**Root cause:** Flyway auto-configuration did not run despite all four SQL files being present inside the JAR and Flyway being enabled in `application.properties`. The exact cause in this Spring Boot / Flyway version combination remains under investigation.
+
+**Fix applied:** All three missing migrations (V2, V3, V4) were applied manually via `psql` (through the `keycloak-db` container, which ships `psql`). All scripts use idempotent DDL (`DROP CONSTRAINT IF EXISTS`, `ADD COLUMN IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`), making re-execution safe. After SQL execution, the corresponding records were inserted into `flyway_schema_history` with correct CRC32 checksums.
+
+### Manual Migration Process (Future Reference)
+
+If Flyway does not apply a migration automatically, follow these three steps:
+
+**Step 1 — Connect and execute the SQL**
+
+```bash
+# Open a psql session through the keycloak-db container
+docker exec -it <keycloak-db-container-name> psql \
+  "postgresql://postgres:<password>@vsgate-s1.dei.isep.ipp.pt:10345/postgres"
+
+# Paste or \i the migration SQL, then verify with:
+\d games          -- check schema changes
+SELECT * FROM flyway_schema_history ORDER BY installed_rank;
+```
+
+**Step 2 — Compute the CRC32 checksum**
+
+Flyway uses Java's `java.util.zip.CRC32` over UTF-8 bytes with LF-normalised line endings, returned as a signed 32-bit integer. Reproduce with Node.js:
+
+```js
+function crc32(str) {
+  str = str.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const buf = Buffer.from(str, 'utf-8');
+  let crc = 0xFFFFFFFF;
+  for (const b of buf) {
+    crc ^= b;
+    for (let i = 0; i < 8; i++) {
+      crc = (crc & 1) ? (0xEDB88320 ^ (crc >>> 1)) : (crc >>> 1);
+    }
+  }
+  crc = (crc ^ 0xFFFFFFFF) >>> 0;
+  return crc > 0x7FFFFFFF ? crc - 0x100000000 : crc;
+}
+const fs = require('fs');
+const file = process.argv[2];
+console.log(crc32(fs.readFileSync(file, 'utf8')));
+```
+
+Run: `node crc32.js Api/src/main/resources/db/migration/V3__add_game_category.sql`
+
+**Step 3 — Insert into `flyway_schema_history`**
+
+```sql
+INSERT INTO flyway_schema_history
+  (installed_rank, version, description, type, script, checksum, installed_by, installed_on, execution_time, success)
+VALUES
+  (<rank>, '<version>', '<description>', 'SQL', '<VN__script_name.sql>', <checksum>, 'postgres', NOW(), 0, true);
+```
+
+Checksums computed and applied during Sprint 1:
+
+| installed_rank | Version | Script | Checksum |
+|---|---|---|---|
+| 2 | 2 | `V2__fix_status_constraints.sql` | 135017770 |
+| 3 | 3 | `V3__add_game_category.sql` | 147218767 |
+| 4 | 4 | `V4__add_performance_indexes.sql` | 950974384 |
 
 ---
 
