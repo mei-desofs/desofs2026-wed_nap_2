@@ -123,11 +123,11 @@ jobs:
 
       # Run Security Tests
       - name: Run Security Tests
-        run: ./mvnw -B test -Dgroups=security-tests
+        run: ./mvnw -B test -DincludeTags=security-tests
 
       # Run Smoke Tests
       - name: Run Smoke Tests
-        run: ./mvnw -B test -Dgroups=smoke-tests
+        run: ./mvnw -B test -DincludeTags=smoke-tests
 
       - name: Cleanup
         if: always()
