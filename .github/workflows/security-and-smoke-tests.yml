@@ -109,6 +109,10 @@ jobs:
 
           exit 1
 
+      # Gives execution permissions to Maven wrapper
+      - name: Fix Maven wrapper permissions
+        run: chmod +x ./mvnw
+
       # Run Security Tests
       - name: Run Security Tests
         run: ./mvnw -B test -Dgroups=security-tests
