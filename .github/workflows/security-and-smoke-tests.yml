@@ -78,8 +78,8 @@ jobs:
         run: docker compose build
 
       # Start docker containers
-      - name: Start containers
-        run: docker compose up -d
+      - name: Start Keycloak
+        run: docker compose up -d keycloak-db keycloak
 
       # Keycloak health check
       - name: Wait for Keycloak
@@ -99,6 +99,18 @@ jobs:
 
           exit 1
 
+      # Gives execution permissions to Maven wrapper
+      - name: Fix Maven wrapper permissions
+        run: chmod +x ./mvnw
+
+      # Run Security Tests
+      - name: Run Security Tests
+        run: ./mvnw test -Dtest=SecurityIntegrationTests
+
+      # Run app
+      - name: Start app
+        run: docker compose up -d app
+
       # Application health check
       - name: Wait for app
         run: |
@@ -116,14 +128,6 @@ jobs:
           docker compose logs
 
           exit 1
-
-      # Gives execution permissions to Maven wrapper
-      - name: Fix Maven wrapper permissions
-        run: chmod +x ./mvnw
-
-      # Run Security Tests
-      - name: Run Security Tests
-        run: ./mvnw test -Dtest=SecurityIntegrationTests
 
       # Run Smoke Tests
       - name: Run Smoke Tests
