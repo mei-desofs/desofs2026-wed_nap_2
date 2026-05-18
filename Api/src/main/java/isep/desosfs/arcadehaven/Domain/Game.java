@@ -53,6 +53,8 @@ public class Game {
 
     public static Game create(String title, String description, BigDecimal price, String rawgApiId,
                               String category, User publisher) {
+        validatePrice(price);
+
         Game game = new Game();
         game.title = title;
         game.description = description;
@@ -61,6 +63,24 @@ public class Game {
         game.category = category;
         game.publisher = publisher;
         return game;
+    }
+
+    private static void validatePrice(BigDecimal price) {
+        if (price == null) {
+            throw new IllegalArgumentException("Price cannot be null");
+        }
+
+        if (price.scale() > 2) {
+            throw new IllegalArgumentException("A maximum of 2 decimal places allowed");
+        }
+
+        if (price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Price must be above 0");
+        }
+
+        if (price.compareTo(new BigDecimal("999999.99")) > 0) {
+            throw new IllegalArgumentException("Price cannot be larger than 999999.99");
+        }
     }
 
     public void approve() {

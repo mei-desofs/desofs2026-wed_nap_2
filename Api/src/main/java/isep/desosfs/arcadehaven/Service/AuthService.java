@@ -29,7 +29,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +66,12 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest request) {
-        String tokenUrl = keycloakServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+        URI tokenUri = UriComponentsBuilder
+                .fromUri(URI.create(keycloakServerUrl))
+                .pathSegment("realms", realm, "protocol", "openid-connect", "token")
+                .build()
+                .encode()
+                .toUri();
 
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("grant_type", "password");
@@ -78,7 +85,7 @@ public class AuthService {
         try {
             @SuppressWarnings("unchecked")
             Map<String, Object> body = restTemplate.postForObject(
-                    tokenUrl, new HttpEntity<>(form, headers), Map.class);
+                    tokenUri, new HttpEntity<>(form, headers), Map.class);
             return new LoginResponse(
                     (String) body.get("access_token"),
                     (String) body.get("refresh_token"),
