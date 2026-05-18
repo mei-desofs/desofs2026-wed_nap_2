@@ -124,12 +124,10 @@ jobs:
       # Run Security Tests
       - name: Run Security Tests
         run: ./mvnw -B test -Dgroups=security-tests
-        working-directory: Api
 
       # Run Smoke Tests
       - name: Run Smoke Tests
         run: ./mvnw -B test -Dgroups=smoke-tests
-        working-directory: Api
 
       - name: Cleanup
         if: always()
