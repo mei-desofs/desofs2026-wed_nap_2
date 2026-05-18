@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.1.5...v2.0.0) (2026-05-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* Change the version
+
+### Features
+
+* Change the version ([577160e](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/577160e0591e19972c62a4ec2c42d90fbf9a955c))
+
 ## [1.1.5](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.1.4...v1.1.5) (2026-05-18)
 
 
