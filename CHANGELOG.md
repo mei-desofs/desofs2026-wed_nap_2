@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.5](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.1.4...v1.1.5) (2026-05-18)
+
+
+### Bug Fixes
+
+* Correction of the KEYCLOAK_CLIENT_ID on the docker-compose.yml  API [#4](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/4) ([9b7a633](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/9b7a63383e444f1a35cd863e0f2b25a68b5e750f))
+* Correction of the KEYCLOAK_CLIENT_ID on the proprieties  API [#4](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/4) ([1d5fbfc](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/1d5fbfc51edd682a177dfe1b62c2296ccbd8bf76))
+
 ## [1.1.4](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.1.3...v1.1.4) (2026-05-18)
 
 
