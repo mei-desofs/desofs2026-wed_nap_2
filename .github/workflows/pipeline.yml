@@ -16,27 +16,34 @@ permissions:
 jobs:
   secret-scanning:
     uses: ./.github/workflows/secret-scanning.yml
+    secrets: inherit
 
   build:
     needs: secret-scanning
     uses: ./.github/workflows/build.yml
+    secrets: inherit
 
   sast-codeql:
     needs: build
     uses: ./.github/workflows/sast-codeql.yml
+    secrets: inherit
 
   code-quality:
     needs: build
     uses: ./.github/workflows/sast-code-quality.yml
+    secrets: inherit
 
   sca-dependency-check:
     needs: build
     uses: ./.github/workflows/sca-dependency-check.yml
+    secrets: inherit
 
   docker-dast:
     needs: [sast-codeql, code-quality, sca-dependency-check]
     uses: ./.github/workflows/build-docker-and-dast.yml
+    secrets: inherit
 
   security-tests:
     needs: docker-dast
     uses: ./.github/workflows/security-and-smoke-tests.yml
+    secrets: inherit
