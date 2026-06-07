@@ -45,17 +45,15 @@ jobs:
 
       - name: Move Checkstyle report
         if: always()
-        run: |
-          mkdir -p reports/code-quality
-          run: mv target/checkstyle-result.xml reports/code-quality/ || true
+        run: mv target/checkstyle-result.xml reports/code-quality/ || true
 
       # Runs SpotBugs static analysis (potential bugs, unsafe code and code smells)
       - name: Run SpotBugs
         run: ./mvnw -B spotbugs:spotbugs
- 
+
       - name: Upload code quality reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: report-code-quality
-          path: Api/reports/
+          path: reports/

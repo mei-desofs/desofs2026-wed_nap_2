@@ -61,7 +61,7 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
         with:
-          output: reports/codeql-results
+          output: Api/reports/codeql-results
 
       # Run SonarCloud analysis via Maven
       #- name: SonarCloud Analysis
