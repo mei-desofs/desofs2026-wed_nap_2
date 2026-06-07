@@ -29,7 +29,7 @@ jobs:
     uses: ./.github/workflows/sca-dependency-check.yml
 
   docker-dast:
-    needs: [sast-codeql, code-quality, sca]
+    needs: [sast-codeql, code-quality, sca-dependency-check]
     uses: ./.github/workflows/build-docker-and-dast.yml
 
   security-tests:
