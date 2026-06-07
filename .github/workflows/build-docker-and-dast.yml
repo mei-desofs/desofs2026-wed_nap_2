@@ -1,10 +1,9 @@
 name: Docker Build, Scan & DAST # Dynamic Application Security Testing (DAST)
 
 on:
-  workflow_run:
-    workflows: ["SAST - CodeQL"]
-    types:
-      - completed
+  workflow_call:
+
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,7 +15,6 @@ jobs:
   build-and-scan:
     name: Docker Build, Scan and DAST
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     defaults:
       run:

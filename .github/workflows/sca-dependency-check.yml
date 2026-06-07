@@ -1,10 +1,7 @@
 name: SCA - Dependency Check # Software Composition Analysis (SCA)
 
 on:
-  workflow_run:
-    workflows: ["Code Quality"]
-    types:
-      - completed
+  workflow_call:
 
   workflow_dispatch:
 
@@ -16,7 +13,6 @@ jobs:
   sca:
     name: OWASP Dependency Check
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     defaults:
       run:
