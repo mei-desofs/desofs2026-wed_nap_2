@@ -1,11 +1,10 @@
 name: SAST - CodeQL # Static Application Security Testing (SAST)
 
 on:
-  push:
-    branches: [ main, pipeline ]
-
-  pull_request:
-    branches: [ main, pipeline ]
+  workflow_run:
+    workflows: ["Build API and Test"]
+    types:
+      - completed
 
 permissions:
   contents: read
@@ -16,6 +15,7 @@ jobs:
   codeql:
     name: CodeQL Java Analysis
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     defaults:
       run:
@@ -25,6 +25,8 @@ jobs:
       # Get code from repository
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       # Install Java for GitHub runner
       - name: Setup Java
@@ -34,16 +36,24 @@ jobs:
           java-version: "21"
           cache: maven
 
+      # Cache SonarCloud packages to speed up future runs
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      # Create reports directory in workspace if it doesn't exist
+      - name: Create reports directory
+        run: mkdir -p reports
+
       # Start CodeQL analysis for Java
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
           languages: java
           queries: security-extended,security-and-quality
-
-      # Gives execution permissions to Maven wrapper
-      - name: Fix Maven wrapper permissions
-        run: chmod +x ./mvnw
 
       # Build project manually instead of using CodeQL autobuild
       - name: Build project for CodeQL
@@ -52,3 +62,30 @@ jobs:
       # Runs security queries and uploads results to GitHub
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
+        with:
+          output: reports/codeql-results
+
+      # Run SonarCloud analysis via Maven
+      #- name: SonarCloud Analysis
+      #  env:
+      #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #  run: |
+      #    ./mvnw -B verify sonar:sonar \
+      #      -DskipTests \
+      #      -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }} \
+      #      -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }} \
+      #      -Dsonar.host.url=https://sonarcloud.io \
+      #      -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+      #      -Dsonar.scanner.metadataFilePath=reports/sonar-report.json
+
+      # Upload all reports
+      - name: Upload all reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sast-reports
+          path: Api/reports/
+
+
+        ##Sonar Cloud
+        ##Search

@@ -1,11 +1,10 @@
 name: Docker Build, Scan & DAST # Dynamic Application Security Testing (DAST)
 
 on:
-  push:
-    branches: [ main, pipeline ]
-
-  pull_request:
-    branches: [ main, pipeline ]
+  workflow_run:
+    workflows: ["SAST - CodeQL"]
+    types:
+      - completed
 
 permissions:
   contents: read
@@ -17,6 +16,7 @@ jobs:
   build-and-scan:
     name: Docker Build, Scan and DAST
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     defaults:
       run:
@@ -65,6 +65,10 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # Create reports directory in workspace if it do
+      - name: Create reports directory
+        run: mkdir -p reports
+
       # Build Docker image
       - name: Build images
         run: docker compose build
@@ -97,11 +101,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y trivy
 
-      # Run Trivy scan
+      # Run Trivy scan - Tool used to find vulnerabilities and dependency issues in the built Docker image and generates a JSON report
       - name: Scan Docker image with Trivy
         run: |
           IMAGE=arcadehaven-api:latest
-          trivy image --format json --output trivy-report.json $IMAGE
+          trivy image --format json --output Api/reports/trivy-report.json $IMAGE
 
       # Upload Trivy report
       - name: Upload Trivy report
@@ -109,7 +113,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: trivy-report
-          path: Api/trivy-report.json
+          path: Api/reports/trivy-report.json
 
       # Start docker containers
       - name: Start containers
@@ -159,12 +163,19 @@ jobs:
           fail_action: false
           allow_issue_writing: false
           artifact_name: zap-report
+          report_html: Api/reports/zap-report.html
 
-      - name: Upload ZAP report
+      - name: OWASP ZAP API Scan (OpenAPI)
+        uses: zaproxy/action-api-scan@v0.8.0
+        with:
+          target: "http://localhost:8080/v3/api-docs"
+
+      - name: Upload all reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: zap-report
-          path: Api/target/report_html.html
+          name: security-reports
+          path: Api/reports/
 
       - name: Cleanup
         if: always()

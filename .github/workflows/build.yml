@@ -1,13 +1,10 @@
 name: Build API and Test
 
 on:
-  push:
-    branches: [ main, pipeline ]
-
-  pull_request:
-    branches: [ main, pipeline ]
-
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Secret Scanning"]
+    types:
+      - completed
 
 # Only allows github to read contents in repository
 permissions:
@@ -17,6 +14,7 @@ jobs:
   build-test:
     name: Build and Test API
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     # Defines folder where pipeline runs commands
     defaults:
@@ -69,6 +67,10 @@ jobs:
       - name: Fix Maven wrapper permissions
         run: chmod +x ./mvnw
 
+      # Create reports directory in workspace if it doesn't exist
+      - name: Create reports directory
+        run: mkdir -p reports
+
       # Cleans, builds, tests and packages project
       - name: Package project
         run: ./mvnw -B clean package
@@ -84,20 +86,15 @@ jobs:
       - name: Generate JaCoCo coverage report
         run: ./mvnw -B jacoco:report
 
-      - name: Upload JaCoCo coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-coverage-report
-          path: Api/target/site/jacoco/
-          retention-days: 30
+      - name: Move JaCoCo report into reports folder
+        run: |
+          mv Api/target/site/jacoco Api/reports/jacoco || true
 
       # Lists all dependencies in the project and respective information
       - name: Generate SBOM
         run: ./mvnw -B cyclonedx:makeAggregateBom
 
       #Uploads the generated SBOM as an artifact
-      - name: Upload SBOM (CycloneDX)
-        uses: actions/upload-artifact@v4
-        with:
-          name: sbom
-          path: Api/target/bom.*
+      - name: Move SBOM into reports folder
+        run: |
+          mv Api/target/bom.* Api/reports/sbom/ || true

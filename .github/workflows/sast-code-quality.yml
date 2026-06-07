@@ -1,11 +1,10 @@
-name: Code Quality - Maven Verify
+name: SAST - Code Quality
 
 on:
-  push:
-    branches: [ main, pipeline ]
-
-  pull_request:
-    branches: [ main, pipeline ]
+  workflow_run:
+    workflows: ["Build API and Test"]
+    types:
+      - completed
 
   workflow_dispatch:
 
@@ -17,6 +16,7 @@ jobs:
   code-quality:
     name: Code Quality and Code Smells
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     defaults:
       run:
@@ -39,17 +39,27 @@ jobs:
       - name: Fix Maven wrapper permissions
         run: chmod +x ./mvnw
 
+      # Create reports directory in workspace if it doesn't exist
+      - name: Create reports directory
+        run: mkdir -p reports
+
       # Runs Checkstyle static code analysis (formatting issues, naming issues and bad code style)
-      - name: Run Checkstyle
-        run: ./mvnw -B checkstyle:check
+      - name: Run Checkstyle (generate report)
+        run: ./mvnw -B checkstyle:checkstyle
+
+      - name: Move Checkstyle report
+        if: always()
+        run: |
+          mkdir -p Api/reports/code-quality
+          mv Api/target/checkstyle-result.xml Api/reports/code-quality/ || true
 
       # Runs SpotBugs static analysis (potential bugs, unsafe code and code smells)
       - name: Run SpotBugs
-        run: ./mvnw -B spotbugs:check
+        run: ./mvnw -B spotbugs:spotbugs
 
-      - name: Upload SpotBugs report
+      - name: Upload all reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: spotbugs-report
-          path: Api/target/spotbugsXml.xml
+          name: code-quality-reports
+          path: Api/reports/

@@ -1,11 +1,10 @@
 name: SCA - Dependency Check # Software Composition Analysis (SCA)
 
 on:
-  push:
-    branches: [ main, pipeline ]
-
-  pull_request:
-    branches: [ main, pipeline ]
+  workflow_run:
+    workflows: ["Code Quality"]
+    types:
+      - completed
 
   workflow_dispatch:
 
@@ -17,6 +16,7 @@ jobs:
   sca:
     name: OWASP Dependency Check
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     defaults:
       run:
@@ -35,6 +35,10 @@ jobs:
           java-version: "21"
           cache: maven
 
+      # Create reports directory in workspace if it doesn't exist
+      - name: Create reports directory
+        run: mkdir -p reports
+
       # Gives execution permissions to Maven wrapper
       - name: Fix Maven wrapper permissions
         run: chmod +x ./mvnw
@@ -52,11 +56,8 @@ jobs:
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
-      # Upload results to github actions
-      # Upload results to github actions
-      - name: Upload Dependency Check report
+      - name: Move Dependency Check report
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: dependency-check-report
-          path: Api/target/dependency-check-report.html
+        run: |
+          mkdir -p reports/sca
+          mv Api/target/dependency-check-report.html Api/reports/ || true
