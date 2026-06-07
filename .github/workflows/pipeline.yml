@@ -8,6 +8,11 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 jobs:
   secret-scanning:
     uses: ./.github/workflows/secret-scanning.yml
