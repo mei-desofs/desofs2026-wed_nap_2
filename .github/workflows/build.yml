@@ -67,7 +67,7 @@ jobs:
 
       # Create reports directory in workspace if it doesn't exist
       - name: Create reports directory
-        run: mkdir -p reports
+        run: mkdir -p reports/jacoco reports/sbom
 
       # Cleans, builds, tests and packages project
       - name: Package project
@@ -83,16 +83,20 @@ jobs:
       # Generate JaCoCo HTML coverage report (reads jacoco.exec produced by the test phase)
       - name: Generate JaCoCo coverage report
         run: ./mvnw -B jacoco:report
-
+ 
       - name: Move JaCoCo report into reports folder
-        run: |
-          mv target/site/jacoco reports/jacoco || true
+        run: mv target/site/jacoco reports/jacoco || true
 
       # Lists all dependencies in the project and respective information
       - name: Generate SBOM
         run: ./mvnw -B cyclonedx:makeAggregateBom
-
-      #Uploads the generated SBOM as an artifact
+ 
       - name: Move SBOM into reports folder
-        run: |
-          mv target/bom.* reports/sbom/ || true
+        run: mv target/bom.* reports/sbom/ || true
+
+      - name: Upload all reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-build-test
+          path: reports/

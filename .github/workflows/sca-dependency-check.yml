@@ -36,7 +36,7 @@ jobs:
 
       # Create reports directory in workspace if it doesn't exist
       - name: Create reports directory
-        run: mkdir -p reports
+        run: mkdir -p reports/sca
 
       # Gives execution permissions to Maven wrapper
       - name: Fix Maven wrapper permissions
@@ -57,6 +57,11 @@ jobs:
 
       - name: Move Dependency Check report
         if: always()
-        run: |
-          mkdir -p reports/sca
-          mv target/dependency-check-report.html reports/sca/ || true
+        run: mv target/dependency-check-report.html reports/sca/ || true
+ 
+      - name: Upload SCA reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-sca
+          path: reports/

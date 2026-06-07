@@ -37,7 +37,7 @@ jobs:
 
       # Create reports directory in workspace if it doesn't exist
       - name: Create reports directory
-        run: mkdir -p reports
+        run: mkdir -p reports/code-quality
 
       # Runs Checkstyle static code analysis (formatting issues, naming issues and bad code style)
       - name: Run Checkstyle (generate report)
@@ -47,15 +47,15 @@ jobs:
         if: always()
         run: |
           mkdir -p reports/code-quality
-          mv target/checkstyle-result.xml reports/code-quality/ || true
+          run: mv target/checkstyle-result.xml reports/code-quality/ || true
 
       # Runs SpotBugs static analysis (potential bugs, unsafe code and code smells)
       - name: Run SpotBugs
         run: ./mvnw -B spotbugs:spotbugs
-
-      - name: Upload all reports
+ 
+      - name: Upload code quality reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: code-quality-reports
+          name: report-code-quality
           path: reports/

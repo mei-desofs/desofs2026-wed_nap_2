@@ -68,7 +68,7 @@ jobs:
 
       # Create reports directory in workspace if it do
       - name: Create reports directory
-        run: mkdir -p reports
+        run: mkdir -p reports/trivy reports/zap
 
       # Build Docker image
       - name: Build images
@@ -106,15 +106,7 @@ jobs:
       - name: Scan Docker image with Trivy
         run: |
           IMAGE=arcadehaven-api:latest
-          trivy image --format json --output reports/trivy-report.json $IMAGE
-
-      # Upload Trivy report
-      - name: Upload Trivy report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-report
-          path: reports/trivy-report.json
+          trivy image --format json --output reports/trivy/trivy-report.json $IMAGE
 
       # Start docker containers
       - name: Start containers
@@ -163,19 +155,21 @@ jobs:
           target: "http://localhost:8080"
           fail_action: false
           allow_issue_writing: false
-          artifact_name: zap-report
-          report_html: reports/zap-report.html
+          artifact_name: zap-baseline-report
+          report_html: reports/zap/zap-baseline-report.html
 
       - name: OWASP ZAP API Scan (OpenAPI)
         uses: zaproxy/action-api-scan@v0.8.0
         with:
           target: "http://localhost:8080/v3/api-docs"
+          artifact_name: zap-api-report
+          report_html: reports/zap/zap-api-report.html
 
-      - name: Upload all reports
+      - name: Upload Docker and DAST reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: security-reports
+          name: report-docker-dast
           path: reports/
 
       - name: Cleanup
