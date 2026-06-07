@@ -18,6 +18,9 @@ jobs:
       run:
         working-directory: Api
 
+    env:
+      NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
     steps:
       # Get repository from github
       - name: Checkout repository
@@ -50,7 +53,7 @@ jobs:
       - name: Run OWASP Dependency Check
         run: ./mvnw -B org.owasp:dependency-check-maven:check -DossindexAnalyzerEnabled=false
         env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+          NVD_API_KEY: ${{ env.NVD_API_KEY }}
 
       - name: Move Dependency Check report
         if: always()
