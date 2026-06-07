@@ -59,4 +59,4 @@ jobs:
         if: always()
         run: |
           mkdir -p reports/sca
-          mv Api/target/dependency-check-report.html Api/reports/ || true
+          mv target/dependency-check-report.html reports/sca/ || true

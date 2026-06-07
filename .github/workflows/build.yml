@@ -86,7 +86,7 @@ jobs:
 
       - name: Move JaCoCo report into reports folder
         run: |
-          mv Api/target/site/jacoco Api/reports/jacoco || true
+          mv target/site/jacoco reports/jacoco || true
 
       # Lists all dependencies in the project and respective information
       - name: Generate SBOM
@@ -95,4 +95,4 @@ jobs:
       #Uploads the generated SBOM as an artifact
       - name: Move SBOM into reports folder
         run: |
-          mv Api/target/bom.* Api/reports/sbom/ || true
+          mv target/bom.* reports/sbom/ || true

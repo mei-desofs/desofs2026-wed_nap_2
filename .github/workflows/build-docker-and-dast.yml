@@ -106,7 +106,7 @@ jobs:
       - name: Scan Docker image with Trivy
         run: |
           IMAGE=arcadehaven-api:latest
-          trivy image --format json --output Api/reports/trivy-report.json $IMAGE
+          trivy image --format json --output reports/trivy-report.json $IMAGE
 
       # Upload Trivy report
       - name: Upload Trivy report
@@ -114,7 +114,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: trivy-report
-          path: Api/reports/trivy-report.json
+          path: reports/trivy-report.json
 
       # Start docker containers
       - name: Start containers
@@ -164,7 +164,7 @@ jobs:
           fail_action: false
           allow_issue_writing: false
           artifact_name: zap-report
-          report_html: Api/reports/zap-report.html
+          report_html: reports/zap-report.html
 
       - name: OWASP ZAP API Scan (OpenAPI)
         uses: zaproxy/action-api-scan@v0.8.0
@@ -176,7 +176,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: security-reports
-          path: Api/reports/
+          path: reports/
 
       - name: Cleanup
         if: always()
