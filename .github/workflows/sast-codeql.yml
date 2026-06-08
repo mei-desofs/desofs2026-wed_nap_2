@@ -79,7 +79,7 @@ jobs:
             -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }} \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.scanner.metadataFilePath=reports/sonar-report.json
+            -Dsonar.scanner.metadataFilePath=${{ github.workspace }}/Api/reports/sonar-report.json
 
       # Upload all reports
       - name: Upload all reports
