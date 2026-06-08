@@ -62,6 +62,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/**").hasRole("BUYER")
                         .requestMatchers("/api/library/**").hasRole("BUYER")
                         .requestMatchers("/api/profile/**").authenticated()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

@@ -1,11 +1,9 @@
 name: Docker Build, Scan & DAST # Dynamic Application Security Testing (DAST)
 
 on:
-  push:
-    branches: [ main, pipeline ]
+  workflow_call:
 
-  pull_request:
-    branches: [ main, pipeline ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -56,6 +54,9 @@ jobs:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
     steps:
       # Checkout repository
       - name: Checkout
@@ -64,6 +65,10 @@ jobs:
       # Set up Docker Buildx
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      # Create reports directory in workspace if it do
+      - name: Create reports directory
+        run: mkdir -p reports/trivy reports/zap
 
       # Build Docker image
       - name: Build images
@@ -78,8 +83,8 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
 
       # Scan Docker image for known vulnerabilities (CVEs) using Docker Scout
       - name: Docker Scout CVE scan
@@ -97,19 +102,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y trivy
 
-      # Run Trivy scan
+      # Run Trivy scan - Tool used to find vulnerabilities and dependency issues in the built Docker image and generates a JSON report
       - name: Scan Docker image with Trivy
         run: |
           IMAGE=arcadehaven-api:latest
-          trivy image --format json --output trivy-report.json $IMAGE
-
-      # Upload Trivy report
-      - name: Upload Trivy report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-report
-          path: Api/trivy-report.json
+          trivy image --format json --output reports/trivy/trivy-report.json $IMAGE
 
       # Start docker containers
       - name: Start containers
@@ -151,20 +148,46 @@ jobs:
 
           exit 1
 
-      # Run OWASP ZAP DAST scan
-      - name: OWASP ZAP Scan
-        uses: zaproxy/action-baseline@v0.14.0
-        with:
-          target: "http://localhost:8080"
-          fail_action: false
-          allow_issue_writing: false
-          artifact_name: zap-report
+      # Fix permissions so ZAP container can write reports
+      - name: Fix ZAP report directory permissions
+        run: |
+          mkdir -p ${{ github.workspace }}/Api/reports/zap
+          chmod 777 ${{ github.workspace }}/Api/reports/zap
 
-      - name: Upload ZAP report
+      # Run OWASP ZAP DAST scan
+      - name: OWASP ZAP Baseline Scan
+        run: |
+          docker run --network=host \
+            -v ${{ github.workspace }}/Api/reports/zap:/zap/wrk/:rw \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py \
+            -t http://localhost:8080 \
+            -J zap-baseline-report.json \
+            -w zap-baseline-report.md \
+            -r zap-baseline-report.html \
+            -I
+        continue-on-error: true
+
+      - name: OWASP ZAP API Scan (OpenAPI)
+        run: |
+          docker run --network=host \
+            -v ${{ github.workspace }}/Api/reports/zap:/zap/wrk/:rw \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-api-scan.py \
+            -t http://localhost:8080/v3/api-docs \
+            -f openapi \
+            -J zap-api-report.json \
+            -w zap-api-report.md \
+            -r zap-api-report.html \
+            -I
+        continue-on-error: true
+
+      - name: Upload Docker and DAST reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: zap-report
-          path: Api/target/report_html.html
+          name: report-docker-dast
+          path: Api/reports/
 
       - name: Cleanup
         if: always()

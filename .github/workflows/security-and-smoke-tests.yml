@@ -1,11 +1,9 @@
 name: Security Tests
 
 on:
-  push:
-    branches: [ main, pipeline ]
+  workflow_call:
 
-  pull_request:
-    branches: [ main, pipeline ]
+  workflow_dispatch:
 
 permissions:
   contents: read
