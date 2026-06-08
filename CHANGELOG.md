@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.0.1](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v2.0.0...v2.0.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* add individual workflow secrets inheritance in pipeline.yml ([df69b30](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/df69b30b9fe5ea3a249fe8f09513ca46b5006ea1))
+* add permissions to pipeline.yml ([aa78794](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/aa7879438c0211b06a985c5e7467c599a9dcb3d8))
+* add SonarCloud analysis to sast-codeql ([6aa3163](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/6aa3163db5ba563b8680c70426e542805dd48219))
+* build docker and dast OWASP Zap report path ([adb191c](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/adb191c24d51ecb17babb8a83eaeb1bd87662fc7))
+* environment variables inside .yml workflow files ([065cc40](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/065cc40c048c1e263a74b5fd9552323d65939c35))
+* identified errors in requirements and DFD's documentation ([6651e0e](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/6651e0eb53ba345b688e6b4478a35f07511437e0))
+* pipeline execution order ([27f77ed](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/27f77edb101c76a95c65cc362a77bf2ecbd034b1))
+* pipeline semantic error ([228e657](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/228e657ffc0fd01d06d8dcb397b45f3a60ce5c7a))
+* reports path for sast .yml workflows ([3ed00cb](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/3ed00cb2ceae1a0e53e2257215673d8fd9570469))
+* reports path in workflow .yml files ([f472ba5](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/f472ba53c195f93c559adaf9483962259b0bb46b))
+* reports upload folder and pipelines execution order ([35485a1](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/35485a1f23b7cd0933472e5c93c9b43448a8bb9a))
+* reports upload path ([2046aa9](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/2046aa9759b1cb3e597ba5fb90276f402474bc46))
+* reports upload path ([933c836](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/933c836f20d1070a591f21126ad2a08a6ca6f750))
+* reports upload path in sast-code-quality.yml ([fa47407](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/fa47407ba317a1c1e1b7b62e7bdb3c59e88b5a1b))
+* SonarCloud report path ([1e8beb9](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/1e8beb918fd1e4dcbf253e9d31c3d3a02d220859))
+* swagger endpoint permissions ([a642d99](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/a642d99e6971b7528b7ed2db167cc737e5f7a2ae))
+
 ## [2.0.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v1.1.5...v2.0.0) (2026-05-18)
 
 
