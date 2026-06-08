@@ -63,11 +63,6 @@ jobs:
         with:
           output: Api/reports/codeql-results
 
-      - name: Debug env
-        run: |
-          echo "DB URL: $SPRING_DATASOURCE_URL"
-          docker compose config
-
       # Run SonarCloud analysis via Maven
       - name: SonarCloud Analysis
         env:
