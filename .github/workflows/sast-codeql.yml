@@ -63,18 +63,23 @@ jobs:
         with:
           output: Api/reports/codeql-results
 
+      - name: Debug env
+        run: |
+          echo "DB URL: $SPRING_DATASOURCE_URL"
+          docker compose config
+
       # Run SonarCloud analysis via Maven
-      #- name: SonarCloud Analysis
-      #  env:
-      #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #  run: |
-      #    ./mvnw -B verify sonar:sonar \
-      #      -DskipTests \
-      #      -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }} \
-      #      -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }} \
-      #      -Dsonar.host.url=https://sonarcloud.io \
-      #      -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-      #      -Dsonar.scanner.metadataFilePath=reports/sonar-report.json
+      - name: SonarCloud Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          ./mvnw -B verify sonar:sonar \
+            -DskipTests \
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }} \
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }} \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.scanner.metadataFilePath=reports/sonar-report.json
 
       # Upload all reports
       - name: Upload all reports
