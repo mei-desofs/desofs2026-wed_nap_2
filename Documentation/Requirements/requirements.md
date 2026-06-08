@@ -19,7 +19,7 @@
 
 | **Level**     | **Description**                                                                                          |
 | ------------- | -------------------------------------------------------------------------------------------------------- |
-| **Low**       | Requirement with minimal impact. Can be implemented later without affecting core system functionalities. |
+| **Low**       | Requirement with minimal impact. Can be implemented without affecting core system functionalities. |
 | **Medium**    | Important requirement, but not critical for the initial release.                                       |
 | **High**      | Significant requirement that strongly improves system functionality or user experience.                |
 | **Essential** | Critical requirement for system operation. Must be implemented for the system to function properly.    |
@@ -60,7 +60,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 | ---------------- | ----------------------------------------------------- |
 | **ID**           | RF-02                                                 |
 | **Name**         | User Authentication                                   |
-| **Description**  | The system must authenticate users via JWT tokens.    |
+| **Description**  | The system must allow users authenticate through keycloak and issue JWT tokens for authenticated sessions.   |
 | **Actors**       | User                                                  |
 | **Restrictions** | User must be registed in the system                   |
 | **Verification** | Validate user credentials                             |
@@ -336,7 +336,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 | ---------------- |---------------------------------------------------------------------------------|
 | **ID**           | RF-23                                                                           |
 | **Name**         | Import a Game Key                                                               |
-| **Description**  | The system must allow the user to import a game key and activate a game with it |
+| **Description**  | The system must allow the user to import a game key and activate a game with it. |
 | **Actors**       | System                                                                          |
 | **Restrictions** |                                                                                 |
 | **Verification** | Validate activation key                                                         |
@@ -510,7 +510,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 | ---------------- | ---------------------------------------------- |
 | **ID**           | RNF-01                                         |
 | **Name**         | Password Storage                               |
-| **Description**  | Passwords must be stored using BCrypt hashing. |
+| **Description**  | User passwords mut be securely stored and managed by Keycloack service using cryptographic hashing methods. |
 | **Actors**       | System                                         |
 | **Restrictions** | None                                           |
 | **Verification** | Validate password hashing                      |
@@ -523,7 +523,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 | ---------------- | ------------------------------------------------------------------------ |
 | **ID**           | RNF-02                                                                   |
 | **Name**         | JWT Authentication                                                       |
-| **Description**  | Authentication must be performed using JWT token.                        |
+| **Description**  | Authenticated sessions must use signed tokens provided by Keycload service.                        |
 | **Actors**       | System                                                                   |
 | **Restrictions** | Token expiration must be configurable                                    |
 | **Verification** | Validate token generation                                                |
@@ -536,7 +536,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 | ---------------- | ------------------------------------------------------------------------------------------------------------- |
 | **ID**           | RNF-03                                                                                                        |
 | **Name**         | Token Revocation and Short Lifetime                                                                           |
-| **Description**  | Authentication tokens must use short expiration times and support invalidation after logout and role changes. |
+| **Description**  | Signed tokens must be configured with short expiration times and support invalidation after logout and role changes. |
 | **Actors**       | System                                                                                                        |
 | **Restrictions** | Logout and role changes must invalidate tokens                                                                |
 | **Verification** | Validate token expiration                                                                                     |
@@ -550,7 +550,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 | ---------------- | -------------------------------------------------------------------------- |
 | **ID**           | RNF-04                                                                     |
 | **Name**         | Endpoint Authentication                                                    |
-| **Description**  | All endpoints (except registration and login) must require authentication. |
+| **Description**  | All endpoints (except registration and login) must require a valid autheticated user session token. |
 | **Actors**       | System                                                                     |
 | **Restrictions** | None                                                                       |
 | **Verification** | Validate authentication enforcement                                        |
@@ -576,7 +576,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 | ---------------- | --------------------------------------------------------------------------------------- |
 | **ID**           | RNF-06                                                                                  |
 | **Name**         | Security Alerting                                                                       |
-| **Description**  | The system must generate alerts for failed logins and unauthorized access to resources. |
+| **Description**  | The system must generate alerts for failed login attempts and unauthorized access to resources. |
 | **Actors**       | System                                                                                  |
 | **Restrictions** | Alerts must be configurable                                                             |
 | **Verification** | Validate alert generated for high and critical events                                   |
@@ -589,7 +589,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 | ---------------- | ---------------------------------------------------------------------------------------------------------- |
 | **ID**           | RNF-07                                                                                                     |
 | **Name**         | Ownership Validation                                                                                       |
-| **Description**  | Access to user-specific resources must be restricted to authenticated owner or authorized administrators.  |
+| **Description**  | Access to user-specific resources must be restricted to authenticated owners or authorized administrators.  |
 | **Actors**       | System                                                                                                     |
 | **Restrictions** | None                                                                                                       |
 | **Verification** | Validate user identity and authorizations                                                                  |
@@ -642,7 +642,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 | ---------------- | ------------------------------------------------------------------------------------- |
 | **ID**           | RNF-11                                                                                |
 | **Name**         | External Data Sanitization                                                            |
-| **Description**  | Data received from external integrations validated and sanitized before presentation. |
+| **Description**  | Data received from external integrations must be validated and sanitized before presentation. |
 | **Actors**       | System                                                                                |
 | **Restrictions** | None                                                                                  |
 | **Verification** | Validate data validation and sanatization                                             |
@@ -695,7 +695,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 | ---------------- | -------------------------------------------------------------------- |
 | **ID**           | RNF-15                                                               |
 | **Name**         | Activation Key Generation                                            |
-| **Description**  | Activation keys must be generated securely using UUID or equivalent. |
+| **Description**  | Activation keys must be generated securely using UUID or equivalent cryptographic mechanisms. |
 | **Actors**       | System                                                               |
 | **Restrictions** | None                                                                 |
 | **Verification** | Validate activation key generation                                   |
@@ -708,7 +708,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 | ---------------- | ------------------------------------------------------------------------------------------- |
 | **ID**           | RNF-16                                                                                      |
 | **Name**         | Brute Force Protection                                                                      |
-| **Description**  | The system must protect against brute force attacks using rate limiting on login endpoints. |
+| **Description**  | The system must protect against brute force attacks using rate limiting. |
 | **Actors**       | System                                                                                      |
 | **Restrictions** | None                                                                                        |
 | **Verification** | Validate rate limiting                                                                      |
