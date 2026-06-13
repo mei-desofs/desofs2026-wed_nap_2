@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Logback configuration — ArcadeHaven
+  ASVS V16.4.2: log files created inside /app/logs (owned by appuser:appgroup, chmod 750)
+                via Dockerfile; no world-readable permissions.
+  ASVS V16.5.2: dual-destination logging (CONSOLE + FILE) ensures at least one destination
+                remains available if the other fails. Logback suppresses internal errors
+                silently so the application continues operating even if file I/O fails.
+-->
+<configuration>
+
+    <!-- ── Console appender (last-resort fallback if file appender fails) ── -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %-5level [%thread] %logger{40} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── Rolling file appender (primary destination) ─────────────────── -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/arcadehaven.log</file>
+        <!--
+          prudent=true uses file-locking for safe concurrent writes.
+          If the file cannot be opened/written, Logback logs the error once
+          to stderr and continues — the application does NOT crash (V16.5.2).
+        -->
+        <prudent>true</prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Daily rollover; keep 30 days of history (V16.4.2 retention) -->
+            <fileNamePattern>logs/arcadehaven.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <!-- Hard cap so a log explosion cannot fill the disk -->
+            <totalSizeCap>500MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %-5level [%thread] %logger{40} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── Security audit logger (SECURITY_AUDIT named logger) ─────────── -->
+    <!--
+      additivity=false prevents audit lines from being duplicated in the root
+      logger's appenders. All audit JSON lines go to both CONSOLE and FILE.
+    -->
+    <logger name="SECURITY_AUDIT" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- ── Application loggers ──────────────────────────────────────────── -->
+    <logger name="isep.desosfs.arcadehaven" level="INFO"/>
+
+    <!-- Reduce noise from framework internals -->
+    <logger name="org.springframework.security"        level="WARN"/>
+    <logger name="org.hibernate"                       level="WARN"/>
+    <logger name="org.flywaydb"                        level="INFO"/>
+    <logger name="com.zaxxer.hikari"                   level="WARN"/>
+    <logger name="net.schmizz"                         level="WARN"/>
+
+    <!-- ── Root logger ──────────────────────────────────────────────────── -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>

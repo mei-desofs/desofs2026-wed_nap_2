@@ -18,7 +18,10 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 COPY --from=builder /build/target/*.jar app.jar
 
-RUN mkdir -p /app/storage && chown -R appuser:appgroup /app
+# Create storage and log directories; restrict log dir to appuser only (V16.4.2)
+RUN mkdir -p /app/storage /app/logs \
+    && chown -R appuser:appgroup /app \
+    && chmod 750 /app/logs
 
 USER appuser
 

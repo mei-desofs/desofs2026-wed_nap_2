@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 /**
  * Records structured security events and fires alerts when per-IP failure
@@ -29,6 +30,12 @@ public class SecurityAuditService {
 
     private static final int ALERT_THRESHOLD = 10;
     private static final long WINDOW_SECONDS = 60;
+
+    // V16.2.5 — patterns for automatic sensitive-value redaction in log output
+    private static final Pattern JWT_PATTERN =
+            Pattern.compile("eyJ[A-Za-z0-9+/\\-_]+=*\\.[A-Za-z0-9+/\\-_]+=*\\.[A-Za-z0-9+/\\-_]+=*");
+    private static final Pattern ACTIVATION_KEY_PATTERN =
+            Pattern.compile("\\b[A-F0-9]{32}\\b");
 
     private final ConcurrentHashMap<String, IpWindow> windows = new ConcurrentHashMap<>();
 
@@ -122,14 +129,17 @@ public class SecurityAuditService {
     }
 
     /**
-     * Strips CR, LF and TAB from log values to prevent log-injection (ASVS V16.4.1).
-     * Also escapes double-quotes to preserve JSON structure.
+     * Strips CR, LF and TAB (V16.4.1) and redacts JWT tokens and 32-char hex
+     * activation keys before embedding any value in a JSON log line (V16.2.5).
      */
     static String sanitize(String value) {
         if (value == null) {
             return "";
         }
-        return value.replace("\r", "").replace("\n", "").replace("\t", "").replace("\"", "'");
+        String v = value.replace("\r", "").replace("\n", "").replace("\t", "").replace("\"", "'");
+        v = JWT_PATTERN.matcher(v).replaceAll("[JWT_REDACTED]");
+        v = ACTIVATION_KEY_PATTERN.matcher(v).replaceAll("[KEY_REDACTED]");
+        return v;
     }
 
     /**
