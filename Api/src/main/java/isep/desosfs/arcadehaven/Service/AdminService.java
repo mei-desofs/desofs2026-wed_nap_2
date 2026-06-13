@@ -8,6 +8,9 @@ import isep.desosfs.arcadehaven.Dto.Response.UserResponse;
 import isep.desosfs.arcadehaven.Exception.ResourceNotFoundException;
 import isep.desosfs.arcadehaven.Repository.LibraryRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
+import isep.desosfs.arcadehaven.Security.SecurityAuditService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,10 +22,13 @@ public class AdminService {
 
     private final UserRepository userRepository;
     private final LibraryRepository libraryRepository;
+    private final SecurityAuditService auditService;
 
-    public AdminService(UserRepository userRepository, LibraryRepository libraryRepository) {
+    public AdminService(UserRepository userRepository, LibraryRepository libraryRepository,
+            SecurityAuditService auditService) {
         this.userRepository = userRepository;
         this.libraryRepository = libraryRepository;
+        this.auditService = auditService;
     }
 
     public List<UserResponse> getAllUsers() {
@@ -37,21 +43,27 @@ public class AdminService {
     public UserResponse deactivateUser(UUID id) {
         User user = findUser(id);
         user.deactivate();
-        return UserResponse.from(userRepository.save(user));
+        UserResponse result = UserResponse.from(userRepository.save(user));
+        auditService.recordAdminAction(currentAdminUsername(), "DEACTIVATE_USER", id.toString());
+        return result;
     }
 
     @Transactional
     public UserResponse activateUser(UUID id) {
         User user = findUser(id);
         user.activate();
-        return UserResponse.from(userRepository.save(user));
+        UserResponse result = UserResponse.from(userRepository.save(user));
+        auditService.recordAdminAction(currentAdminUsername(), "ACTIVATE_USER", id.toString());
+        return result;
     }
 
     @Transactional
     public UserResponse changeUserRole(UUID id, Role role) {
         User user = findUser(id);
         user.changeRole(role);
-        return UserResponse.from(userRepository.save(user));
+        UserResponse result = UserResponse.from(userRepository.save(user));
+        auditService.recordAdminAction(currentAdminUsername(), "CHANGE_ROLE:" + role.name(), id.toString());
+        return result;
     }
 
     // RF-30: Suspend a library entry (admin revokes access to a specific game)
@@ -61,6 +73,8 @@ public class AdminService {
         LibraryEntry entry = findEntry(library, entryId);
         entry.suspend();
         libraryRepository.save(library);
+        auditService.recordAdminAction(currentAdminUsername(), "SUSPEND_LIBRARY_ENTRY",
+                "user=" + userId + ",entry=" + entryId);
     }
 
     // RF-30: Revoke a library entry (admin permanently removes the game from the library)
@@ -70,6 +84,13 @@ public class AdminService {
         LibraryEntry entry = findEntry(library, entryId);
         entry.refund();
         libraryRepository.save(library);
+        auditService.recordAdminAction(currentAdminUsername(), "REVOKE_LIBRARY_ENTRY",
+                "user=" + userId + ",entry=" + entryId);
+    }
+
+    private String currentAdminUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (auth != null && auth.getName() != null) ? auth.getName() : "system";
     }
 
     private User findUser(UUID id) {

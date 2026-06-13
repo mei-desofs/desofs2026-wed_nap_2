@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(h -> h
-                        // HSTS max-age ≥ 1 year; sent on all requests (proxy terminates TLS)
+                        // HSTS max-age >= 1 year; sent on all requests (proxy terminates TLS)
                         .httpStrictTransportSecurity(hsts -> hsts
                                 .includeSubDomains(true)
                                 .maxAgeInSeconds(31_536_000)
@@ -51,9 +51,11 @@ public class SecurityConfig {
                         // Prevent caching of sensitive responses in browsers and intermediaries
                         .cacheControl(Customizer.withDefaults())
                 )
-                //CORS restricted to explicit origin allowlist
+                // CORS restricted to explicit origin allowlist
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        // ASVS V13.4.4 — deny HTTP TRACE on all paths (prevents Cross-Site Tracing)
+                        .requestMatchers(HttpMethod.TRACE, "/**").denyAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/games/**").permitAll()
@@ -62,6 +64,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/**").hasRole("BUYER")
                         .requestMatchers("/api/library/**").hasRole("BUYER")
                         .requestMatchers("/api/profile/**").authenticated()
+                        // ASVS V13.4.5 — API docs require authentication (not public in production)
+                        .requestMatchers("/v3/api-docs/**").authenticated()
+                        .requestMatchers("/swagger-ui/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

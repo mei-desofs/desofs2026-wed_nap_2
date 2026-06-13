@@ -25,6 +25,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -59,12 +60,17 @@ public class GlobalExceptionHandler {
     // ── 400 ──────────────────────────────────────────────────────────────────
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex,
+            HttpServletRequest request) {
         Map<String, String> fieldErrors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String field = ((FieldError) error).getField();
             fieldErrors.put(field, error.getDefaultMessage());
         });
+        // Log as security event so validation probing is visible in the audit log (ASVS V16.3.3)
+        String details = fieldErrors.keySet().stream().sorted().collect(Collectors.joining(","));
+        auditService.recordValidationFailure(resolveIp(request), request.getRequestURI(), details);
+
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", HttpStatus.BAD_REQUEST.value());
@@ -74,12 +80,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException ex) {
+    public ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException ex,
+            HttpServletRequest request) {
         Map<String, String> fieldErrors = new HashMap<>();
         ex.getConstraintViolations().forEach(cv -> {
             String field = cv.getPropertyPath().toString();
             fieldErrors.put(field, cv.getMessage());
         });
+        String details = fieldErrors.keySet().stream().sorted().collect(Collectors.joining(","));
+        auditService.recordValidationFailure(resolveIp(request), request.getRequestURI(), details);
+
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", HttpStatus.BAD_REQUEST.value());

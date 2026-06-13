@@ -136,8 +136,10 @@ public class GlobalExceptionHandlerTest {
         MethodArgumentNotValidException ex =
                 new MethodArgumentNotValidException(null, bindingResult);
 
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
         ResponseEntity<Map<String, Object>> response =
-                handler.handleValidation(ex);
+                handler.handleValidation(ex, request);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
@@ -162,9 +164,10 @@ public class GlobalExceptionHandlerTest {
     @Test
     void shouldHandleConstraintViolation() {
         ConstraintViolationException ex = new ConstraintViolationException(Set.of());
+        HttpServletRequest request = mock(HttpServletRequest.class);
 
         ResponseEntity<Map<String, Object>> response =
-                handler.handleConstraintViolation(ex);
+                handler.handleConstraintViolation(ex, request);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Validation failed", response.getBody().get("error"));

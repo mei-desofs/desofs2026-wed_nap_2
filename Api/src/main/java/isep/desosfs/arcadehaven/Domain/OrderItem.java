@@ -31,10 +31,30 @@ public class OrderItem {
     protected OrderItem() {}
 
     public static OrderItem of(Game game, BigDecimal price) {
+        validatePrice(price);
+
         OrderItem item = new OrderItem();
         item.game = game;
         item.price = price;
         return item;
+    }
+
+    private static void validatePrice(BigDecimal price) {
+        if (price == null) {
+            throw new IllegalArgumentException("Price cannot be null");
+        }
+
+        if (price.scale() > 2) {
+            throw new IllegalArgumentException("A maximum of 2 decimal places allowed");
+        }
+
+        if (price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Price must be above 0");
+        }
+
+        if (price.compareTo(new BigDecimal("999999.99")) > 0) {
+            throw new IllegalArgumentException("Price cannot be larger than 999999.99");
+        }
     }
 
     public void generateActivationKey() {
