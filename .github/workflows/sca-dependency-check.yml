@@ -1,11 +1,7 @@
 name: SCA - Dependency Check # Software Composition Analysis (SCA)
 
 on:
-  push:
-    branches: [ main, pipeline ]
-
-  pull_request:
-    branches: [ main, pipeline ]
+  workflow_call:
 
   workflow_dispatch:
 
@@ -22,6 +18,9 @@ jobs:
       run:
         working-directory: Api
 
+    env:
+      NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
     steps:
       # Get repository from github
       - name: Checkout repository
@@ -34,6 +33,10 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
+
+      # Create reports directory in workspace if it doesn't exist
+      - name: Create reports directory
+        run: mkdir -p reports/sca
 
       # Gives execution permissions to Maven wrapper
       - name: Fix Maven wrapper permissions
@@ -50,13 +53,15 @@ jobs:
       - name: Run OWASP Dependency Check
         run: ./mvnw -B org.owasp:dependency-check-maven:check -DossindexAnalyzerEnabled=false
         env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+          NVD_API_KEY: ${{ env.NVD_API_KEY }}
 
-      # Upload results to github actions
-      # Upload results to github actions
-      - name: Upload Dependency Check report
+      - name: Move Dependency Check report
+        if: always()
+        run: mv target/dependency-check-report.html reports/sca/ || true
+ 
+      - name: Upload SCA reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dependency-check-report
-          path: Api/target/dependency-check-report.html
+          name: report-sca
+          path: Api/reports/
