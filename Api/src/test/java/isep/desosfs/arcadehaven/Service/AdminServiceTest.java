@@ -32,6 +32,7 @@ import isep.desosfs.arcadehaven.Dto.Response.UserResponse;
 import isep.desosfs.arcadehaven.Exception.ResourceNotFoundException;
 import isep.desosfs.arcadehaven.Repository.LibraryRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
+import isep.desosfs.arcadehaven.Security.SecurityAuditService;
 
 @ExtendWith(MockitoExtension.class)
 public class AdminServiceTest {
@@ -40,6 +41,9 @@ public class AdminServiceTest {
 
     @Mock
     private LibraryRepository libraryRepository;
+
+    @Mock
+    private SecurityAuditService securityAuditService;
 
     @InjectMocks
     private AdminService adminService;

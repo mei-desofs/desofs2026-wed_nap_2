@@ -10,6 +10,7 @@ import isep.desosfs.arcadehaven.Dto.Response.RegisterResponse;
 import isep.desosfs.arcadehaven.Exception.BusinessException;
 import isep.desosfs.arcadehaven.Repository.LibraryRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
+import isep.desosfs.arcadehaven.Security.SecurityAuditService;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
@@ -45,6 +46,7 @@ public class AuthService {
     private final Keycloak keycloak;
     private final PasswordPolicyService passwordPolicyService;
     private final RestTemplate restTemplate;
+    private final SecurityAuditService auditService;
 
     @Value("${keycloak.realm}")
     private String realm;
@@ -57,12 +59,13 @@ public class AuthService {
 
     public AuthService(UserRepository userRepository, LibraryRepository libraryRepository,
                        Keycloak keycloak, PasswordPolicyService passwordPolicyService,
-                       RestTemplate restTemplate) {
+                       RestTemplate restTemplate, SecurityAuditService auditService) {
         this.userRepository = userRepository;
         this.libraryRepository = libraryRepository;
         this.keycloak = keycloak;
         this.passwordPolicyService = passwordPolicyService;
         this.restTemplate = restTemplate;
+        this.auditService = auditService;
     }
 
     public LoginResponse login(LoginRequest request) {
@@ -81,6 +84,8 @@ public class AuthService {
             @SuppressWarnings("unchecked")
             Map<String, Object> body = restTemplate.postForObject(
                     tokenUrl, new HttpEntity<>(form, headers), Map.class);
+            // ASVS V16.3.1 — log successful authentications
+            auditService.recordLoginSuccess(request.username());
             return new LoginResponse(
                     (String) body.get("access_token"),
                     (String) body.get("refresh_token"),
@@ -121,6 +126,8 @@ public class AuthService {
 
         libraryRepository.save(Library.create(user));
 
+        // ASVS V16.3.1 — log successful registrations
+        auditService.recordRegistrationSuccess(request.username());
         return new RegisterResponse(user.getUsername(), user.getRole().name());
     }
 

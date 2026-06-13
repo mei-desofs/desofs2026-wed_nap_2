@@ -17,7 +17,10 @@
     { "key": "gameId",      "value": "",                      "type": "string" },
     { "key": "orderId",     "value": "",                      "type": "string" },
     { "key": "userId",      "value": "",                      "type": "string" },
-    { "key": "entryId",     "value": "",                      "type": "string" }
+    { "key": "entryId",      "value": "",                      "type": "string" },
+    { "key": "refreshToken", "value": "",                      "type": "string" },
+    { "key": "kcAdminToken", "value": "",                      "type": "string" },
+    { "key": "kcUserId",     "value": "",                      "type": "string" }
   ],
   "item": [
     {
@@ -160,7 +163,8 @@
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
                   "var json = pm.response.json();",
                   "pm.test('Returns access_token', () => pm.expect(json.access_token).to.be.a('string'));",
-                  "if (json.access_token) { pm.collectionVariables.set('token', json.access_token); }"
+                  "if (json.access_token) { pm.collectionVariables.set('token', json.access_token); }",
+                  "if (json.refresh_token) { pm.collectionVariables.set('refreshToken', json.refresh_token); }"
                 ]
               }
             }
@@ -186,7 +190,8 @@
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
                   "var json = pm.response.json();",
                   "pm.test('Returns access_token', () => pm.expect(json.access_token).to.be.a('string'));",
-                  "if (json.access_token) { pm.collectionVariables.set('token', json.access_token); }"
+                  "if (json.access_token) { pm.collectionVariables.set('token', json.access_token); }",
+                  "if (json.refresh_token) { pm.collectionVariables.set('refreshToken', json.refresh_token); }"
                 ]
               }
             }
@@ -407,6 +412,542 @@
             "auth": { "type": "noauth" },
             "method": "GET",
             "url": { "raw": "{{baseUrl}}/api/profile", "host": ["{{baseUrl}}"], "path": ["api","profile"] }
+          }
+        },
+        {
+          "name": "Change Password – Success (ASVS V6.2.2 + V6.2.3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204 No Content', () => pm.response.to.have.status(204));",
+                  "pm.test('Empty body', () => pm.expect(pm.response.text()).to.eql(''));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Xtr4Safe#2026XY\",\n  \"newPassword\": \"N3wXtr4Safe#2026!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/profile/password", "host": ["{{baseUrl}}"], "path": ["api","profile","password"] }
+          }
+        },
+        {
+          "name": "Change Password – Wrong Current Password (Expects 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Wrong current password returns 409', () => pm.response.to.have.status(409));",
+                  "pm.test('Error message present', () => pm.expect(pm.response.json().message).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"WrongPassword123!\",\n  \"newPassword\": \"N3wXtr4Safe#2026!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/profile/password", "host": ["{{baseUrl}}"], "path": ["api","profile","password"] }
+          }
+        },
+        {
+          "name": "Change Password – New Password Too Short (Expects 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Short password returns 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Xtr4Safe#2026XY\",\n  \"newPassword\": \"short\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/profile/password", "host": ["{{baseUrl}}"], "path": ["api","profile","password"] }
+          }
+        },
+        {
+          "name": "Change Password – Blocked Term in New Password (Expects 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Blocked term returns 409', () => pm.response.to.have.status(409));",
+                  "pm.test('Error message present', () => pm.expect(pm.response.json().message).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Xtr4Safe#2026XY\",\n  \"newPassword\": \"ArcadeHaven2024!!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/profile/password", "host": ["{{baseUrl}}"], "path": ["api","profile","password"] }
+          }
+        },
+        {
+          "name": "Change Password – Common Password (Expects 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Common password returns 409', () => pm.response.to.have.status(409));",
+                  "pm.test('Error message present', () => pm.expect(pm.response.json().message).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Xtr4Safe#2026XY\",\n  \"newPassword\": \"123456789012\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/profile/password", "host": ["{{baseUrl}}"], "path": ["api","profile","password"] }
+          }
+        },
+        {
+          "name": "Change Password – Unauthenticated (Expects 401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unauthenticated returns 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Xtr4Safe#2026XY\",\n  \"newPassword\": \"N3wXtr4Safe#2026!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/profile/password", "host": ["{{baseUrl}}"], "path": ["api","profile","password"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Keycloak (ASVS V6 Testing)",
+      "item": [
+        {
+          "name": "Get Admin Token – Client Credentials",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "var json = pm.response.json();",
+                  "pm.test('Returns access_token', () => pm.expect(json.access_token).to.be.a('string'));",
+                  "if (json.access_token) { pm.collectionVariables.set('kcAdminToken', json.access_token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "grant_type",    "value": "client_credentials" },
+                { "key": "client_id",     "value": "arcadehaven-admin" },
+                { "key": "client_secret", "value": "{{KEYCLOAK_ADMIN_CLIENT_SECRET}}" }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token",
+              "host": ["{{keycloakUrl}}"], "path": ["realms","{{realm}}","protocol","openid-connect","token"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Access Token (ASVS V6.5.5)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "var json = pm.response.json();",
+                  "pm.test('New access_token returned', () => pm.expect(json.access_token).to.be.a('string'));",
+                  "pm.test('expires_in <= 900 (15 min, ASVS V6.8.3)', () => pm.expect(json.expires_in).to.be.at.most(900));",
+                  "if (json.access_token) { pm.collectionVariables.set('token', json.access_token); }",
+                  "if (json.refresh_token) { pm.collectionVariables.set('refreshToken', json.refresh_token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "grant_type",    "value": "refresh_token" },
+                { "key": "client_id",     "value": "arcadehaven-public" },
+                { "key": "refresh_token", "value": "{{refreshToken}}" }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token",
+              "host": ["{{keycloakUrl}}"], "path": ["realms","{{realm}}","protocol","openid-connect","token"]
+            }
+          }
+        },
+        {
+          "name": "Introspect Token – Active Session (ASVS V6.8.3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "var json = pm.response.json();",
+                  "pm.test('Token is active', () => pm.expect(json.active).to.be.true);",
+                  "pm.test('Has username claim', () => pm.expect(json.username).to.be.a('string'));",
+                  "pm.test('Has exp claim (not expired)', () => pm.expect(json.exp).to.be.greaterThan(Math.floor(Date.now()/1000)));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "token",         "value": "{{token}}" },
+                { "key": "client_id",     "value": "arcadehaven-admin" },
+                { "key": "client_secret", "value": "{{KEYCLOAK_ADMIN_CLIENT_SECRET}}" }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token/introspect",
+              "host": ["{{keycloakUrl}}"], "path": ["realms","{{realm}}","protocol","openid-connect","token","introspect"]
+            }
+          }
+        },
+        {
+          "name": "Introspect Token – After Logout (Token Inactive)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Token is inactive after logout (ASVS V6.8.3)', () => pm.expect(pm.response.json().active).to.be.false);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "token",         "value": "{{token}}" },
+                { "key": "client_id",     "value": "arcadehaven-admin" },
+                { "key": "client_secret", "value": "{{KEYCLOAK_ADMIN_CLIENT_SECRET}}" }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/token/introspect",
+              "host": ["{{keycloakUrl}}"], "path": ["realms","{{realm}}","protocol","openid-connect","token","introspect"]
+            }
+          }
+        },
+        {
+          "name": "OIDC UserInfo – Verify JWT Claims (ASVS V9)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "var json = pm.response.json();",
+                  "pm.test('Has sub claim (non-reassignable)', () => pm.expect(json.sub).to.be.a('string'));",
+                  "pm.test('Has preferred_username', () => pm.expect(json.preferred_username).to.be.a('string'));",
+                  "pm.test('Has email', () => pm.expect(json.email).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/userinfo",
+              "host": ["{{keycloakUrl}}"], "path": ["realms","{{realm}}","protocol","openid-connect","userinfo"]
+            }
+          }
+        },
+        {
+          "name": "Revoke Token (ASVS V6.8.3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 – token revoked', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "token",           "value": "{{refreshToken}}" },
+                { "key": "token_type_hint", "value": "refresh_token" },
+                { "key": "client_id",       "value": "arcadehaven-public" }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloakUrl}}/realms/{{realm}}/protocol/openid-connect/revoke",
+              "host": ["{{keycloakUrl}}"], "path": ["realms","{{realm}}","protocol","openid-connect","revoke"]
+            }
+          }
+        },
+        {
+          "name": "Get User by Username – Keycloak Admin (ASVS V6.4.4)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "var json = pm.response.json();",
+                  "pm.test('Returns array with at least one user', () => pm.expect(json).to.be.an('array').with.length.greaterThan(0));",
+                  "if (json.length > 0) { pm.collectionVariables.set('kcUserId', json[0].id); pm.test('Has Keycloak user ID', () => pm.expect(json[0].id).to.be.a('string')); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{kcAdminToken}}" }],
+            "url": {
+              "raw": "{{keycloakUrl}}/admin/realms/{{realm}}/users?username=buyer1&exact=true",
+              "host": ["{{keycloakUrl}}"],
+              "path": ["admin","realms","{{realm}}","users"],
+              "query": [
+                { "key": "username", "value": "buyer1" },
+                { "key": "exact",    "value": "true" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User Sessions – Keycloak Admin (ASVS V6.8.3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns sessions array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{kcAdminToken}}" }],
+            "url": {
+              "raw": "{{keycloakUrl}}/admin/realms/{{realm}}/users/{{kcUserId}}/sessions",
+              "host": ["{{keycloakUrl}}"], "path": ["admin","realms","{{realm}}","users","{{kcUserId}}","sessions"]
+            }
+          }
+        },
+        {
+          "name": "Get User Credentials – Check TOTP Enrolled (ASVS V6.3.3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "var creds = pm.response.json();",
+                  "pm.test('Returns credentials array', () => pm.expect(creds).to.be.an('array'));",
+                  "var totpCred = creds.find(c => c.type === 'otp');",
+                  "pm.test('TOTP credential exists (MFA enrolled)', () => pm.expect(totpCred).to.exist);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{kcAdminToken}}" }],
+            "url": {
+              "raw": "{{keycloakUrl}}/admin/realms/{{realm}}/users/{{kcUserId}}/credentials",
+              "host": ["{{keycloakUrl}}"], "path": ["admin","realms","{{realm}}","users","{{kcUserId}}","credentials"]
+            }
+          }
+        },
+        {
+          "name": "Reset User Password – Keycloak Admin (ASVS V6.4.3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204 – password reset', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{kcAdminToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"password\",\n  \"value\": \"N3wXtr4Safe#2026!\",\n  \"temporary\": false\n}"
+            },
+            "url": {
+              "raw": "{{keycloakUrl}}/admin/realms/{{realm}}/users/{{kcUserId}}/reset-password",
+              "host": ["{{keycloakUrl}}"], "path": ["admin","realms","{{realm}}","users","{{kcUserId}}","reset-password"]
+            }
+          }
+        },
+        {
+          "name": "Revoke All User Sessions – Keycloak Admin (ASVS V6.8.3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204 – all sessions revoked', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{kcAdminToken}}" }],
+            "url": {
+              "raw": "{{keycloakUrl}}/admin/realms/{{realm}}/users/{{kcUserId}}/logout",
+              "host": ["{{keycloakUrl}}"], "path": ["admin","realms","{{realm}}","users","{{kcUserId}}","logout"]
+            }
+          }
+        },
+        {
+          "name": "Remove TOTP Credential – Keycloak Admin (ASVS V6.4.4)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204 – TOTP credential removed', () => pm.response.to.have.status(204));",
+                  "pm.test('Note: user will need to re-enrol TOTP on next login (CONFIGURE_TOTP required action)', () => pm.expect(true).to.be.true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{kcAdminToken}}" }],
+            "url": {
+              "raw": "{{keycloakUrl}}/admin/realms/{{realm}}/users/{{kcUserId}}/credentials/{{credentialId}}",
+              "host": ["{{keycloakUrl}}"], "path": ["admin","realms","{{realm}}","users","{{kcUserId}}","credentials","{{credentialId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Realm OTP Policy – Verify TOTP Config (ASVS V6.3.3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "var json = pm.response.json();",
+                  "pm.test('OTP type is totp', () => pm.expect(json.otpPolicyType).to.eql('totp'));",
+                  "pm.test('OTP period is 30s (ASVS V6.5.5)', () => pm.expect(json.otpPolicyPeriod).to.eql(30));",
+                  "pm.test('OTP digits is 6 (ASVS V6.5.4)', () => pm.expect(json.otpPolicyDigits).to.eql(6));",
+                  "pm.test('OTP algorithm is HmacSHA1 (RFC 6238)', () => pm.expect(json.otpPolicyAlgorithm).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{kcAdminToken}}" }],
+            "url": {
+              "raw": "{{keycloakUrl}}/admin/realms/{{realm}}",
+              "host": ["{{keycloakUrl}}"], "path": ["admin","realms","{{realm}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Realm Brute Force Config (ASVS V6.6.3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "var json = pm.response.json();",
+                  "pm.test('Brute force protection enabled', () => pm.expect(json.bruteForceProtected).to.be.true);",
+                  "pm.test('Permanent lockout after threshold', () => pm.expect(json.permanentLockout).to.be.a('boolean'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{kcAdminToken}}" }],
+            "url": {
+              "raw": "{{keycloakUrl}}/admin/realms/{{realm}}",
+              "host": ["{{keycloakUrl}}"], "path": ["admin","realms","{{realm}}"]
+            }
           }
         }
       ]

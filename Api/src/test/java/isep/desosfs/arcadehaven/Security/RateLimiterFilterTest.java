@@ -22,7 +22,7 @@ public class RateLimiterFilterTest {
 
     @BeforeEach
     void setUp() {
-        filter = new RateLimitFilter();
+        filter = new RateLimitFilter(mock(SecurityAuditService.class));
     }
 
     @Test

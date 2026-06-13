@@ -3,6 +3,7 @@ package isep.desosfs.arcadehaven.Service;
 import isep.desosfs.arcadehaven.Exception.BusinessException;
 import isep.desosfs.arcadehaven.Repository.LibraryRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
+import isep.desosfs.arcadehaven.Security.SecurityAuditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +38,7 @@ class AuthServiceLogoutTest {
     @Mock private LibraryRepository libraryRepository;
     @Mock private Keycloak keycloak;
     @Mock private PasswordPolicyService passwordPolicyService;
+    @Mock private SecurityAuditService securityAuditService;
 
     @InjectMocks
     private AuthService authService;

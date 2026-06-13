@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Per-IP rate limiter applied to sensitive endpoints (login, register, file upload).
  * Each IP gets 20 requests per minute on protected paths before receiving 429.
+ * Rate-limit breaches are recorded as security events (ASVS V16.3.3).
  */
 @Component
 public class RateLimitFilter implements Filter {
@@ -34,6 +35,11 @@ public class RateLimitFilter implements Filter {
     );
 
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
+    private final SecurityAuditService auditService;
+
+    public RateLimitFilter(SecurityAuditService auditService) {
+        this.auditService = auditService;
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -49,6 +55,7 @@ public class RateLimitFilter implements Filter {
             Bucket bucket = buckets.computeIfAbsent(ip, k -> newBucket());
 
             if (!bucket.tryConsume(1)) {
+                auditService.recordRateLimitExceeded(ip, path);
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
                 httpResponse.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
                 httpResponse.setContentType("application/json");

@@ -30,6 +30,7 @@ import isep.desosfs.arcadehaven.Dto.Response.LoginResponse;
 import isep.desosfs.arcadehaven.Exception.BusinessException;
 import isep.desosfs.arcadehaven.Repository.LibraryRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
+import isep.desosfs.arcadehaven.Security.SecurityAuditService;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceLoginTest {
@@ -39,6 +40,7 @@ class AuthServiceLoginTest {
     @Mock private Keycloak keycloak;
     @Mock private PasswordPolicyService passwordPolicyService;
     @Mock private RestTemplate restTemplate;
+    @Mock private SecurityAuditService securityAuditService;
 
     @InjectMocks private AuthService authService;
 

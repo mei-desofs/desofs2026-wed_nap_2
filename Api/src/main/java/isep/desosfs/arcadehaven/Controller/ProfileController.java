@@ -1,5 +1,6 @@
 package isep.desosfs.arcadehaven.Controller;
 
+import isep.desosfs.arcadehaven.Dto.Request.ChangePasswordRequest;
 import isep.desosfs.arcadehaven.Dto.Request.UpdateProfileRequest;
 import isep.desosfs.arcadehaven.Dto.Response.UserResponse;
 import isep.desosfs.arcadehaven.Service.ProfileService;
@@ -25,5 +26,12 @@ public class ProfileController {
     @PatchMapping
     public ResponseEntity<UserResponse> updateProfile(@Valid @RequestBody UpdateProfileRequest request) {
         return ResponseEntity.ok(profileService.updateProfile(request));
+    }
+
+    // V6.2.2 + V6.2.3 — change own password; requires current password
+    @PatchMapping("/password")
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        profileService.changePassword(request);
+        return ResponseEntity.noContent().build();
     }
 }
