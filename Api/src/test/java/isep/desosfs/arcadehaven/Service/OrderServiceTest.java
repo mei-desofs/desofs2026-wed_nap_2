@@ -438,4 +438,168 @@ public class OrderServiceTest {
         assertThrows(ResourceNotFoundException.class,
                 () -> orderService.getMyOrders());
     }
+
+    @Test
+    void shouldThrowWhenInvoicePathIsNull() {
+        UUID buyerId = UUID.randomUUID();
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Order order = Order.create(buyer); 
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+
+        assertThrows(BusinessException.class,
+                () -> orderService.downloadInvoice(UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldThrowWhenOrderBelongsToOtherUser() {
+        UUID buyerId = UUID.randomUUID();
+        UUID otherId = UUID.randomUUID();
+
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        User other = User.create("other", "mail2", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(other, "id", otherId);
+
+        Order order = Order.create(other);
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+
+        assertThrows(BusinessException.class,
+                () -> orderService.getOrderById(UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldThrowWhenBuyerAlreadyOwnsGameInCreateOrder() {
+        UUID gameId = UUID.randomUUID();
+
+        Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, buyer);
+        game.approve();
+        ReflectionTestUtils.setField(game, "id", gameId);
+
+        library.addGame(game, "KEY-123");
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(libraryRepository.findByUser(buyer)).thenReturn(Optional.of(library));
+        when(gameRepository.findById(any())).thenReturn(Optional.of(game));
+
+        assertThrows(BusinessException.class,
+                () -> orderService.createOrder(new CreateOrderRequest(List.of(gameId))));
+    }
+
+    @Test
+    void shouldThrowWhenBuyerAlreadyOwnsGameInAddItem() {
+        UUID buyerId = UUID.randomUUID();
+        UUID gameId = UUID.randomUUID();
+
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, buyer);
+        game.approve();
+        ReflectionTestUtils.setField(game, "id", gameId);
+
+        library.addGame(game, "KEY-456");
+
+        Order order = Order.create(buyer);
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+        when(libraryRepository.findByUser(buyer)).thenReturn(Optional.of(library));
+        when(gameRepository.findById(any())).thenReturn(Optional.of(game));
+
+        assertThrows(BusinessException.class,
+                () -> orderService.addItemToOrder(UUID.randomUUID(), gameId));
+    }
+
+    @Test
+    void shouldDownloadKeyCardWithItems() {
+        UUID buyerId = UUID.randomUUID();
+        UUID gameId = UUID.randomUUID();
+
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Game game = Game.create("My Game", "d", BigDecimal.TEN, "r", null, buyer);
+        game.approve();
+        ReflectionTestUtils.setField(game, "id", gameId);
+
+        Order order = Order.create(buyer);
+        OrderItem item = OrderItem.of(game, BigDecimal.TEN);
+        order.addItem(item);
+        order.complete("invoices/inv.txt"); 
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+
+        byte[] result = orderService.downloadKeyCard(UUID.randomUUID());
+
+        assertNotNull(result);
+        String content = new String(result, java.nio.charset.StandardCharsets.UTF_8);
+        assertTrue(content.contains("My Game"));
+        assertTrue(content.contains("ArcadeHaven"));
+    }
+
+    @Test
+    void shouldThrowWhenLibraryNotFoundOnComplete() {
+        UUID buyerId = UUID.randomUUID();
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Order order = Order.create(buyer);
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+        when(libraryRepository.findByUser(buyer)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> orderService.completeOrder(UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldThrowWhenLibraryNotFoundOnAddItem() {
+        UUID buyerId = UUID.randomUUID();
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Order order = Order.create(buyer);
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+        when(libraryRepository.findByUser(buyer)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> orderService.addItemToOrder(UUID.randomUUID(), UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldThrowWhenGameNotFoundOnAddItem() {
+        UUID buyerId = UUID.randomUUID();
+        User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(buyer, "id", buyerId);
+
+        Order order = Order.create(buyer);
+
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(order));
+        when(libraryRepository.findByUser(buyer)).thenReturn(Optional.of(library));
+        when(gameRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> orderService.addItemToOrder(UUID.randomUUID(), UUID.randomUUID()));
+    }
+
+    @Test
+    void shouldThrowWhenOrderNotFound() {
+        when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
+        when(orderRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> orderService.getOrderById(UUID.randomUUID()));
+    }
 }
