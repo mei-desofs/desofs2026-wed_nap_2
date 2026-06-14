@@ -137,4 +137,122 @@ public class GameTest {
                 publisher
         );
     }
+
+    @Test
+    void shouldThrowWhenPriceIsNull() {
+        User publisher = User.create("publisher", "publisher@test.com", "hash", Role.PUBLISHER);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> Game.create("Game", "Description", null, "rawg", null, publisher)
+        );
+
+        assertEquals("Price cannot be null", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowWhenPriceHasMoreThanTwoDecimalPlaces() {
+        User publisher = User.create("publisher", "publisher@test.com", "hash", Role.PUBLISHER);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> Game.create("Game", "Description", new BigDecimal("9.999"), "rawg", null, publisher)
+        );
+
+        assertEquals("A maximum of 2 decimal places allowed", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowWhenPriceExceedsMaximum() {
+        User publisher = User.create("publisher", "publisher@test.com", "hash", Role.PUBLISHER);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> Game.create("Game", "Description", new BigDecimal("1000000.00"), "rawg", null, publisher)
+        );
+
+        assertEquals("Price cannot be larger than 999999.99", ex.getMessage());
+    }
+
+    @Test
+    void shouldAcceptPriceAtMaximumBoundary() {
+        User publisher = User.create("publisher", "publisher@test.com", "hash", Role.PUBLISHER);
+
+        Game game = Game.create("Game", "Description", new BigDecimal("999999.99"), "rawg", null, publisher);
+
+        assertEquals(new BigDecimal("999999.99"), game.getPrice());
+    }
+
+    @Test
+    void shouldThrowWhenUpdatePriceIsNull() {
+        Game game = createGame();
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> game.updatePrice(null)
+        );
+
+        assertEquals("Price must be greater than zero", ex.getMessage());
+    }
+
+    @Test
+    void shouldNotUpdateTitleWhenNull() {
+        Game game = createGame();
+
+        game.updateDetails(null, "New Description", null);
+
+        assertEquals("Game", game.getTitle());
+        assertEquals("New Description", game.getDescription());
+    }
+
+    @Test
+    void shouldNotUpdateTitleWhenBlank() {
+        Game game = createGame();
+
+        game.updateDetails("   ", "New Description", null);
+
+        assertEquals("Game", game.getTitle());
+    }
+
+    @Test
+    void shouldNotUpdateDescriptionWhenNull() {
+        Game game = createGame();
+
+        game.updateDetails("New Title", null, null);
+
+        assertEquals("New Title", game.getTitle());
+        assertEquals("Description", game.getDescription());
+    }
+
+    @Test
+    void shouldUpdateCategoryWhenProvided() {
+        Game game = createGame();
+
+        game.updateDetails(null, null, "RPG");
+
+        assertEquals("RPG", game.getCategory());
+    }
+
+    @Test
+    void shouldNotUpdateCategoryWhenBlank() {
+        Game game = createGame();
+        game.updateDetails(null, null, "RPG");
+
+        game.updateDetails(null, null, "   ");
+
+        assertEquals("RPG", game.getCategory());
+    }
+
+    @Test
+    void shouldThrowWhenRejectingNonPendingGame() {
+        Game game = createGame();
+        game.reject();
+
+        IllegalStateException ex = assertThrows(
+                IllegalStateException.class,
+                game::reject
+        );
+
+        assertEquals("Only pending games can be rejected", ex.getMessage());
+    }
 }

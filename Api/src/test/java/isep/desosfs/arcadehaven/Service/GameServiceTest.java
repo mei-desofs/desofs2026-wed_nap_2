@@ -9,8 +9,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 
 import isep.desosfs.arcadehaven.Domain.Game;
 import isep.desosfs.arcadehaven.Domain.User;
@@ -352,4 +355,55 @@ public class GameServiceTest {
         assertThrows(IllegalArgumentException.class, () ->
                 gameService.uploadGameFile(UUID.randomUUID(), file, FileType.IMAGE));
     }
+
+    @Test
+        void shouldThrowWhenGetGameByIdNotFound() {
+        when(gameRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> gameService.getGameById(UUID.randomUUID()));
+        }
+
+        @Test
+        void shouldUpdateGameWithoutChangingPrice() {
+        Game game = Game.create("t", "d", BigDecimal.TEN, "r", null, user);
+        UUID id = UUID.randomUUID();
+
+        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        when(gameRepository.findByIdAndPublisher(id, user)).thenReturn(Optional.of(game));
+        when(gameRepository.save(any())).thenReturn(game);
+
+        UpdateGameRequest req = new UpdateGameRequest("novo titulo", "nova desc", null, null);
+
+        var result = gameService.updateGame(id, req);
+
+        assertEquals("novo titulo", result.title());
+        assertEquals(BigDecimal.TEN, game.getPrice());
+        }
+
+        @Test
+        void shouldThrowWhenFileSizeExceedsLimit() {
+        byte[] oversized = new byte[(25 * 1024 * 1024) + 1];
+        MockMultipartFile file = new MockMultipartFile(
+                "f", "big.png", "image/png", oversized);
+
+        lenient().when(userRepository.findByUsername("john"))
+                .thenReturn(Optional.of(user));
+
+        assertThrows(org.springframework.web.multipart.MaxUploadSizeExceededException.class,
+                () -> gameService.uploadGameFile(UUID.randomUUID(), file, FileType.IMAGE));
+        }
+
+        @Test
+        void shouldThrowStorageExceptionWhenStreamFails() throws Exception {
+        MultipartFile brokenFile = mock(org.springframework.web.multipart.MultipartFile.class);
+        when(brokenFile.getSize()).thenReturn(100L);
+        when(brokenFile.getInputStream()).thenThrow(new IOException("disco cheio"));
+
+        lenient().when(userRepository.findByUsername("john"))
+                .thenReturn(Optional.of(user));
+
+        assertThrows(isep.desosfs.arcadehaven.Exception.StorageException.class,
+                () -> gameService.uploadGameFile(UUID.randomUUID(), brokenFile, FileType.IMAGE));
+        }
 }

@@ -5,11 +5,23 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.UUID;
@@ -26,6 +38,12 @@ class SecurityIntegrationTests {
 
     @Autowired
     private WebApplicationContext wac;
+
+    @Autowired
+    private JwtAuthenticationConverter jwtAuthenticationConverter;
+
+    @Autowired
+    private CorsConfigurationSource corsConfigurationSource;
 
     @BeforeEach
     void setup() {
@@ -350,4 +368,197 @@ class SecurityIntegrationTests {
                 .andExpect(status().is4xxClientError());
     }
 
+    @Test
+    void actuatorHealthIsPubliclyAccessible() throws Exception {
+        mockMvc.perform(get("/actuator/health"))
+                .andExpect(result ->
+                        assertNotEquals(401, result.getResponse().getStatus()));
+    }
+
+    @Test
+    void loginEndpointIsPubliclyAccessible() throws Exception {
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"x\",\"password\":\"y\"}"))
+                .andExpect(result ->
+                        assertNotEquals(401, result.getResponse().getStatus()));
+    }
+
+    @Test
+    void registerEndpointIsPubliclyAccessible() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"x\",\"email\":\"x@x.com\",\"password\":\"y\"}"))
+                .andExpect(result ->
+                        assertNotEquals(401, result.getResponse().getStatus()));
+    }
+
+    @Test
+    void gamesGetEndpointIsPubliclyAccessible() throws Exception {
+        mockMvc.perform(get("/api/games/1"))
+                .andExpect(result ->
+                        assertNotEquals(401, result.getResponse().getStatus()));
+    }
+
+    @Test
+    void adminEndpointRequiresAdminRole() throws Exception {
+        mockMvc.perform(get("/api/admin/users")
+                        .with(jwt().authorities(() -> "ROLE_BUYER")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void publisherEndpointRequiresPublisherRole() throws Exception {
+        mockMvc.perform(get("/api/publisher/games")
+                        .with(jwt().authorities(() -> "ROLE_BUYER")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void ordersEndpointRequiresBuyerRole() throws Exception {
+        mockMvc.perform(get("/api/orders")
+                        .with(jwt().authorities(() -> "ROLE_PUBLISHER")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void libraryEndpointRequiresBuyerRole() throws Exception {
+        mockMvc.perform(get("/api/library")
+                        .with(jwt().authorities(() -> "ROLE_PUBLISHER")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void profileEndpointRequiresAuthentication() throws Exception {
+        mockMvc.perform(get("/api/profile/me"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void unknownEndpointRequiresAuthentication() throws Exception {
+        mockMvc.perform(get("/api/unknown/endpoint"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void apiDocsRequireAuthentication() throws Exception {
+        mockMvc.perform(get("/v3/api-docs/swagger-config"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void swaggerUiRequiresAuthentication() throws Exception {
+        mockMvc.perform(get("/swagger-ui/index.html"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void responseHeadersAreConfigured() throws Exception {
+        mockMvc.perform(get("/actuator/health"))
+                .andExpect(result -> {
+                    var response = result.getResponse();
+                    // X-Content-Type-Options (contentTypeOptions)
+                    assertNotNull(response.getHeader("X-Content-Type-Options"));
+                    // Cache-Control (cacheControl)
+                    assertNotNull(response.getHeader("Cache-Control"));
+                });
+    }
+
+    @Test
+    void postWithoutCsrfTokenIsAccepted() throws Exception {
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"x\",\"password\":\"y\"}"))
+                .andExpect(result ->
+                        assertNotEquals(403, result.getResponse().getStatus()));
+    }
+
+    @Test
+    void noSessionIsCreatedAfterRequest() throws Exception {
+        mockMvc.perform(get("/actuator/health"))
+                .andExpect(result ->
+                        assertNull(result.getRequest().getSession(false)));
+    }
+
+    @Test
+    void corsConfigurationSourceIsNotNull() {
+        assertNotNull(corsConfigurationSource);
+    }
+
+    @Test
+    void corsAllowsConfiguredOrigins() {
+        var config = corsConfigurationSource
+                .getCorsConfiguration(new MockHttpServletRequest());
+        assertNotNull(config);
+        assertNotNull(config.getAllowedOrigins());
+        assertFalse(config.getAllowedOrigins().isEmpty());
+    }
+
+    @Test
+    void corsAllowsExpectedMethods() {
+        var config = corsConfigurationSource
+                .getCorsConfiguration(new MockHttpServletRequest());
+        assertNotNull(config);
+        assertTrue(config.getAllowedMethods().contains("GET"));
+        assertTrue(config.getAllowedMethods().contains("POST"));
+        assertTrue(config.getAllowedMethods().contains("DELETE"));
+        assertTrue(config.getAllowedMethods().contains("PUT"));
+        assertTrue(config.getAllowedMethods().contains("PATCH"));
+    }
+
+    @Test
+    void corsAllowsExpectedHeaders() {
+        var config = corsConfigurationSource
+                .getCorsConfiguration(new MockHttpServletRequest());
+        assertNotNull(config);
+        assertTrue(config.getAllowedHeaders().contains("Authorization"));
+        assertTrue(config.getAllowedHeaders().contains("Content-Type"));
+    }
+
+    @Test
+    void invalidBearerTokenTriggersEntryPoint() throws Exception {
+        mockMvc.perform(get("/api/profile/me")
+                        .header("Authorization", "Bearer token.invalido.mesmo"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void jwtAuthenticationConverterIsNotNull() {
+        assertNotNull(jwtAuthenticationConverter);
+    }
+
+    @Test
+    void jwtAuthenticationConverterExtractsPrincipalFromPreferredUsername() {
+        Jwt jwt = Jwt.withTokenValue("token")
+                .header("alg", "none")
+                .claim("preferred_username", "alice")
+                .claim("realm_access", java.util.Map.of(
+                        "roles", java.util.List.of("BUYER")))
+                .build();
+
+        var auth = jwtAuthenticationConverter.convert(jwt);
+        assertNotNull(auth);
+        assertEquals("alice", auth.getName());
+    }
+
+    @Test
+    void jwtAuthenticationConverterExtractsRolesFromRealmAccess() {
+        Jwt jwt = Jwt.withTokenValue("token")
+                .header("alg", "none")
+                .claim("preferred_username", "publisher1")
+                .claim("realm_access", java.util.Map.of(
+                        "roles", java.util.List.of("PUBLISHER")))
+                .build();
+
+        var auth = jwtAuthenticationConverter.convert(jwt);
+        assertNotNull(auth);
+        assertTrue(auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_PUBLISHER")));
+    }
+
+    @Test
+    void httpTraceDeniedOnAllPaths() throws Exception {
+        mockMvc.perform(request(HttpMethod.TRACE, "/api/games/1"))
+                .andExpect(status().isForbidden());
+    }
 }
