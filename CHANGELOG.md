@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v2.0.1...v2.1.0) (2026-06-14)
+
+
+### Features
+
+* Improvement the API with the ASVS Rules specific about Authentication, Logs, RateLimit and Security Audit [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#10](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/10) [#12](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/12) [#13](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/13) [#16](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/16) ([a3f1a09](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/a3f1a09eca18be882f56e58c7d4fbbacc36ad220))
+* Improvement the API with the ASVS Rules specific about Rate Limit, Log Events, Http Trace, CRLF Injection prevention [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#10](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/10) [#12](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/12) [#13](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/13) [#16](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/16) ([1fbb0f9](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/1fbb0f9c23e0626cff010bb39c57c9970a7a2679))
+
 ## [2.0.1](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v2.0.0...v2.0.1) (2026-06-08)
 
 
