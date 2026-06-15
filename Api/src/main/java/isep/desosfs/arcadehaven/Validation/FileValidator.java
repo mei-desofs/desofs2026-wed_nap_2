@@ -67,6 +67,7 @@ public class FileValidator {
                             "Invalid file type: " + detectedType);
                 }
             }
+            default -> throw new IllegalArgumentException("Unsupported file type: " + fileType);
         }
     }
 
@@ -96,6 +97,7 @@ public class FileValidator {
                     throw new IllegalArgumentException("Unsupported image extension: " + extension);
                 }
             }
+            default -> throw new IllegalArgumentException("Unsupported file type: " + fileType);
         }
     }
 }
