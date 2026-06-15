@@ -1,6 +1,7 @@
 package isep.desosfs.arcadehaven.Domain;
 
 import isep.desosfs.arcadehaven.Domain.Enums.OrderStatus;
+import isep.desosfs.arcadehaven.Exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Table(name = "orders")
 @Getter
 public class Order {
+    private static final BigDecimal MAX_TOTAL = new BigDecimal("1000000.00");
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -82,8 +84,14 @@ public class Order {
     }
 
     public BigDecimal calculateTotal() {
-        return items.stream()
+        BigDecimal total = items.stream()
                 .map(OrderItem::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (total.compareTo(MAX_TOTAL) > 0) {
+            throw new BusinessException("Order total exceeds allowed maximum");
+        }
+
+        return total;
     }
 }

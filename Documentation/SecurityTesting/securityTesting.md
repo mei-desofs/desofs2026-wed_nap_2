@@ -16,7 +16,7 @@ This document defines the Phase 1 security testing plan for ArcadeHaven.
 | T-04 | Brute force login protection             | Repeated failed login attempts                                                 | Rate limiting, IP/user lock or MFA enforcement |
 | T-05 | Privilege escalation                     | Call admin endpoints with non-admin token                                      | Operation blocked with 403 Forbidden |
 | T-06 | Endpoint authentication enforcement      | Call protected endpoints with invalid/expired/stolen tokens                    | Request is rejected with 403 Forbidden |
-| T-07 | Malicious file upload                    | Upload executable/scripts disguised as image/PDF                               | Upload is rejected or sanitized; no execution possible |
+| T-07 | Malicious file upload                    | Upload executable/scripts disguised as image/PDF                               | Upload is rejected or sanitized to a valid file type; no execution possible |
 | T-08 | Oversized file upload                    | Upload files above allowed size limit                                          | Request is rejected with size limit error |
 | T-09 | MIME type bypass                         | Upload file with mismatched extension and content                              | File is rejected after content validation |
 | T-10 | Game key guessing attacks                | Attempt brute force activation keys                                            | Invalid keys rejected and rate limiting applied |

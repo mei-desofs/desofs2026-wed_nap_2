@@ -78,8 +78,8 @@ public class Game {
             throw new IllegalArgumentException("Price must be above 0");
         }
 
-        if (price.compareTo(new BigDecimal("999999.99")) > 0) {
-            throw new IllegalArgumentException("Price cannot be larger than 999999.99");
+        if (price.compareTo(new BigDecimal("9999.99")) > 0) {
+            throw new IllegalArgumentException("Price cannot be larger than 9999.99");
         }
     }
 
@@ -102,9 +102,8 @@ public class Game {
     }
 
     public void updatePrice(BigDecimal newPrice) {
-        if (newPrice == null || newPrice.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Price must be greater than zero");
-        }
+        validatePrice(newPrice);
+
         this.price = newPrice;
     }
 
@@ -114,7 +113,11 @@ public class Game {
         if (category != null && !category.isBlank()) this.category = category;
     }
 
-    public void addFile(String filename, String path, FileType type) {
-        this.files.add(new GameFile(filename, path, type, LocalDateTime.now()));
+    public void addFile(UUID fileId, String filename, String path, FileType type) {
+        this.files.add(new GameFile(fileId, filename, path, type, LocalDateTime.now()));
+    }
+
+    public void addFile(GameFile file) {
+        this.files.add(file);
     }
 }
