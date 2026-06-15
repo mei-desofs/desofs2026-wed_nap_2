@@ -26,9 +26,11 @@ jobs:
       SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
 
       KEYCLOAK_JWK_SET_URI: ${{ vars.KEYCLOAK_JWK_SET_URI }}
+      KEYCLOAK_JWK_ISSUER: ${{ vars.KEYCLOAK_JWK_ISSUER }}
       KEYCLOAK_SERVER_URL: ${{ vars.KEYCLOAK_SERVER_URL }}
       KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
       KEYCLOAK_CLIENT_ID: ${{ vars.KEYCLOAK_CLIENT_ID }}
+      KEYCLOAK_BACKEND_CLIENT_SECRET: ${{ secrets.KEYCLOAK_BACKEND_CLIENT_SECRET }}
       KEYCLOAK_ADMIN_USERNAME: ${{ secrets.KEYCLOAK_ADMIN_USERNAME }}
       KEYCLOAK_ADMIN_PASSWORD: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
 
@@ -74,6 +76,10 @@ jobs:
       # Set up Docker Buildx
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      # Generate self-signed TLS cert for nginx (dev/CI — ASVS V12.2.2)
+      - name: Generate self-signed TLS certificate
+        run: bash nginx/generate-self-signed-cert.sh
 
       # Build Docker image
       - name: Build images

@@ -10,7 +10,7 @@
     ]
   },
   "variable": [
-    { "key": "baseUrl",     "value": "http://localhost:8080", "type": "string" },
+    { "key": "baseUrl",     "value": "https://localhost", "type": "string" },
     { "key": "keycloakUrl", "value": "http://localhost:8180", "type": "string" },
     { "key": "realm",       "value": "arcadehaven",           "type": "string" },
     { "key": "token",       "value": "",                      "type": "string" },

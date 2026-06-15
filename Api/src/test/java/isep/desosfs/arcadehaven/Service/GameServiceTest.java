@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.lenient;
@@ -452,7 +451,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(null, null, null, null))
                 .thenReturn(List.of(activeGame()));
 
-        List<GameResponse> result = gameService.getAllActiveGames(null, null, null, null);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest(null, null, null, null));
 
         assertThat(result).hasSize(1);
         verify(gameRepository).findActiveWithFilters(null, null, null, null);
@@ -463,7 +462,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters("Sonic", null, null, null))
                 .thenReturn(List.of(activeGame()));
 
-        List<GameResponse> result = gameService.getAllActiveGames("Sonic", null, null, null);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest("Sonic", null, null, null));
 
         assertThat(result).hasSize(1);
         verify(gameRepository).findActiveWithFilters("Sonic", null, null, null);
@@ -474,7 +473,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(null, "action", null, null))
                 .thenReturn(List.of(activeGame()));
 
-        List<GameResponse> result = gameService.getAllActiveGames(null, "action", null, null);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest(null, "action", null, null));
 
         assertThat(result).hasSize(1);
         verify(gameRepository).findActiveWithFilters(null, "action", null, null);
@@ -487,7 +486,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(null, null, min, max))
                 .thenReturn(List.of(activeGame()));
 
-        List<GameResponse> result = gameService.getAllActiveGames(null, null, min, max);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest(null, null, min, max));
 
         assertThat(result).hasSize(1);
         verify(gameRepository).findActiveWithFilters(null, null, min, max);
@@ -500,7 +499,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters("Sonic", "action", min, max))
                 .thenReturn(List.of(activeGame()));
 
-        List<GameResponse> result = gameService.getAllActiveGames("Sonic", "action", min, max);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest("Sonic", "action", min, max));
 
         assertThat(result).hasSize(1);
         verify(gameRepository).findActiveWithFilters("Sonic", "action", min, max);
@@ -511,7 +510,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(null, null, null, null))
                 .thenReturn(List.of());
 
-        List<GameResponse> result = gameService.getAllActiveGames(null, null, null, null);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest(null, null, null, null));
 
         assertThat(result).isEmpty();
     }
@@ -522,7 +521,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(null, null, null, null))
                 .thenReturn(List.of(game));
 
-        List<GameResponse> result = gameService.getAllActiveGames(null, null, null, null);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest(null, null, null, null));
 
         assertThat(result.get(0).title()).isEqualTo("Sonic");
         assertThat(result.get(0).price()).isEqualByComparingTo(BigDecimal.TEN);
