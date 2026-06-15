@@ -19,8 +19,8 @@ public interface GameRepository extends JpaRepository<Game, UUID> {
     Optional<Game> findByIdAndPublisher(UUID id, User publisher);
 
     @Query("SELECT g FROM Game g WHERE g.status = 'ACTIVE'"
-            + " AND (:title IS NULL OR LOWER(g.title) LIKE LOWER(CONCAT('%', :title, '%')))"
-            + " AND (:category IS NULL OR LOWER(g.category) = LOWER(:category))"
+            + " AND (:title IS NULL OR LOWER(g.title) LIKE LOWER(CONCAT('%', CAST(:title AS String), '%')))"
+            + " AND (:category IS NULL OR LOWER(g.category) = LOWER(CAST(:category AS String)))"
             + " AND (:minPrice IS NULL OR g.price >= :minPrice)"
             + " AND (:maxPrice IS NULL OR g.price <= :maxPrice)")
     List<Game> findActiveWithFilters(
