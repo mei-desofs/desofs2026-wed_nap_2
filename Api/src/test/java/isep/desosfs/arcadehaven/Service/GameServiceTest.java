@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -41,9 +42,13 @@ import isep.desosfs.arcadehaven.Dto.Request.CreateGameRequest;
 import isep.desosfs.arcadehaven.Dto.Request.UpdateGameRequest;
 import isep.desosfs.arcadehaven.Dto.Response.GameResponse;
 import isep.desosfs.arcadehaven.Exception.ResourceNotFoundException;
+import isep.desosfs.arcadehaven.Exception.StorageException;
 import isep.desosfs.arcadehaven.Repository.GameRepository;
 import isep.desosfs.arcadehaven.Repository.OrderRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
+import isep.desosfs.arcadehaven.Security.ClamAVService;
+import isep.desosfs.arcadehaven.Validation.FileValidator;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,6 +62,8 @@ public class GameServiceTest {
     @Mock UserRepository userRepository;
     @Mock FileStorageService fileStorageService;
     @Mock OrderRepository orderRepository;
+    @Mock FileValidator fileValidator;
+    @Mock ClamAVService clamAVService;
 
     @InjectMocks GameService gameService;
 
@@ -352,17 +359,10 @@ public class GameServiceTest {
 
     @Test
     void shouldThrowStorageExceptionWhenFileReadFails() {
+        MockMultipartFile broken = new MockMultipartFile("f", "img.png", "image/png", new byte[0]);
 
-        MockMultipartFile broken =
-                new MockMultipartFile(
-                        "f",
-                        "img.png",
-                        "image/png",
-                        new byte[0]
-                );
-
-        lenient().when(userRepository.findByUsername("john"))
-                .thenReturn(Optional.of(user));
+        doThrow(new IllegalArgumentException("Invalid file type: application/octet-stream"))
+                .when(fileValidator).validateMimeType(any(), any());
 
         assertThrows(IllegalArgumentException.class, () ->
                 gameService.uploadGameFile(UUID.randomUUID(), broken, FileType.IMAGE));
@@ -370,19 +370,10 @@ public class GameServiceTest {
 
     @Test
     void shouldThrowWhenInvalidMimeType() {
+        MockMultipartFile file = new MockMultipartFile("f", "file.txt", "text/plain", "hello".getBytes());
 
-        byte[] txt = "hello".getBytes();
-
-        MockMultipartFile file =
-                new MockMultipartFile("f", "file.txt", "text/plain", txt);
-
-        lenient().when(userRepository.findByUsername("john"))
-                .thenReturn(Optional.of(user));
-
-        lenient().when(gameRepository.findByIdAndPublisher(any(), eq(user)))
-                .thenReturn(Optional.of(
-                        Game.create("t", "d", BigDecimal.TEN, "r", null, user)
-                ));
+        doThrow(new IllegalArgumentException("Invalid file type: text/plain"))
+                .when(fileValidator).validateMimeType(any(), eq(FileType.IMAGE));
 
         assertThrows(IllegalArgumentException.class, () ->
                 gameService.uploadGameFile(UUID.randomUUID(), file, FileType.IMAGE));
@@ -415,29 +406,25 @@ public class GameServiceTest {
 
     @Test
     void shouldThrowWhenFileSizeExceedsLimit() {
-        byte[] oversized = new byte[(25 * 1024 * 1024) + 1];
-        MockMultipartFile file = new MockMultipartFile(
-                "f", "big.png", "image/png", oversized);
+        MockMultipartFile file = new MockMultipartFile("f", "big.png", "image/png", new byte[1]);
 
-        lenient().when(userRepository.findByUsername("john"))
-                .thenReturn(Optional.of(user));
+        doThrow(new MaxUploadSizeExceededException(25 * 1024 * 1024L))
+                .when(fileValidator).validateFileSize(any());
 
-        assertThrows(org.springframework.web.multipart.MaxUploadSizeExceededException.class,
+        assertThrows(MaxUploadSizeExceededException.class,
                 () -> gameService.uploadGameFile(UUID.randomUUID(), file, FileType.IMAGE));
     }
 
     @Test
-    void shouldThrowStorageExceptionWhenStreamFails() throws Exception {
-        MultipartFile brokenFile = mock(org.springframework.web.multipart.MultipartFile.class);
-        when(brokenFile.getSize()).thenReturn(100L);
-        when(brokenFile.getInputStream()).thenThrow(new IOException("disco cheio"));
+    void shouldThrowStorageExceptionWhenStreamFails() {
+        MultipartFile brokenFile = mock(MultipartFile.class);
 
-        lenient().when(userRepository.findByUsername("john"))
-                .thenReturn(Optional.of(user));
+        doThrow(new StorageException("Cannot read file", new IOException("disco cheio")))
+                .when(fileValidator).validateMimeType(any(), any());
 
-        assertThrows(isep.desosfs.arcadehaven.Exception.StorageException.class,
+        assertThrows(StorageException.class,
                 () -> gameService.uploadGameFile(UUID.randomUUID(), brokenFile, FileType.IMAGE));
-        }
+    }
 
         private Game activeGame() {
         User publisher = User.create("pub", "pub@test.com", "hash", Role.PUBLISHER);

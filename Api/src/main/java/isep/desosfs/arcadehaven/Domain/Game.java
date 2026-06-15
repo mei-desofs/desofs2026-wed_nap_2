@@ -66,20 +66,16 @@ public class Game {
     }
 
     private static void validatePrice(BigDecimal price) {
-        if (price == null) {
-            throw new IllegalArgumentException("Price cannot be null");
+        if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Price must be greater than zero");
         }
 
         if (price.scale() > 2) {
             throw new IllegalArgumentException("A maximum of 2 decimal places allowed");
         }
 
-        if (price.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Price must be above 0");
-        }
-
-        if (price.compareTo(new BigDecimal("9999.99")) > 0) {
-            throw new IllegalArgumentException("Price cannot be larger than 9999.99");
+        if (price.compareTo(new BigDecimal("999999.99")) > 0) {
+            throw new IllegalArgumentException("Price cannot be larger than 999999.99");
         }
     }
 

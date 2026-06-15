@@ -162,4 +162,67 @@ class SecurityAuditServiceTest {
         service.recordUnauthorized("55.55.55.55", "/api/login", "POST");
         assertDoesNotThrow(() -> service.evictStaleWindows());
     }
+
+    // ── V14.2.4 — sensitive key redaction (json method) ───────────────────
+
+    @Test
+    void json_withPasswordKey_redactsValue() {
+        String result = SecurityAuditService.json("test", "password", "supersecret123");
+        assertTrue(result.contains("\"password\":\"[REDACTED]\""),
+                "password field must be redacted");
+        assertFalse(result.contains("supersecret123"),
+                "plaintext password must not appear in log output");
+    }
+
+    @Test
+    void json_withSecretKey_redactsValue() {
+        String result = SecurityAuditService.json("test", "secret", "my-client-secret");
+        assertTrue(result.contains("[REDACTED]"), "secret field must be redacted");
+        assertFalse(result.contains("my-client-secret"),
+                "plaintext secret must not appear in log output");
+    }
+
+    @Test
+    void json_withClientSecretKey_redactsValue() {
+        String result = SecurityAuditService.json("test", "client_secret", "backend-secret");
+        assertTrue(result.contains("[REDACTED]"), "client_secret field must be redacted");
+        assertFalse(result.contains("backend-secret"),
+                "plaintext client_secret must not appear in log output");
+    }
+
+    @Test
+    void json_withCaseInsensitivePasswordKey_redactsValue() {
+        String result = SecurityAuditService.json("test", "PASSWORD", "shouldBeRedacted");
+        assertTrue(result.contains("[REDACTED]"),
+                "case-insensitive key match must trigger redaction");
+        assertFalse(result.contains("shouldBeRedacted"),
+                "value must not appear in output when key is sensitive");
+    }
+
+    @Test
+    void json_withNonSensitiveKey_preservesValue() {
+        String result = SecurityAuditService.json("test", "username", "alice");
+        assertTrue(result.contains("\"username\":\"alice\""),
+                "non-sensitive key must preserve its value");
+    }
+
+    // ── V14.2.4 — form-encoded credential redaction (sanitize method) ─────
+
+    @Test
+    void sanitize_formEncodedPassword_isRedacted() {
+        String input = "grant_type=password&username=alice&password=hunter2";
+        String result = SecurityAuditService.sanitize(input);
+        assertFalse(result.contains("hunter2"),
+                "form-encoded password value must be redacted");
+        assertTrue(result.contains("password=[REDACTED]"),
+                "form-encoded password key must remain with [REDACTED] value");
+    }
+
+    @Test
+    void sanitize_formEncodedSecret_isRedacted() {
+        String input = "client_id=app&secret=very-secret-value&scope=openid";
+        String result = SecurityAuditService.sanitize(input);
+        assertFalse(result.contains("very-secret-value"),
+                "form-encoded secret value must be redacted from log string");
+    }
 }

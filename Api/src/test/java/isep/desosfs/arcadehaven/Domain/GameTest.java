@@ -156,7 +156,7 @@ public class GameTest {
                 () -> Game.create("Game", "Description", null, "rawg", null, publisher)
         );
 
-        assertEquals("Price cannot be null", ex.getMessage());
+        assertEquals("Price must be greater than zero", ex.getMessage());
     }
 
     @Test
