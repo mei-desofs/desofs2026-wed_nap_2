@@ -7,7 +7,11 @@ import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
 
 import java.net.URI;
 import java.util.List;
@@ -29,7 +33,15 @@ public class KeycloakAdminConfig {
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        // V15.3.2 — outbound HTTP calls must not follow redirects automatically
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory() {
+            @Override
+            protected void prepareConnection(HttpURLConnection connection, String httpMethod) throws IOException {
+                super.prepareConnection(connection, httpMethod);
+                connection.setInstanceFollowRedirects(false);
+            }
+        };
+        return new RestTemplate(factory);
     }
 
     // ASVS V1.2.2

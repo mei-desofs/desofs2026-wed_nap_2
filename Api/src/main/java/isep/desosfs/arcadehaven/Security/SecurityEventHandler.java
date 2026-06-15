@@ -59,10 +59,8 @@ public class SecurityEventHandler implements AuthenticationEntryPoint, AccessDen
     }
 
     private String resolveIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
-        }
+        // Tomcat's RemoteIpFilter (server.forward-headers-strategy=NATIVE) has already
+        // resolved the real client IP from trusted X-Forwarded-For headers (V15.3.4).
         return request.getRemoteAddr();
     }
 
