@@ -22,6 +22,15 @@ import java.util.List;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+import java.net.URI;
+import java.util.List;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+
+import java.net.URI;
+import java.util.List;
+
 @Configuration
 public class KeycloakAdminConfig {
 
