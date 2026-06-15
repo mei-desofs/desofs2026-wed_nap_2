@@ -558,7 +558,8 @@ class SecurityIntegrationTests {
 
     @Test
     void httpTraceDeniedOnAllPaths() throws Exception {
+        // StrictHttpFirewall rejects TRACE before authorization rules run → 400
         mockMvc.perform(request(HttpMethod.TRACE, "/api/games/1"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isBadRequest());
     }
 }
