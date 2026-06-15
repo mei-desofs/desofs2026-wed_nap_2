@@ -1,5 +1,29 @@
 # Changelog
 
+## [3.0.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v2.0.1...v3.0.0) (2026-06-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* port 8080 is no longer published; generate TLS certs before starting the stack (./nginx/generate-self-signed-cert.sh or .ps1)
+
+### Features
+
+* Implement ASVS V12 secure communication via nginx TLS reverse proxy ([e8d476f](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/e8d476f581c9b3297ec76ac6f079ca3d9095a522))
+* Implementation of the Security Vulnerability & Architecture Risk Policy on the application [#3](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/3) [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) ([fcb921c](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/fcb921ce8d935910d58c089af553f97fa9a17403))
+* Implementation of the Security Vulnerability & Architecture Risk Policy on the application [#3](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/3) [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) ([9744cc9](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/9744cc960ea253ff139d67115b51beef51041243))
+* Implementation of the Security Vulnerability & Architecture Risk Policy on the application [#3](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/3) [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) ([52c81e3](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/52c81e3250abd56da79cfa4be9e535429d33018b))
+* Improvement the API with the ASVS Rules specific about Authentication, Logs, RateLimit and Security Audit [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#10](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/10) [#12](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/12) [#13](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/13) [#16](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/16) ([a3f1a09](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/a3f1a09eca18be882f56e58c7d4fbbacc36ad220))
+* Improvement the API with the ASVS Rules specific about Rate Limit, Log Events, Http Trace, CRLF Injection prevention [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#10](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/10) [#12](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/12) [#13](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/13) [#16](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/16) ([1fbb0f9](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/1fbb0f9c23e0626cff010bb39c57c9970a7a2679))
+* Integration of OAuthGrantConfigTest and improvement of SecurityAuditService and correction of testes [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#12](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/12) [#13](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/13) ([483f5f6](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/483f5f69b8c91b8247625e84449c60f1d8a8a930))
+
+
+### Bug Fixes
+
+* Correction of the SecurityIntegrationTests changing isForbidden to isBadRequest [#12](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/12) [#13](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/13) ([83cde9a](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/83cde9a984c282e3fc3a7b9461afe39b2d45471d))
+* GameRepository correction on cast strings ([65af744](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/65af744739e4b275e6c22b6695feaac0b161601f))
+* GameRepository correction on cast strings ([8e7a39b](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/8e7a39b98341987859475023d65e99cd5d40905d))
+
 ## [2.0.1](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v2.0.0...v2.0.1) (2026-06-08)
 
 
