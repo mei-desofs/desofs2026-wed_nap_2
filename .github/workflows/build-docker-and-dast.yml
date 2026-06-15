@@ -187,7 +187,7 @@ jobs:
             zap-api-scan.py \
             -t https://localhost/v3/api-docs \
             -f openapi \
-            -config ssl.verify=false \
+            -z "-config ssl.verify=false" \
             -J zap-api-report.json \
             -w zap-api-report.md \
             -r zap-api-report.html \
