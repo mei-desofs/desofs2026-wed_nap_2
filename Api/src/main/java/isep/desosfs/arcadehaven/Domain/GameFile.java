@@ -9,12 +9,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Embeddable
 @Getter
 @AllArgsConstructor
 public class GameFile {
 
+    private UUID id;
     private String filename;
     private String path;
 

@@ -47,6 +47,9 @@ jobs:
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      CLAMAV_HOST: ${{ vars.CLAMAV_HOST }}
+      CLAMAV_PORT: ${{ vars.CLAMAV_PORT }}
+      CLAMAV_TIMEOUT_MS: ${{ vars.CLAMAV_TIMEOUT_MS }}
 
     steps:
       # Get code from repository

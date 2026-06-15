@@ -121,7 +121,10 @@ public class SftpStorageService implements StorageService {
         try (SFTPClient sftp = ssh.newSFTPClient();
              InputStream input = file.getInputStream()) {
 
-            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String originalFilename = file.getOriginalFilename();
+            String safeFilename = sanitizeFilename(originalFilename);
+
+            String filename = UUID.randomUUID() + "_" + safeFilename;
             String folder = baseRemoteDir + "/" + subDir;
             String remotePath = folder + "/" + filename;
             ensureDirExists(sftp, folder);
@@ -140,6 +143,12 @@ public class SftpStorageService implements StorageService {
         } finally {
             disconnectQuietly(ssh);
         }
+    }
+
+    // ASVS 1.3.3
+    private String sanitizeFilename(String input) {
+        if (input == null) return "file";
+        return input.replaceAll("[^a-zA-Z0-9._-]", "_");
     }
 
     public String uploadBytes(byte[] data, String filename, String subDir) throws StorageException {
@@ -196,6 +205,7 @@ public class SftpStorageService implements StorageService {
     private void disconnectQuietly(SSHClient ssh) {
         try {
             ssh.disconnect();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 }

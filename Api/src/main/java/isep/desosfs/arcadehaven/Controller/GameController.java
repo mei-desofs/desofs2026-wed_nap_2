@@ -1,7 +1,9 @@
 package isep.desosfs.arcadehaven.Controller;
 
+import isep.desosfs.arcadehaven.Dto.Request.GameFilterRequest;
 import isep.desosfs.arcadehaven.Dto.Response.GameResponse;
 import isep.desosfs.arcadehaven.Service.GameService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +22,8 @@ public class GameController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GameResponse>> getAllGames(
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice) {
-        return ResponseEntity.ok(gameService.getAllActiveGames(title, category, minPrice, maxPrice));
+    public ResponseEntity<List<GameResponse>> getAllGames(@Valid GameFilterRequest request) {
+        return ResponseEntity.ok(gameService.getAllActiveGames(request));
     }
 
     @GetMapping("/{id}")

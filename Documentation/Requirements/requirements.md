@@ -788,7 +788,7 @@ This table represents the lifecycle of each requirement from initial proposal to
 | **Name**         | File MIME Verification                                                                |
 | **Description**  | Uploaded files must be verified for their actual MIME type, not just their extension. |
 | **Actors**       | System                                                                                |
-| **Restrictions** | None                                                                                  |
+| **Restrictions** | Uploaded images must be of either Image, Screenshot or cover type and must have either .jpg, .jpeg, .png or .webp file extension                                                                                |
 | **Verification** | Validate file type verification                                                       |
 | **Priority**     | High                                                                                  |
 | **State**        | Approved                                                                              |

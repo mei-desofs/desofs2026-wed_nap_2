@@ -7,6 +7,7 @@ import isep.desosfs.arcadehaven.Dto.Response.UserResponse;
 import isep.desosfs.arcadehaven.Exception.BusinessException;
 import isep.desosfs.arcadehaven.Exception.ResourceNotFoundException;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -21,7 +22,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +44,26 @@ public class ProfileService {
 
     @Value("${keycloak.client-id}")
     private String clientId;
+
+    // ASVS V1.2.2
+    @PostConstruct
+    private void validateServerUrl() {
+        URI uri = URI.create(keycloakServerUrl);
+
+        if (uri.getScheme() == null) {
+            throw new IllegalStateException("Keycloak server URL missing scheme");
+        }
+
+        List<String> allowedSchemes = List.of("http", "https");
+
+        if (!allowedSchemes.contains(uri.getScheme().toLowerCase())) {
+            throw new IllegalStateException("Invalid Keycloak URL scheme");
+        }
+
+        if (uri.getHost() == null || uri.getHost().isBlank()) {
+            throw new IllegalStateException("Keycloak server URL missing host");
+        }
+    }
 
     public ProfileService(UserRepository userRepository, Keycloak keycloak,
                           PasswordPolicyService passwordPolicyService, RestTemplate restTemplate) {
@@ -77,7 +100,13 @@ public class ProfileService {
     }
 
     private void verifyCurrentPassword(String username, String currentPassword) {
-        String tokenUrl = keycloakServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+        URI tokenUri = UriComponentsBuilder // ASVS V1.2.2
+                .fromUriString(keycloakServerUrl)
+                .pathSegment("realms", realm, "protocol", "openid-connect", "token")
+                .build()
+                .encode()
+                .toUri();
+
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("grant_type", "password");
         form.add("client_id", clientId);
@@ -86,7 +115,7 @@ public class ProfileService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         try {
-            restTemplate.postForObject(tokenUrl, new HttpEntity<>(form, headers), Map.class);
+            restTemplate.postForObject(tokenUri, new HttpEntity<>(form, headers), Map.class);
         } catch (HttpClientErrorException e) {
             throw new BusinessException("Current password is incorrect");
         } catch (Exception e) {

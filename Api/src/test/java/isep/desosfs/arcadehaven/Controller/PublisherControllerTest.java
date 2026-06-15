@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import isep.desosfs.arcadehaven.Dto.Response.FileDownloadResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -238,30 +239,48 @@ public class PublisherControllerTest {
     }
 
     @Test
-    void shouldDownloadFile_whenPathIsNull_returnsDefaultFilename() {
-        UUID gameId = UUID.randomUUID();
-        byte[] fileData = "data".getBytes();
-        when(gameService.downloadGameFile(gameId, null)).thenReturn(fileData);
+    void shouldDownloadFile_returnsFileDataAndFilename() {
 
-        var response = controller.downloadFile(gameId, null);
+        UUID gameId = UUID.randomUUID();
+        UUID fileId = UUID.randomUUID();
+
+        byte[] fileData = "data".getBytes();
+
+        FileDownloadResult result = new FileDownloadResult("file.png", fileData);
+
+        when(gameService.downloadGameFile(gameId, fileId))
+                .thenReturn(result);
+
+        var response = controller.downloadFile(gameId, fileId);
 
         assertEquals(fileData, response.getBody());
-        assertTrue(response.getHeaders().getFirst("Content-Disposition").contains("file"));
-        verify(gameService).downloadGameFile(gameId, null);
+        assertTrue(response.getHeaders()
+                .getFirst("Content-Disposition")
+                .contains("file.png"));
+
+        verify(gameService).downloadGameFile(gameId, fileId);
     }
 
     @Test
-    void shouldDownloadFile_whenPathHasNoSlash_returnsFilenameAsPath() {
+    void shouldDownloadFile_usesStoredFilename() {
         UUID gameId = UUID.randomUUID();
-        byte[] fileData = "data".getBytes();
-        String path = "filename.txt";
-        when(gameService.downloadGameFile(gameId, path)).thenReturn(fileData);
+        UUID fileId = UUID.randomUUID();
 
-        var response = controller.downloadFile(gameId, path);
+        byte[] fileData = "data".getBytes();
+
+        FileDownloadResult result = new FileDownloadResult("filename.txt", fileData);
+
+        when(gameService.downloadGameFile(gameId, fileId))
+                .thenReturn(result);
+
+        var response = controller.downloadFile(gameId, fileId);
 
         assertEquals(fileData, response.getBody());
-        assertTrue(response.getHeaders().getFirst("Content-Disposition").contains("filename.txt"));
-        verify(gameService).downloadGameFile(gameId, path);
+        assertTrue(response.getHeaders()
+                .getFirst("Content-Disposition")
+                .contains("filename.txt"));
+
+        verify(gameService).downloadGameFile(gameId, fileId);
     }
 
     @Test

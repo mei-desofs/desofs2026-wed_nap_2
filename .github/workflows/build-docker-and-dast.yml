@@ -57,6 +57,10 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      CLAMAV_HOST: ${{ vars.CLAMAV_HOST }}
+      CLAMAV_PORT: ${{ vars.CLAMAV_PORT }}
+      CLAMAV_TIMEOUT_MS: ${{ vars.CLAMAV_TIMEOUT_MS }}
+
     steps:
       # Checkout repository
       - name: Checkout
