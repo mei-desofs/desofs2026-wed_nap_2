@@ -50,12 +50,9 @@ public class SecurityConfig {
         this.securityEventHandler = securityEventHandler;
     }
 
-    /**
-     * ASVS V9.2.2 — validates typ=Bearer to prevent ID tokens being used as access tokens.
-     * ASVS V9.2.3 / V9.2.4 — validates aud claim against the configured audience value.
-     */
-    @Bean
-    public JwtDecoder jwtDecoder() {
+    // ASVS V9.2.2 — validates typ=Bearer to prevent ID tokens being used as access tokens.
+    // ASVS V9.2.3 / V9.2.4 — validates aud claim against the configured audience value.
+    private JwtDecoder buildJwtDecoder() {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
 
         OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuerUri);
@@ -108,7 +105,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .jwt(jwt -> {
+                            jwt.decoder(buildJwtDecoder());
+                            jwt.jwtAuthenticationConverter(jwtAuthenticationConverter());
+                        })
                         .authenticationEntryPoint(securityEventHandler)
                 )
                 .exceptionHandling(ex -> ex
