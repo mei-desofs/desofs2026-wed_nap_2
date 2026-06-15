@@ -52,8 +52,8 @@ public class OrderItem {
             throw new IllegalArgumentException("Price must be above 0");
         }
 
-        if (price.compareTo(new BigDecimal("999999.99")) > 0) {
-            throw new IllegalArgumentException("Price cannot be larger than 999999.99");
+        if (price.compareTo(new BigDecimal("9999.99")) > 0) {
+            throw new IllegalArgumentException("Price cannot be larger than 9999.99");
         }
     }
 

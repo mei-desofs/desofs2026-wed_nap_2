@@ -15,10 +15,13 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import isep.desosfs.arcadehaven.Domain.GameFile;
+import isep.desosfs.arcadehaven.Dto.Request.GameFilterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -200,7 +203,8 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(isNull(), isNull(), isNull(), isNull()))
                 .thenReturn(List.of());
 
-        var result = gameService.getAllActiveGames(null, null, null, null);
+        GameFilterRequest req = new GameFilterRequest(null, null, null, null);
+        var result = gameService.getAllActiveGames(req);
 
         assertTrue(result.isEmpty());
     }
@@ -228,7 +232,9 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(isNull(), isNull(), isNull(), isNull()))
                 .thenReturn(List.of());
 
-        var result = gameService.getAllActiveGames(null, null, null, null);
+        GameFilterRequest req = new GameFilterRequest(null, null, null, null);
+
+        var result = gameService.getAllActiveGames(req);
 
         assertTrue(result.isEmpty());
     }
@@ -249,32 +255,51 @@ public class GameServiceTest {
     @Test
     void shouldDownloadGameFile() {
 
+        UUID gameId = UUID.randomUUID();
+        UUID fileId = UUID.randomUUID();
+
         Game game = Game.create("t", "d", BigDecimal.TEN, "r", null, user);
+
+        GameFile file = new GameFile(
+                fileId,
+                "file.png",
+                "games/images/file.png",
+                FileType.IMAGE,
+                LocalDateTime.now()
+        );
+
+        game.addFile(file);
 
         byte[] expected = new byte[]{1, 2, 3};
 
-        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername("john"))
+                .thenReturn(Optional.of(user));
+
         when(gameRepository.findByIdAndPublisher(any(), eq(user)))
                 .thenReturn(Optional.of(game));
 
-        when(fileStorageService.downloadFile(anyString()))
+        when(fileStorageService.downloadFile(file.getPath()))
                 .thenReturn(expected);
 
-        byte[] result =
-                gameService.downloadGameFile(UUID.randomUUID(), "path");
+        var result = gameService.downloadGameFile(gameId, fileId);
 
-        assertEquals(expected, result);
+        assertEquals(expected, result.data());
     }
 
     @Test
     void shouldThrowWhenDownloadingGameNotOwned() {
 
-        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        UUID gameId = UUID.randomUUID();
+        UUID fileId = UUID.randomUUID();
+
+        when(userRepository.findByUsername("john"))
+                .thenReturn(Optional.of(user));
+
         when(gameRepository.findByIdAndPublisher(any(), eq(user)))
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class,
-                () -> gameService.downloadGameFile(UUID.randomUUID(), "path"));
+                () -> gameService.downloadGameFile(gameId, fileId));
     }
 
     @Test

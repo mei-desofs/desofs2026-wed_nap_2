@@ -11,6 +11,7 @@ import isep.desosfs.arcadehaven.Exception.BusinessException;
 import isep.desosfs.arcadehaven.Repository.LibraryRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
 import isep.desosfs.arcadehaven.Security.SecurityAuditService;
+import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
@@ -57,6 +58,26 @@ public class AuthService {
     @Value("${keycloak.client-id}")
     private String clientId;
 
+    // ASVS V1.2.2
+    @PostConstruct
+    private void validateKeycloakUrl() {
+        URI uri = URI.create(keycloakServerUrl);
+
+        if (uri.getScheme() == null) {
+            throw new IllegalStateException("Missing URL scheme");
+        }
+
+        List<String> allowedSchemes = List.of("http", "https");
+
+        if (!allowedSchemes.contains(uri.getScheme().toLowerCase())) {
+            throw new IllegalStateException("Invalid URL scheme: " + uri.getScheme());
+        }
+
+        if (uri.getHost() == null || uri.getHost().isBlank()) {
+            throw new IllegalStateException("Missing host in Keycloak URL");
+        }
+    }
+
     public AuthService(UserRepository userRepository, LibraryRepository libraryRepository,
                        Keycloak keycloak, PasswordPolicyService passwordPolicyService,
                        RestTemplate restTemplate, SecurityAuditService auditService) {
@@ -69,7 +90,12 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest request) {
-        String tokenUrl = keycloakServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+        URI tokenUri = UriComponentsBuilder // ASVS V1.2.2
+                .fromUriString(keycloakServerUrl)
+                .pathSegment("realms", realm, "protocol", "openid-connect", "token")
+                .build()
+                .encode()
+                .toUri();
 
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("grant_type", "password");
@@ -83,7 +109,7 @@ public class AuthService {
         try {
             @SuppressWarnings("unchecked")
             Map<String, Object> body = restTemplate.postForObject(
-                    tokenUrl, new HttpEntity<>(form, headers), Map.class);
+                    tokenUri, new HttpEntity<>(form, headers), Map.class);
             // ASVS V16.3.1 — log successful authentications
             auditService.recordLoginSuccess(request.username());
             return new LoginResponse(

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -114,6 +115,7 @@ public class GameTest {
         Game game = createGame();
 
         game.addFile(
+                UUID.randomUUID(),
                 "cover.png",
                 "/images/cover.png",
                 FileType.COVER
