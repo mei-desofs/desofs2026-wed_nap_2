@@ -173,3 +173,8 @@ Api/set-env.sh
 # Environment variables — never commit real credentials
 .env
 settings.local.json
+
+# TLS certificates — never commit private keys (ASVS V12.2.2)
+Api/nginx/certs/*.crt
+Api/nginx/certs/*.key
+Api/nginx/certs/*.pem

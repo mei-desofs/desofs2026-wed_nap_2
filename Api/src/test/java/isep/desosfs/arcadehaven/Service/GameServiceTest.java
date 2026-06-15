@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -15,10 +15,13 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import isep.desosfs.arcadehaven.Domain.GameFile;
+import isep.desosfs.arcadehaven.Dto.Request.GameFilterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,9 +42,13 @@ import isep.desosfs.arcadehaven.Dto.Request.CreateGameRequest;
 import isep.desosfs.arcadehaven.Dto.Request.UpdateGameRequest;
 import isep.desosfs.arcadehaven.Dto.Response.GameResponse;
 import isep.desosfs.arcadehaven.Exception.ResourceNotFoundException;
+import isep.desosfs.arcadehaven.Exception.StorageException;
 import isep.desosfs.arcadehaven.Repository.GameRepository;
 import isep.desosfs.arcadehaven.Repository.OrderRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
+import isep.desosfs.arcadehaven.Security.ClamAVService;
+import isep.desosfs.arcadehaven.Validation.FileValidator;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,6 +62,8 @@ public class GameServiceTest {
     @Mock UserRepository userRepository;
     @Mock FileStorageService fileStorageService;
     @Mock OrderRepository orderRepository;
+    @Mock FileValidator fileValidator;
+    @Mock ClamAVService clamAVService;
 
     @InjectMocks GameService gameService;
 
@@ -200,7 +209,8 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(isNull(), isNull(), isNull(), isNull()))
                 .thenReturn(List.of());
 
-        var result = gameService.getAllActiveGames(null, null, null, null);
+        GameFilterRequest req = new GameFilterRequest(null, null, null, null);
+        var result = gameService.getAllActiveGames(req);
 
         assertTrue(result.isEmpty());
     }
@@ -228,7 +238,9 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(isNull(), isNull(), isNull(), isNull()))
                 .thenReturn(List.of());
 
-        var result = gameService.getAllActiveGames(null, null, null, null);
+        GameFilterRequest req = new GameFilterRequest(null, null, null, null);
+
+        var result = gameService.getAllActiveGames(req);
 
         assertTrue(result.isEmpty());
     }
@@ -249,32 +261,51 @@ public class GameServiceTest {
     @Test
     void shouldDownloadGameFile() {
 
+        UUID gameId = UUID.randomUUID();
+        UUID fileId = UUID.randomUUID();
+
         Game game = Game.create("t", "d", BigDecimal.TEN, "r", null, user);
+
+        GameFile file = new GameFile(
+                fileId,
+                "file.png",
+                "games/images/file.png",
+                FileType.IMAGE,
+                LocalDateTime.now()
+        );
+
+        game.addFile(file);
 
         byte[] expected = new byte[]{1, 2, 3};
 
-        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername("john"))
+                .thenReturn(Optional.of(user));
+
         when(gameRepository.findByIdAndPublisher(any(), eq(user)))
                 .thenReturn(Optional.of(game));
 
-        when(fileStorageService.downloadFile(anyString()))
+        when(fileStorageService.downloadFile(file.getPath()))
                 .thenReturn(expected);
 
-        byte[] result =
-                gameService.downloadGameFile(UUID.randomUUID(), "path");
+        var result = gameService.downloadGameFile(gameId, fileId);
 
-        assertEquals(expected, result);
+        assertEquals(expected, result.data());
     }
 
     @Test
     void shouldThrowWhenDownloadingGameNotOwned() {
 
-        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
+        UUID gameId = UUID.randomUUID();
+        UUID fileId = UUID.randomUUID();
+
+        when(userRepository.findByUsername("john"))
+                .thenReturn(Optional.of(user));
+
         when(gameRepository.findByIdAndPublisher(any(), eq(user)))
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class,
-                () -> gameService.downloadGameFile(UUID.randomUUID(), "path"));
+                () -> gameService.downloadGameFile(gameId, fileId));
     }
 
     @Test
@@ -328,17 +359,10 @@ public class GameServiceTest {
 
     @Test
     void shouldThrowStorageExceptionWhenFileReadFails() {
+        MockMultipartFile broken = new MockMultipartFile("f", "img.png", "image/png", new byte[0]);
 
-        MockMultipartFile broken =
-                new MockMultipartFile(
-                        "f",
-                        "img.png",
-                        "image/png",
-                        new byte[0]
-                );
-
-        lenient().when(userRepository.findByUsername("john"))
-                .thenReturn(Optional.of(user));
+        doThrow(new IllegalArgumentException("Invalid file type: application/octet-stream"))
+                .when(fileValidator).validateMimeType(any(), any());
 
         assertThrows(IllegalArgumentException.class, () ->
                 gameService.uploadGameFile(UUID.randomUUID(), broken, FileType.IMAGE));
@@ -346,19 +370,10 @@ public class GameServiceTest {
 
     @Test
     void shouldThrowWhenInvalidMimeType() {
+        MockMultipartFile file = new MockMultipartFile("f", "file.txt", "text/plain", "hello".getBytes());
 
-        byte[] txt = "hello".getBytes();
-
-        MockMultipartFile file =
-                new MockMultipartFile("f", "file.txt", "text/plain", txt);
-
-        lenient().when(userRepository.findByUsername("john"))
-                .thenReturn(Optional.of(user));
-
-        lenient().when(gameRepository.findByIdAndPublisher(any(), eq(user)))
-                .thenReturn(Optional.of(
-                        Game.create("t", "d", BigDecimal.TEN, "r", null, user)
-                ));
+        doThrow(new IllegalArgumentException("Invalid file type: text/plain"))
+                .when(fileValidator).validateMimeType(any(), eq(FileType.IMAGE));
 
         assertThrows(IllegalArgumentException.class, () ->
                 gameService.uploadGameFile(UUID.randomUUID(), file, FileType.IMAGE));
@@ -391,29 +406,25 @@ public class GameServiceTest {
 
     @Test
     void shouldThrowWhenFileSizeExceedsLimit() {
-        byte[] oversized = new byte[(25 * 1024 * 1024) + 1];
-        MockMultipartFile file = new MockMultipartFile(
-                "f", "big.png", "image/png", oversized);
+        MockMultipartFile file = new MockMultipartFile("f", "big.png", "image/png", new byte[1]);
 
-        lenient().when(userRepository.findByUsername("john"))
-                .thenReturn(Optional.of(user));
+        doThrow(new MaxUploadSizeExceededException(25 * 1024 * 1024L))
+                .when(fileValidator).validateFileSize(any());
 
-        assertThrows(org.springframework.web.multipart.MaxUploadSizeExceededException.class,
+        assertThrows(MaxUploadSizeExceededException.class,
                 () -> gameService.uploadGameFile(UUID.randomUUID(), file, FileType.IMAGE));
     }
 
     @Test
-    void shouldThrowStorageExceptionWhenStreamFails() throws Exception {
-        MultipartFile brokenFile = mock(org.springframework.web.multipart.MultipartFile.class);
-        when(brokenFile.getSize()).thenReturn(100L);
-        when(brokenFile.getInputStream()).thenThrow(new IOException("disco cheio"));
+    void shouldThrowStorageExceptionWhenStreamFails() {
+        MultipartFile brokenFile = mock(MultipartFile.class);
 
-        lenient().when(userRepository.findByUsername("john"))
-                .thenReturn(Optional.of(user));
+        doThrow(new StorageException("Cannot read file", new IOException("disco cheio")))
+                .when(fileValidator).validateMimeType(any(), any());
 
-        assertThrows(isep.desosfs.arcadehaven.Exception.StorageException.class,
+        assertThrows(StorageException.class,
                 () -> gameService.uploadGameFile(UUID.randomUUID(), brokenFile, FileType.IMAGE));
-        }
+    }
 
         private Game activeGame() {
         User publisher = User.create("pub", "pub@test.com", "hash", Role.PUBLISHER);
@@ -427,7 +438,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(null, null, null, null))
                 .thenReturn(List.of(activeGame()));
 
-        List<GameResponse> result = gameService.getAllActiveGames(null, null, null, null);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest(null, null, null, null));
 
         assertThat(result).hasSize(1);
         verify(gameRepository).findActiveWithFilters(null, null, null, null);
@@ -438,7 +449,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters("Sonic", null, null, null))
                 .thenReturn(List.of(activeGame()));
 
-        List<GameResponse> result = gameService.getAllActiveGames("Sonic", null, null, null);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest("Sonic", null, null, null));
 
         assertThat(result).hasSize(1);
         verify(gameRepository).findActiveWithFilters("Sonic", null, null, null);
@@ -449,7 +460,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(null, "action", null, null))
                 .thenReturn(List.of(activeGame()));
 
-        List<GameResponse> result = gameService.getAllActiveGames(null, "action", null, null);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest(null, "action", null, null));
 
         assertThat(result).hasSize(1);
         verify(gameRepository).findActiveWithFilters(null, "action", null, null);
@@ -462,7 +473,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(null, null, min, max))
                 .thenReturn(List.of(activeGame()));
 
-        List<GameResponse> result = gameService.getAllActiveGames(null, null, min, max);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest(null, null, min, max));
 
         assertThat(result).hasSize(1);
         verify(gameRepository).findActiveWithFilters(null, null, min, max);
@@ -475,7 +486,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters("Sonic", "action", min, max))
                 .thenReturn(List.of(activeGame()));
 
-        List<GameResponse> result = gameService.getAllActiveGames("Sonic", "action", min, max);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest("Sonic", "action", min, max));
 
         assertThat(result).hasSize(1);
         verify(gameRepository).findActiveWithFilters("Sonic", "action", min, max);
@@ -486,7 +497,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(null, null, null, null))
                 .thenReturn(List.of());
 
-        List<GameResponse> result = gameService.getAllActiveGames(null, null, null, null);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest(null, null, null, null));
 
         assertThat(result).isEmpty();
     }
@@ -497,7 +508,7 @@ public class GameServiceTest {
         when(gameRepository.findActiveWithFilters(null, null, null, null))
                 .thenReturn(List.of(game));
 
-        List<GameResponse> result = gameService.getAllActiveGames(null, null, null, null);
+        List<GameResponse> result = gameService.getAllActiveGames(new GameFilterRequest(null, null, null, null));
 
         assertThat(result.get(0).title()).isEqualTo("Sonic");
         assertThat(result.get(0).price()).isEqualByComparingTo(BigDecimal.TEN);

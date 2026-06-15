@@ -3,6 +3,7 @@ package isep.desosfs.arcadehaven.Controller;
 import isep.desosfs.arcadehaven.Domain.Enums.FileType;
 import isep.desosfs.arcadehaven.Dto.Request.CreateGameRequest;
 import isep.desosfs.arcadehaven.Dto.Request.UpdateGameRequest;
+import isep.desosfs.arcadehaven.Dto.Response.FileDownloadResult;
 import isep.desosfs.arcadehaven.Dto.Response.GameMetricsResponse;
 import isep.desosfs.arcadehaven.Dto.Response.GameResponse;
 import isep.desosfs.arcadehaven.Service.GameService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,13 +43,17 @@ public class PublisherController {
         return ResponseEntity.ok(gameService.updateGame(id, request));
     }
 
-    @GetMapping("/games/{gameId}/files")
+    @GetMapping("/games/{gameId}/{fileId}")
     public ResponseEntity<byte[]> downloadFile(@PathVariable UUID gameId,
-                                               @RequestParam String path) {
-        byte[] fileData = gameService.downloadGameFile(gameId, path);
+                                               @RequestParam UUID file) {
+        FileDownloadResult fileData = gameService.downloadGameFile(gameId, file);
+
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=\"" + extractFilename(path) + "\"")
-                .body(fileData);
+                .header(
+                        "Content-Disposition",
+                        "attachment; filename=\"" + fileData.filename() + "\""
+                )
+                .body(fileData.data());
     }
 
     @GetMapping("/games/{id}/metrics")
@@ -62,8 +68,11 @@ public class PublisherController {
         return ResponseEntity.ok(gameService.uploadGameFile(id, file, fileType));
     }
 
-    private String extractFilename(String path) {
-        if (path == null) return "file";
-        return path.substring(path.lastIndexOf("/") + 1);
+    private String safeFilename(String filename) {
+        if (filename == null) return "download";
+
+        return filename
+                .replaceAll("[\\r\\n\"\\\\]", "_")
+                .replaceAll("[^a-zA-Z0-9._-]", "_");
     }
 }

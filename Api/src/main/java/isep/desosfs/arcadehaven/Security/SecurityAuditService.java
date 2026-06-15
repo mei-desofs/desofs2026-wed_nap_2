@@ -36,6 +36,15 @@ public class SecurityAuditService {
             Pattern.compile("eyJ[A-Za-z0-9+/\\-_]+=*\\.[A-Za-z0-9+/\\-_]+=*\\.[A-Za-z0-9+/\\-_]+=*");
     private static final Pattern ACTIVATION_KEY_PATTERN =
             Pattern.compile("\\b[A-F0-9]{32}\\b");
+    // V14.2.4 — key-based redaction: any log field whose key matches this pattern
+    //           has its value replaced with [REDACTED] to prevent accidental
+    //           credential disclosure (passwords, secrets, client credentials).
+    private static final Pattern SENSITIVE_KEY_PATTERN =
+            Pattern.compile("(?i)\\b(password|secret|credential|private_key|client_secret)\\b");
+    // V14.2.4 — form-encoded credential pattern (e.g. "password=abc123" embedded in
+    //           error messages or request-body echo in exception strings).
+    private static final Pattern FORM_ENCODED_SECRET_PATTERN =
+            Pattern.compile("(?i)(password|secret|credential)=[^&\\s\"'\\}]+");
 
     private final ConcurrentHashMap<String, IpWindow> windows = new ConcurrentHashMap<>();
 
@@ -129,8 +138,9 @@ public class SecurityAuditService {
     }
 
     /**
-     * Strips CR, LF and TAB (V16.4.1) and redacts JWT tokens and 32-char hex
-     * activation keys before embedding any value in a JSON log line (V16.2.5).
+     * Strips CR, LF and TAB (V16.4.1) and redacts JWT tokens, 32-char hex
+     * activation keys, and form-encoded credentials before embedding any value
+     * in a JSON log line (V16.2.5 / V14.2.4).
      */
     static String sanitize(String value) {
         if (value == null) {
@@ -139,20 +149,28 @@ public class SecurityAuditService {
         String v = value.replace("\r", "").replace("\n", "").replace("\t", "").replace("\"", "'");
         v = JWT_PATTERN.matcher(v).replaceAll("[JWT_REDACTED]");
         v = ACTIVATION_KEY_PATTERN.matcher(v).replaceAll("[KEY_REDACTED]");
+        v = FORM_ENCODED_SECRET_PATTERN.matcher(v).replaceAll("$1=[REDACTED]");
         return v;
     }
 
     /**
      * Builds a JSON-structured log entry (ASVS V16.2.4).
      * Format: {"event":"<name>","ts":"<iso>","key":"value",...}
+     *
+     * V14.2.4: any key whose name matches SENSITIVE_KEY_PATTERN (password, secret,
+     * credential, private_key, client_secret) has its value replaced with [REDACTED]
+     * regardless of the value itself, preventing accidental credential disclosure.
      */
     static String json(String event, String... kvPairs) {
         StringBuilder sb = new StringBuilder("{");
         sb.append("\"event\":\"").append(sanitize(event)).append("\"");
         sb.append(",\"ts\":\"").append(Instant.now()).append("\"");
         for (int i = 0; i + 1 < kvPairs.length; i += 2) {
-            sb.append(",\"").append(sanitize(kvPairs[i])).append("\":\"")
-                    .append(sanitize(kvPairs[i + 1])).append("\"");
+            String key = sanitize(kvPairs[i]);
+            String value = SENSITIVE_KEY_PATTERN.matcher(kvPairs[i]).find()
+                    ? "[REDACTED]"
+                    : sanitize(kvPairs[i + 1]);
+            sb.append(",\"").append(key).append("\":\"").append(value).append("\"");
         }
         sb.append("}");
         return sb.toString();

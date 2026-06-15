@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import isep.desosfs.arcadehaven.Dto.Request.GameFilterRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,13 +31,15 @@ public class GameControllerTest {
     void shouldGetAllGames() {
         List<GameResponse> games = List.of(createGameResponse());
 
-        when(gameService.getAllActiveGames(null, null, null, null)).thenReturn(games);
+        GameFilterRequest request = new GameFilterRequest(null, null, null, null);
 
-        var response = controller.getAllGames(null, null, null, null);
+        when(gameService.getAllActiveGames(request)).thenReturn(games);
+
+        var response = controller.getAllGames(request);
 
         assertEquals(games, response.getBody());
 
-        verify(gameService).getAllActiveGames(null, null, null, null);
+        verify(gameService).getAllActiveGames(request);
     }
 
     @Test

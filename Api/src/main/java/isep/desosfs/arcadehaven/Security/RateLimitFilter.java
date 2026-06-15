@@ -76,10 +76,9 @@ public class RateLimitFilter implements Filter {
     }
 
     private String resolveClientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
-        }
+        // Tomcat's RemoteIpFilter (server.forward-headers-strategy=NATIVE) has already
+        // resolved the real client IP from trusted X-Forwarded-For headers before this
+        // filter runs. Reading the header directly here would allow spoofing (V15.3.4).
         return request.getRemoteAddr();
     }
 }

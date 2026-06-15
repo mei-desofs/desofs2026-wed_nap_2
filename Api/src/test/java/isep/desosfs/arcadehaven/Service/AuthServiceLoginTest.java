@@ -53,7 +53,7 @@ class AuthServiceLoginTest {
 
     @Test
     void login_validCredentials_returnsTokens() {
-        when(restTemplate.postForObject(anyString(), any(), eq(Map.class)))
+        when(restTemplate.postForObject(any(), any(), eq(Map.class)))
                 .thenReturn(Map.of(
                         "access_token", "acc-token",
                         "refresh_token", "ref-token",
@@ -71,7 +71,7 @@ class AuthServiceLoginTest {
     void login_wrongPassword_throwsBadCredentialsException() {
         HttpClientErrorException.Unauthorized unauthorized =
                 mock(HttpClientErrorException.Unauthorized.class);
-        when(restTemplate.postForObject(anyString(), any(), eq(Map.class)))
+        when(restTemplate.postForObject(any(), any(), eq(Map.class)))
                 .thenThrow(unauthorized);
 
         assertThatThrownBy(() -> authService.login(new LoginRequest("user", "wrong")))

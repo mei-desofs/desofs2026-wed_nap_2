@@ -26,9 +26,11 @@ jobs:
       SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
 
       KEYCLOAK_JWK_SET_URI: ${{ vars.KEYCLOAK_JWK_SET_URI }}
+      KEYCLOAK_JWK_ISSUER: ${{ vars.KEYCLOAK_JWK_ISSUER }}
       KEYCLOAK_SERVER_URL: ${{ vars.KEYCLOAK_SERVER_URL }}
       KEYCLOAK_REALM: ${{ secrets.KEYCLOAK_REALM }}
       KEYCLOAK_CLIENT_ID: ${{ vars.KEYCLOAK_CLIENT_ID }}
+      KEYCLOAK_BACKEND_CLIENT_SECRET: ${{ secrets.KEYCLOAK_BACKEND_CLIENT_SECRET }}
       KEYCLOAK_ADMIN_USERNAME: ${{ secrets.KEYCLOAK_ADMIN_USERNAME }}
       KEYCLOAK_ADMIN_PASSWORD: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
 
@@ -57,6 +59,10 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      CLAMAV_HOST: ${{ vars.CLAMAV_HOST }}
+      CLAMAV_PORT: ${{ vars.CLAMAV_PORT }}
+      CLAMAV_TIMEOUT_MS: ${{ vars.CLAMAV_TIMEOUT_MS }}
+
     steps:
       # Checkout repository
       - name: Checkout
@@ -69,6 +75,10 @@ jobs:
       # Create reports directory in workspace if it do
       - name: Create reports directory
         run: mkdir -p reports/trivy reports/zap
+
+      # Generate self-signed TLS cert for nginx (dev/CI — ASVS V12.2.2)
+      - name: Generate self-signed TLS certificate
+        run: bash nginx/generate-self-signed-cert.sh
 
       # Build Docker image
       - name: Build images
@@ -130,11 +140,11 @@ jobs:
 
           exit 1
 
-      # Application health check
+      # Application health check — via nginx on :443 (port 8080 not published externally)
       - name: Wait for app
         run: |
           for i in {1..60}; do
-            if curl -fs http://localhost:8080/actuator/health; then
+            if curl -fsk https://localhost/actuator/health; then
               echo "App ready"
               exit 0
             fi
@@ -154,14 +164,15 @@ jobs:
           mkdir -p ${{ github.workspace }}/Api/reports/zap
           chmod 777 ${{ github.workspace }}/Api/reports/zap
 
-      # Run OWASP ZAP DAST scan
+      # Run OWASP ZAP DAST scan — target nginx on :443 (-config ssl.verify=false accepts self-signed cert)
       - name: OWASP ZAP Baseline Scan
         run: |
           docker run --network=host \
             -v ${{ github.workspace }}/Api/reports/zap:/zap/wrk/:rw \
             ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py \
-            -t http://localhost:8080 \
+            -t https://localhost \
+            -config ssl.verify=false \
             -J zap-baseline-report.json \
             -w zap-baseline-report.md \
             -r zap-baseline-report.html \
@@ -174,8 +185,9 @@ jobs:
             -v ${{ github.workspace }}/Api/reports/zap:/zap/wrk/:rw \
             ghcr.io/zaproxy/zaproxy:stable \
             zap-api-scan.py \
-            -t http://localhost:8080/v3/api-docs \
+            -t https://localhost/v3/api-docs \
             -f openapi \
+            -config ssl.verify=false \
             -J zap-api-report.json \
             -w zap-api-report.md \
             -r zap-api-report.html \
