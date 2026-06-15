@@ -186,11 +186,8 @@ public class GlobalExceptionHandler {
 
     // ── helpers ──────────────────────────────────────────────────────────────
 
+    // ASVS 4.1.3
     private String resolveIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
-        }
         return request.getRemoteAddr();
     }
 

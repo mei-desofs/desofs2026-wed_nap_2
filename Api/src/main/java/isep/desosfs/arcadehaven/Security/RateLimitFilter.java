@@ -75,6 +75,7 @@ public class RateLimitFilter implements Filter {
         return Bucket.builder().addLimit(limit).build();
     }
 
+    //ASVS 4.1.3
     private String resolveClientIp(HttpServletRequest request) {
         // Tomcat's RemoteIpFilter (server.forward-headers-strategy=NATIVE) has already
         // resolved the real client IP from trusted X-Forwarded-For headers before this
