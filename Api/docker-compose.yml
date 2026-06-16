@@ -53,6 +53,10 @@ services:
       CLAMAV_TIMEOUT_MS: ${CLAMAV_TIMEOUT_MS}
       # TLS terminated at the reverse proxy; disable Spring Boot SSL to avoid missing-keystore error
       SERVER_SSL_ENABLED: "false"
+      # V12.3.1 / V14.2.4 — DB TLS mode: 'prefer' (dev) or 'require' (production with TLS-enabled DB)
+      DB_SSL_MODE: ${DB_SSL_MODE:-prefer}
+      # V13.2.2 — Set FLYWAY_DATASOURCE_URL / _USERNAME / _PASSWORD in .env to use a separate
+      # DDL-only user for Flyway migrations. When not set, Flyway falls back to the main datasource.
     volumes:
       - ./storage:/app/storage
     # RNF-26 — restart on crash; healthcheck via Spring Boot Actuator
@@ -110,6 +114,34 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
+    restart: unless-stopped
+
+  # RNF-27 — Daily pg_dump for both the remote application DB and the local Keycloak DB.
+  # Runs at 02:00 every day (see backup/crontab). Backups are stored in ./backups/ on the host.
+  # To trigger immediately: docker compose exec backup sh /backup.sh
+  backup:
+    image: postgres:16-alpine
+    environment:
+      # Remote application database
+      REMOTE_HOST: vsgate-s1.dei.isep.ipp.pt
+      REMOTE_PORT: "10345"
+      REMOTE_USER: ${SPRING_DATASOURCE_USERNAME}
+      REMOTE_DB_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      # Database name: update if the remote DB is not named 'postgres'
+      REMOTE_DB: postgres
+      # Local Keycloak database
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      # Days to retain backups (default: 7)
+      RETENTION_DAYS: "7"
+    volumes:
+      - ./backups:/backups
+      - ./backup/backup.sh:/backup.sh:ro
+      - ./backup/crontab:/etc/crontabs/root:ro
+    # Use sh explicitly — avoids needing execute bit on the mounted script
+    command: ["/bin/sh", "-c", "crond -f -l 2"]
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:

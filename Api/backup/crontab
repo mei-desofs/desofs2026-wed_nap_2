@@ -1,0 +1,10 @@
+# ArcadeHaven backup schedule — busybox crond format
+# Runs daily at 02:00 AM. Output appended to /backups/backup.log (visible via docker logs when
+# the container is started with command "crond -f -l 2").
+#
+# To trigger an immediate backup:  docker compose exec backup sh /backup.sh
+# To read the log:                 docker compose logs backup
+#                                  cat ./backups/backup.log
+#
+# min  hour  day  month  weekday  command
+0      2     *    *      *        /bin/sh /backup.sh >> /backups/backup.log 2>&1
