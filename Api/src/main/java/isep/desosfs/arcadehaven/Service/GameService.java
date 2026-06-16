@@ -184,7 +184,8 @@ public class GameService {
         User publisher = getCurrentUser();
         Game game = gameRepository.findByIdAndPublisher(gameId, publisher)
                 .orElseThrow(() -> new ResourceNotFoundException("Game not found or not owned by you"));
-        Object[] row = orderRepository.findMetricsByGameId(gameId);
+        List<Object[]> rows = orderRepository.findMetricsByGameId(gameId);
+        Object[] row = rows.isEmpty() ? new Object[]{0L, BigDecimal.ZERO} : rows.get(0);
 
         long unitsSold = row[0] != null ? ((Number) row[0]).longValue() : 0L;
         BigDecimal totalRevenue = row[1] != null ? (BigDecimal) row[1] : BigDecimal.ZERO;

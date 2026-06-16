@@ -12,7 +12,8 @@ public record OrderResponse(
         String status,
         BigDecimal totalPrice,
         List<OrderItemResponse> items,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        String invoicePath
 ) {
     public static OrderResponse from(Order order) {
         return new OrderResponse(
@@ -20,7 +21,8 @@ public record OrderResponse(
                 order.getStatus().name(),
                 order.getTotalPrice(),
                 order.getItems().stream().map(OrderItemResponse::from).toList(),
-                order.getCreatedAt()
+                order.getCreatedAt(),
+                order.getInvoicePath()
         );
     }
 }

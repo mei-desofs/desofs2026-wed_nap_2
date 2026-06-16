@@ -59,7 +59,7 @@ public class GameTest {
     }
 
     @Test
-    void shouldThrowWhenApprovingNonPendingGame() {
+    void shouldThrowWhenApprovingActiveGame() {
         Game game = createGame();
 
         game.approve();
@@ -69,7 +69,7 @@ public class GameTest {
                 game::approve
         );
 
-        assertEquals("Only pending games can be approved", ex.getMessage());
+        assertEquals("Only pending or rejected games can be approved", ex.getMessage());
     }
 
     @Test
@@ -253,7 +253,7 @@ public class GameTest {
     }
 
     @Test
-    void shouldThrowWhenRejectingNonPendingGame() {
+    void shouldThrowWhenRejectingAlreadyRejectedGame() {
         Game game = createGame();
         game.reject();
 
@@ -262,7 +262,7 @@ public class GameTest {
                 game::reject
         );
 
-        assertEquals("Only pending games can be rejected", ex.getMessage());
+        assertEquals("Only pending or active games can be rejected", ex.getMessage());
     }
 
     @Test
@@ -287,7 +287,15 @@ public class GameTest {
 
         assertThatThrownBy(game::approve)
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Only pending games can be approved");
+                .hasMessageContaining("Only pending or rejected games can be approved");
+    }
+
+    @Test
+    void approve_rejectedGame_becomesActive() {
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
+        game.reject();
+        game.approve();
+        assertThat(game.getStatus()).isEqualTo(GameStatus.ACTIVE);
     }
 
     @Test
@@ -298,13 +306,21 @@ public class GameTest {
     }
 
     @Test
-    void reject_activeGame_throwsIllegalState() {
+    void reject_activeGame_becomesRejected() {
         Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
         game.approve();
+        game.reject();
+        assertThat(game.getStatus()).isEqualTo(GameStatus.REJECTED);
+    }
+
+    @Test
+    void reject_rejectedGame_throwsIllegalState() {
+        Game game = Game.create("Title", "desc", BigDecimal.TEN, null, null, publisher);
+        game.reject();
 
         assertThatThrownBy(game::reject)
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Only pending games can be rejected");
+                .hasMessageContaining("Only pending or active games can be rejected");
     }
 
     @Test

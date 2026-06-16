@@ -34,9 +34,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RateLimitFilter implements Filter {
 
     private enum RateTier {
-        AUTH(20),    // Authentication endpoints
-        UPLOAD(10),  // File-upload / game submission
-        STATE(5);    // Business state-changing operations (payment, key import)
+        AUTH(30),    // Authentication endpoints
+        UPLOAD(30),  // File-upload / game submission
+        STATE(30);   // Business state-changing operations (payment, key import)
 
         final int requestsPerMinute;
 

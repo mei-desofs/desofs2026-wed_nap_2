@@ -332,7 +332,7 @@ public class GameServiceTest {
         when(gameRepository.findByIdAndPublisher(any(), eq(user)))
                 .thenReturn(Optional.of(game));
         when(orderRepository.findMetricsByGameId(any()))
-                .thenReturn(row);
+                .thenReturn(List.<Object[]>of(row));
 
         var result = gameService.getGameMetrics(UUID.randomUUID());
 
@@ -351,7 +351,7 @@ public class GameServiceTest {
         when(gameRepository.findByIdAndPublisher(any(), eq(user)))
                 .thenReturn(Optional.of(game));
         when(orderRepository.findMetricsByGameId(any()))
-                .thenReturn(row);
+                .thenReturn(List.<Object[]>of(row));
 
         var result = gameService.getGameMetrics(UUID.randomUUID());
 

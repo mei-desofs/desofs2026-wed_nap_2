@@ -15,5 +15,5 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     @Query("SELECT COUNT(oi), COALESCE(SUM(oi.price), 0) FROM Order o JOIN o.items oi"
             + " WHERE oi.game.id = :gameId AND o.status = 'COMPLETED'")
-    Object[] findMetricsByGameId(@Param("gameId") UUID gameId);
+    List<Object[]> findMetricsByGameId(@Param("gameId") UUID gameId);
 }

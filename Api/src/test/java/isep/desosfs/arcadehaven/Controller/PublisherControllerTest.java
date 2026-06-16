@@ -312,7 +312,8 @@ public class PublisherControllerTest {
                 null,
                 null,
                 "publisher",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                List.of()
         );
     }
 }
