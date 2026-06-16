@@ -58,7 +58,7 @@ public class LocalStorageService implements StorageService {
             Path target = resolveAndValidate(subDir, UUID.randomUUID() + "_" + original);
             Files.createDirectories(target.getParent());
             Files.copy(file.getInputStream(), target);
-            return target.toString();
+            return baseDir.relativize(target).toString().replace("\\", "/");
         } catch (IOException e) {
             throw new StorageException("Failed to save file locally: " + e.getMessage(), e);
         }
@@ -70,7 +70,7 @@ public class LocalStorageService implements StorageService {
             Path target = resolveAndValidate(subDir, filename);
             Files.createDirectories(target.getParent());
             Files.write(target, data);
-            return target.toString();
+            return baseDir.relativize(target).toString().replace("\\", "/");
         } catch (IOException e) {
             throw new StorageException("Failed to write file locally: " + e.getMessage(), e);
         }
@@ -79,7 +79,7 @@ public class LocalStorageService implements StorageService {
     @Override
     public byte[] downloadFile(String path) throws StorageException {
         try {
-            Path target = Path.of(path).normalize();
+            Path target = baseDir.resolve(path).normalize();
             if (!target.startsWith(baseDir)) {
                 throw new StorageException("Path is outside local storage root: " + path, null);
             }
@@ -94,7 +94,7 @@ public class LocalStorageService implements StorageService {
     @Override
     public void deleteFile(String path) throws StorageException {
         try {
-            Path target = Path.of(path).normalize();
+            Path target = baseDir.resolve(path).normalize();
             if (!target.startsWith(baseDir)) {
                 throw new StorageException("Path is outside local storage root: " + path, null);
             }

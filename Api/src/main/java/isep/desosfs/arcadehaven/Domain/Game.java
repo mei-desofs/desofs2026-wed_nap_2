@@ -83,15 +83,15 @@ public class Game {
     }
 
     public void approve() {
-        if (status != GameStatus.PENDING) {
-            throw new IllegalStateException("Only pending games can be approved");
+        if (status != GameStatus.PENDING && status != GameStatus.REJECTED) {
+            throw new IllegalStateException("Only pending or rejected games can be approved");
         }
         this.status = GameStatus.ACTIVE;
     }
 
     public void reject() {
-        if (status != GameStatus.PENDING) {
-            throw new IllegalStateException("Only pending games can be rejected");
+        if (status != GameStatus.PENDING && status != GameStatus.ACTIVE) {
+            throw new IllegalStateException("Only pending or active games can be rejected");
         }
         this.status = GameStatus.REJECTED;
     }
