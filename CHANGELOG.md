@@ -1,5 +1,15 @@
 # Changelog
 
+## [4.1.1](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v4.1.0...v4.1.1) (2026-06-16)
+
+
+### Bug Fixes
+
+* Implementation of the CORS on the docker compose [#4](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/4) ([a58d7af](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/a58d7afcb1eae41cc49ddfe90f2de5a692dc96a8))
+* Implementation the option to run locally because of the remote DB is down [#4](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/4) ([176f44e](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/176f44ed840f97f49f39d6b126a8e0a4a1c1539c))
+* Implementation the option to run locally because of the remote DB is down [#4](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/4) ([8760216](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/876021607c84bb984e499ac081edfc875c5656d3))
+* Improvement of the endpoints of the RateLimitFilter, Testing app availability with K6 testing and docker and finalization of the ASVS Report [#3](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/3) [#4](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/4) [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) ([6fd2461](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/6fd24615221d5ddfaa70d07f9dbb32f20838dca4))
+
 ## [4.1.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v4.0.0...v4.1.0) (2026-06-16)
 
 
