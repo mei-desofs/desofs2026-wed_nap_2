@@ -36,6 +36,9 @@ import isep.desosfs.arcadehaven.Security.SecurityAuditService;
 
 @ExtendWith(MockitoExtension.class)
 public class AdminServiceTest {
+
+    private static final String VALID_ACTIVATION_KEY = "1A2B3C4D5E6F7890ABCDEF1234567890";
+
     @Mock
     private UserRepository userRepository;
 
@@ -147,7 +150,7 @@ public class AdminServiceTest {
 
         Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, user);
         Library library = Library.create(user);
-        library.addGame(game, "key-abc");
+        library.addGame(game, VALID_ACTIVATION_KEY);
 
         LibraryEntry entry = library.getEntries().get(0);
         ReflectionTestUtils.setField(entry, "id", entryId);
@@ -166,7 +169,7 @@ public class AdminServiceTest {
 
         Game game = Game.create("g", "d", BigDecimal.TEN, "r", null, user);
         Library library = Library.create(user);
-        library.addGame(game, "key-abc");
+        library.addGame(game, VALID_ACTIVATION_KEY);
 
         LibraryEntry entry = library.getEntries().get(0);
         ReflectionTestUtils.setField(entry, "id", entryId);
