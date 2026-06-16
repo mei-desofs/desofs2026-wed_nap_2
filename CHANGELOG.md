@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v4.0.0...v4.1.0) (2026-06-16)
+
+
+### Features
+
+* Implementation of validateSubDir and validateRemotePath on SFTP, implementation of SSRF: enforce egress allowlist on all outbound RestTemplate calls [#4](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/4) [#6](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/6) [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) ([237c637](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/237c637409799e2f8a33f10e4a804eb7c3d6a753))
+
 ## [4.0.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v3.1.0...v4.0.0) (2026-06-16)
 
 
