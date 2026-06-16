@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.1.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v3.0.0...v3.1.0) (2026-06-16)
+
+
+### Features
+
+* implement ASVS V9.2.2/V9.2.3/V9.2.4 - JWT typ and audience claim validation [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#12](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/12) [#13](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/13) ([a8acb73](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/a8acb7317e758509eea5d8c0793114f4ef6b06d3))
+
+
+### Bug Fixes
+
+* Correction of the JwtDecoder [#13](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/13) ([e0ead0e](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/e0ead0ee542ce46634fd30cfff5d3adc5120af86))
+
 ## [3.0.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v2.0.1...v3.0.0) (2026-06-15)
 
 

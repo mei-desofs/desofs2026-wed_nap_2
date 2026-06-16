@@ -16,7 +16,7 @@ public class LibraryEntryResponseTest {
     void whenFromEntry_thenMappingCorrect() {
         User publisher = User.create("pub", "pub@example.com", "hash", Role.BUYER);
         Game game = Game.create("Game", "Desc", BigDecimal.valueOf(10), null, null, publisher);
-        LibraryEntry entry = LibraryEntry.of(game, "KEY123");
+        LibraryEntry entry = LibraryEntry.of(game, "1A2B3C4D5E6F7890ABCDEF1234567890");
 
         LibraryEntryResponse response = LibraryEntryResponse.from(entry);
 

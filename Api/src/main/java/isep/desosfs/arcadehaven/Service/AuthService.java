@@ -112,7 +112,7 @@ public class AuthService {
                     tokenUri, new HttpEntity<>(form, headers), Map.class);
             // ASVS V16.3.1 — log successful authentications
             auditService.recordLoginSuccess(request.username());
-            return new LoginResponse(
+            return new LoginResponse(// ASVS 7.2.2
                     (String) body.get("access_token"),
                     (String) body.get("refresh_token"),
                     (String) body.get("token_type"),

@@ -18,7 +18,7 @@ public class LibraryResponseTest {
         Library library = Library.create(user);
 
         Game game = Game.create("Game", "Desc", BigDecimal.valueOf(10), null, null, user);
-        library.addGame(game, "KEY123");
+        library.addGame(game, "1A2B3C4D5E6F7890ABCDEF1234567890");
 
         LibraryResponse response = LibraryResponse.from(library);
 

@@ -40,6 +40,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
 public class LibraryServiceTest {
+
+    private static final String VALID_KEY = "1A2B3C4D5E6F7890ABCDEF1234567890";
+    private static final String EXISTING_KEY = "1A2B3C4D5E6F7890ABCDEF1234567890";
+    private static final String NEW_KEY = "AB12CD34EF56AB78CD90EF12AB34CD56";
+    private static final String IMPORT_KEY = "FEDCBA9876543210FEDCBA9876543210";
+
     @Mock private LibraryRepository libraryRepository;
     @Mock private UserRepository userRepository;
     @Mock private GameRepository gameRepository;
@@ -78,9 +84,9 @@ public class LibraryServiceTest {
         when(libraryRepository.findByUser(user)).thenReturn(Optional.of(library));
 
         var auth = new UsernamePasswordAuthenticationToken(
-            "buyer",
-            null,
-            List.of()
+                "buyer",
+                null,
+                List.of()
         );
 
         SecurityContextHolder.getContext().setAuthentication(auth);
@@ -107,7 +113,7 @@ public class LibraryServiceTest {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken("buyer", null, List.of()));
 
-        LibraryResponse response = libraryService.importGameKey(new ImportKeyRequest(gameId, "KEY-123"));
+        LibraryResponse response = libraryService.importGameKey(new ImportKeyRequest(gameId, VALID_KEY));
 
         assertNotNull(response);
     }
@@ -158,7 +164,7 @@ public class LibraryServiceTest {
         ReflectionTestUtils.setField(game, "id", gameId);
 
         Library library = Library.create(user);
-        library.addGame(game, "EXISTING-KEY");
+        library.addGame(game, EXISTING_KEY);
 
         when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(user));
         when(libraryRepository.findByUser(user)).thenReturn(Optional.of(library));
@@ -168,7 +174,7 @@ public class LibraryServiceTest {
                 new UsernamePasswordAuthenticationToken("buyer", null, List.of()));
 
         assertThrows(BusinessException.class,
-                () -> libraryService.importGameKey(new ImportKeyRequest(gameId, "KEY-456")));
+                () -> libraryService.importGameKey(new ImportKeyRequest(gameId, NEW_KEY)));
     }
 
     @Test
@@ -213,11 +219,11 @@ public class LibraryServiceTest {
                 .thenAnswer(inv -> inv.getArgument(0));
 
         LibraryResponse response = libraryService.importGameKey(
-                new ImportKeyRequest(gameId, "MY-KEY-123"));
+                new ImportKeyRequest(gameId, IMPORT_KEY));
 
         assertThat(response.entries()).hasSize(1);
         assertThat(response.entries().get(0).activationKey())
-                .isEqualTo("MY-KEY-123");
+                .isEqualTo(IMPORT_KEY);
     }
 
     @Test

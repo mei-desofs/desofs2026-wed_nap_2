@@ -44,7 +44,7 @@ public class LibraryTest {
         Library library = Library.create(createUser());
         Game game = createGame();
 
-        library.addGame(game, "ABC123");
+        library.addGame(game, "ABCDEF0123456789ABCDEF0123456789");
 
         assertEquals(1, library.getEntries().size());
     }
@@ -93,9 +93,9 @@ public class LibraryTest {
     @Test
     void addGame_addsEntry() {
         Library library = Library.create(owner);
-        library.addGame(game, "KEY-001");
+        library.addGame(game, "0123456789ABCDEF0123456789ABCDEF");
         assertThat(library.getEntries()).hasSize(1);
-        assertThat(library.getEntries().get(0).getActivationKey()).isEqualTo("KEY-001");
+        assertThat(library.getEntries().get(0).getActivationKey()).isEqualTo("0123456789ABCDEF0123456789ABCDEF");
     }
 
 //    @Test
