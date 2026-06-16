@@ -112,6 +112,34 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  # RNF-27 — Daily pg_dump for both the remote application DB and the local Keycloak DB.
+  # Runs at 02:00 every day (see backup/crontab). Backups are stored in ./backups/ on the host.
+  # To trigger immediately: docker compose exec backup sh /backup.sh
+  backup:
+    image: postgres:16-alpine
+    environment:
+      # Remote application database
+      REMOTE_HOST: vsgate-s1.dei.isep.ipp.pt
+      REMOTE_PORT: "10345"
+      REMOTE_USER: ${SPRING_DATASOURCE_USERNAME}
+      REMOTE_DB_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      # Database name: update if the remote DB is not named 'postgres'
+      REMOTE_DB: postgres
+      # Local Keycloak database
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      # Days to retain backups (default: 7)
+      RETENTION_DAYS: "7"
+    volumes:
+      - ./backups:/backups
+      - ./backup/backup.sh:/backup.sh:ro
+      - ./backup/crontab:/etc/crontabs/root:ro
+    # Use sh explicitly — avoids needing execute bit on the mounted script
+    command: ["/bin/sh", "-c", "crond -f -l 2"]
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   storage_data:
   keycloak_db_data:
