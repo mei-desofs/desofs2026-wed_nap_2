@@ -178,6 +178,17 @@ jobs:
 
           echo "TOKEN=$TOKEN" >> $GITHUB_OUTPUT
 
+      # Write ZAP options file with auth header
+      - name: Create ZAP options file
+        run: |
+          cat > ${{ github.workspace }}/Api/reports/zap/options.prop << EOF
+          replacer.full_list(0).description=auth
+          replacer.full_list(0).enabled=true
+          replacer.full_list(0).matchtype=REQ_HEADER
+          replacer.full_list(0).matchstr=Authorization
+          replacer.full_list(0).replacement=Bearer ${{ steps.auth_token.outputs.TOKEN }}
+          EOF
+
       # Fix permissions so ZAP container can write reports
       - name: Fix ZAP report directory permissions
         run: |
@@ -193,6 +204,7 @@ jobs:
             zap-baseline.py \
             -t https://localhost \
             -z "-config ssl.verify=false" \
+            -z "-configfile /zap/wrk/options.prop" \
             -J zap-baseline-report.json \
             -w zap-baseline-report.md \
             -r zap-baseline-report.html \
@@ -208,12 +220,8 @@ jobs:
             zap-api-scan.py \
             -t https://localhost/v3/api-docs \
             -f openapi \
-            -z "-config ssl.verify=false \
-                -config replacer.full_list(0).description=auth \
-                -config replacer.full_list(0).enabled=true \
-                -config replacer.full_list(0).matchtype=REQ_HEADER \
-                -config replacer.full_list(0).matchstr=Authorization \
-                -config replacer.full_list(0).replacement=Bearer ${{ steps.auth_token.outputs.TOKEN }}" \
+            -z "-config ssl.verify=false" \
+            -z "-configfile /zap/wrk/options.prop" \
             -J zap-api-report.json \
             -w zap-api-report.md \
             -r zap-api-report.html \
