@@ -10,20 +10,27 @@ import isep.desosfs.arcadehaven.Domain.Enums.EntryStatus;
 import isep.desosfs.arcadehaven.Domain.Enums.Role;
 
 public class LibraryEntryTest {
+
+    private static final String VALID_ACTIVATION_KEY = "1A2B3C4D5E6F7890ABCDEF1234567890";
+
     @Test
     void shouldCreateLibraryEntry() {
         Game game = createGame();
+        game.approve();
 
-        LibraryEntry entry = LibraryEntry.of(game, "KEY123");
+        LibraryEntry entry = LibraryEntry.of(game, VALID_ACTIVATION_KEY);
 
         assertEquals(game, entry.getGame());
-        assertEquals("KEY123", entry.getActivationKey());
+        assertEquals(VALID_ACTIVATION_KEY, entry.getActivationKey());
         assertEquals(EntryStatus.ACTIVE, entry.getStatus());
     }
 
     @Test
     void shouldRefundEntry() {
-        LibraryEntry entry = LibraryEntry.of(createGame(), "KEY");
+        Game game = createGame();
+        game.approve();
+
+        LibraryEntry entry = LibraryEntry.of(game, VALID_ACTIVATION_KEY);
 
         entry.refund();
 
@@ -32,7 +39,7 @@ public class LibraryEntryTest {
 
     @Test
     void shouldSuspendEntry() {
-        LibraryEntry entry = LibraryEntry.of(createGame(), "KEY");
+        LibraryEntry entry = LibraryEntry.of(createGame(), VALID_ACTIVATION_KEY);
 
         entry.suspend();
 

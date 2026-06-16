@@ -123,6 +123,9 @@ public class InvoiceServiceTest {
     void buildInvoiceContent_multipleItems_allListed() {
         Game g1 = Game.create("Alpha Game", "d", new BigDecimal("9.99"), null, null, publisher);
         Game g2 = Game.create("Beta Game", "d", new BigDecimal("14.99"), null, null, publisher);
+        g1.approve();
+        g2.approve();
+
         Order order = Order.create(buyer);
         order.addItem(OrderItem.of(g1, new BigDecimal("9.99")));
         order.addItem(OrderItem.of(g2, new BigDecimal("14.99")));
@@ -197,6 +200,7 @@ public class InvoiceServiceTest {
     // ── helpers ──────────────────────────────────────────────────────────────────
 
     private Order buildCompletedOrder(Game game, BigDecimal price) {
+        game.approve();
         Order order = Order.create(buyer);
         order.addItem(OrderItem.of(game, price));
         order.complete("invoices/test.txt");

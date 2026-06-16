@@ -41,6 +41,9 @@ import isep.desosfs.arcadehaven.Repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
+
+    private static final String VALID_KEY = "1A2B3C4D5E6F7890ABCDEF1234567890";
+
     @Mock OrderRepository orderRepository;
     @Mock GameRepository gameRepository;
     @Mock UserRepository userRepository;
@@ -138,6 +141,8 @@ public class OrderServiceTest {
 
         Game g1 = Game.create("g1", "d", BigDecimal.TEN, "r", null, buyer);
         Game g2 = Game.create("g2", "d", BigDecimal.valueOf(20), "r", null, buyer);
+        g1.approve();
+        g2.approve();
 
         order.addItem(OrderItem.of(g1, BigDecimal.TEN));
         order.addItem(OrderItem.of(g2, BigDecimal.valueOf(20)));
@@ -445,7 +450,7 @@ public class OrderServiceTest {
         User buyer = User.create("buyer", "mail", "pass", Role.BUYER);
         ReflectionTestUtils.setField(buyer, "id", buyerId);
 
-        Order order = Order.create(buyer); 
+        Order order = Order.create(buyer);
 
         when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
         when(orderRepository.findById(any())).thenReturn(Optional.of(order));
@@ -482,7 +487,7 @@ public class OrderServiceTest {
         game.approve();
         ReflectionTestUtils.setField(game, "id", gameId);
 
-        library.addGame(game, "KEY-123");
+        library.addGame(game, VALID_KEY);
 
         when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
         when(libraryRepository.findByUser(buyer)).thenReturn(Optional.of(library));
@@ -504,7 +509,7 @@ public class OrderServiceTest {
         game.approve();
         ReflectionTestUtils.setField(game, "id", gameId);
 
-        library.addGame(game, "KEY-456");
+        library.addGame(game, VALID_KEY);
 
         Order order = Order.create(buyer);
 
@@ -532,7 +537,7 @@ public class OrderServiceTest {
         Order order = Order.create(buyer);
         OrderItem item = OrderItem.of(game, BigDecimal.TEN);
         order.addItem(item);
-        order.complete("invoices/inv.txt"); 
+        order.complete("invoices/inv.txt");
 
         when(userRepository.findByUsername("buyer")).thenReturn(Optional.of(buyer));
         when(orderRepository.findById(any())).thenReturn(Optional.of(order));

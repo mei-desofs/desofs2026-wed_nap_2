@@ -104,6 +104,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").authenticated()
                         .anyRequest().authenticated()
                 )
+                // ASVS V7.2.1
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> {
                             jwt.decoder(buildJwtDecoder());

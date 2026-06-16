@@ -25,6 +25,7 @@ public class OrderTest {
         buyer = User.create("buyer", "buyer@test.com", "hash", Role.BUYER);
         User publisher = User.create("pub", "pub@test.com", "hash", Role.PUBLISHER);
         game = Game.create("Test Game", "desc", BigDecimal.TEN, null, null, publisher);
+        game.approve();
     }
 
     @Test
@@ -112,6 +113,7 @@ public class OrderTest {
                 null,
                 createUser()
         );
+        game.approve();
 
         return OrderItem.of(game, price);
     }
@@ -208,6 +210,7 @@ public class OrderTest {
         Order order = Order.create(buyer);
         User publisher = User.create("pub2", "pub2@test.com", "hash", Role.PUBLISHER);
         Game game2 = Game.create("Game 2", "desc", new BigDecimal("20.00"), null, null, publisher);
+        game2.approve();
         order.addItem(OrderItem.of(game, BigDecimal.TEN));
         order.addItem(OrderItem.of(game2, new BigDecimal("20.00")));
 

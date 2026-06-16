@@ -27,11 +27,13 @@ public class OrderItemTest {
     void setUp() {
         User publisher = User.create("pub", "pub@test.com", "hash", Role.PUBLISHER);
         game = Game.create("Test Game", "desc", BigDecimal.TEN, null, null, publisher);
+        game.approve();
     }
 
     @Test
     void shouldCreateOrderItem() {
         Game game = createGame();
+        game.approve();
 
         OrderItem item = OrderItem.of(game, BigDecimal.TEN);
 
@@ -41,7 +43,10 @@ public class OrderItemTest {
 
     @Test
     void shouldGenerateActivationKey() {
-        OrderItem item = OrderItem.of(createGame(), BigDecimal.TEN);
+        Game game = createGame();
+        game.approve();
+
+        OrderItem item = OrderItem.of(game, BigDecimal.TEN);
 
         item.generateActivationKey();
 
