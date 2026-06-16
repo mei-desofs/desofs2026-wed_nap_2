@@ -1,0 +1,59 @@
+# docker-compose.local.yml — Local PostgreSQL override for development
+#
+# Use this when the remote DB at vsgate-s1.dei.isep.ipp.pt is unavailable.
+# Starts a local postgres:16 container on the app-services network and
+# redirects the Spring Boot app to it. Flyway runs all migrations automatically.
+#
+# USAGE (from the Api/ directory):
+#
+#   docker compose -f docker-compose.yml -f docker-compose.local.yml up -d
+#
+# Stop and remove local DB data:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.local.yml down -v
+#
+# The override merges on top of docker-compose.yml:
+#   - adds the app-db service
+#   - overrides SPRING_DATASOURCE_* and DB_SSL_MODE for the app service only
+#   - all other services (nginx, keycloak, keycloak-db, backup) are unchanged
+
+version: '3.8'
+services:
+
+  app-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: arcadehaven
+      POSTGRES_USER: arcadehaven
+      POSTGRES_PASSWORD: arcadehaven_dev
+    volumes:
+      - app_db_data:/var/lib/postgresql/data
+    networks:
+      - app-services
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U arcadehaven -d arcadehaven"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  app:
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://app-db:5432/arcadehaven
+      SPRING_DATASOURCE_USERNAME: arcadehaven
+      SPRING_DATASOURCE_PASSWORD: arcadehaven_dev
+      DB_SSL_MODE: disable
+      # Fresh local DB has no pre-existing schema, so run V1 from scratch.
+      # The main compose uses baseline-on-migrate=true for the remote DB (pre-Flyway schema).
+      # Flyway autoconfiguration has a compatibility issue with Spring Boot 4.x when
+      # connecting to a fresh database. For local dev, disable Flyway and use Hibernate
+      # to create the schema directly from entity definitions.
+      SPRING_FLYWAY_ENABLED: "false"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+    depends_on:
+      app-db:
+        condition: service_healthy
+
+volumes:
+  app_db_data:
