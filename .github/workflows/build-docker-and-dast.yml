@@ -162,7 +162,7 @@ jobs:
         id: auth_token
         run: |
           RESPONSE=$(curl -s -X POST \
-            "https://localhost:8080/api/auth/login" \
+            "https://localhost/api/auth/login" \
             -k \
             -H "Content-Type: application/json" \
             -d '{"username": "${{ env.ADMIN_USERNAME }}", "password": "${{ env.ADMIN_PASSWORD }}"}')
