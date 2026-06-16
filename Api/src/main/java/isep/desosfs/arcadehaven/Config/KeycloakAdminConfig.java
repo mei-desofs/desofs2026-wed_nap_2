@@ -1,5 +1,6 @@
 package isep.desosfs.arcadehaven.Config;
 
+import isep.desosfs.arcadehaven.Security.EgressAllowlistInterceptor;
 import jakarta.annotation.PostConstruct;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 @Configuration
 public class KeycloakAdminConfig {
@@ -44,7 +46,16 @@ public class KeycloakAdminConfig {
                 connection.setInstanceFollowRedirects(false);
             }
         };
-        return new RestTemplate(factory);
+        RestTemplate rt = new RestTemplate(factory);
+        // V1.3.6 — SSRF: enforce egress allowlist on all outbound RestTemplate calls.
+        // Keycloak host is derived at runtime from ${keycloak.server-url} to handle
+        // any hostname (Docker service name, IP, or external domain).
+        URI keycloakUri = URI.create(serverUrl);
+        rt.getInterceptors().add(new EgressAllowlistInterceptor(Set.of(
+                keycloakUri.getHost(),  // Keycloak: login, logout, JWT verification, admin API
+                "api.rawg.io"           // RF-12: RAWG game-metadata enrichment
+        )));
+        return rt;
     }
 
     // ASVS V1.2.2

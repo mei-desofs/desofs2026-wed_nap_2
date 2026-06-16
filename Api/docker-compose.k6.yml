@@ -29,5 +29,3 @@ services:
       BASE_URL: https://nginx
     depends_on:
       - nginx
-    networks:
-      - default
