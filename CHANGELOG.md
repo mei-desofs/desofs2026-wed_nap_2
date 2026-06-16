@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.0.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v3.1.0...v4.0.0) (2026-06-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* RAWG API integration, Keycloak session management and DB schema fixes #9 #10 #12 #13 #16
+
+### Features
+
+* Implementation of deactivate all user sessions and deactivate user account [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#10](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/10) ([ea86898](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/ea8689880ca9a107aa9fa79cd8de2fa137b493fe))
+* RAWG API integration, Keycloak session management and DB schema fixes [#9](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/9) [#10](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/10) [#12](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/12) [#13](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/13) [#16](https://github.com/mei-desofs/desofs2026-wed_nap_2/issues/16) ([92af8e7](https://github.com/mei-desofs/desofs2026-wed_nap_2/commit/92af8e727b581c5c9a7cf89b9ba7534fa0900ed0))
+
 ## [3.1.0](https://github.com/mei-desofs/desofs2026-wed_nap_2/compare/v3.0.0...v3.1.0) (2026-06-16)
 
 
