@@ -158,6 +158,18 @@ jobs:
 
           exit 1
 
+      - name: Fetch auth token
+        id: auth_token
+        run: |
+          TOKEN=$(curl -s -X POST \
+            "https://localhost/api/auth/login" \
+            -k \
+            -H "Content-Type: application/json" \
+            -d '{"username": "${{ secrets.ADMIN_USERNAME }}", "password": "${{ secrets.ADMIN_PASSWORD }}"}' \
+            | jq -r '.token')
+
+          echo "TOKEN=$TOKEN" >> $GITHUB_OUTPUT
+
       # Fix permissions so ZAP container can write reports
       - name: Fix ZAP report directory permissions
         run: |
