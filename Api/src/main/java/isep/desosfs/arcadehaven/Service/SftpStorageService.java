@@ -188,6 +188,7 @@ public class SftpStorageService implements StorageService {
         }
     }
 
+    @Override
     public byte[] downloadFile(String path) throws StorageException {
         String absolutePath = resolveAbsolutePath(path); // V1.3.3 / V5.3.2
         SSHClient ssh = createClient();
