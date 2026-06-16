@@ -117,6 +117,7 @@ public class SftpStorageService implements StorageService {
     }
 
     public String uploadFile(MultipartFile file, String subDir) throws StorageException {
+        validateSubDir(subDir); // V1.3.3 / V5.3.2
         SSHClient ssh = createClient();
         try (SFTPClient sftp = ssh.newSFTPClient();
              InputStream input = file.getInputStream()) {
@@ -145,17 +146,45 @@ public class SftpStorageService implements StorageService {
         }
     }
 
-    // ASVS 1.3.3
+    // V1.3.3 / V5.3.2 — reject sub-directory paths that could escape the base directory
+    private void validateSubDir(String subDir) {
+        if (subDir == null || subDir.isBlank()) {
+            throw new StorageException("Sub-directory must not be empty");
+        }
+        String normalized = subDir.replace("\\", "/");
+        if (normalized.startsWith("/") || normalized.contains("..")) {
+            throw new StorageException("Sub-directory contains path traversal sequence: " + subDir);
+        }
+    }
+
+    // V1.3.3 / V5.3.2 — validate that download/delete paths stay within the permitted base directory
+    private void validateRemotePath(String remotePath) {
+        if (remotePath == null || remotePath.isBlank()) {
+            throw new StorageException("Remote path must not be empty");
+        }
+        if (remotePath.contains("..")) {
+            throw new StorageException("Remote path contains traversal sequence: " + remotePath);
+        }
+        String normalized = remotePath.replace("\\", "/").replaceAll("/+", "/");
+        String base = baseRemoteDir.replace("\\", "/").replaceAll("/+", "/").replaceAll("/$", "");
+        if (!normalized.startsWith(base + "/") && !normalized.equals(base)) {
+            throw new StorageException("Remote path escapes permitted base directory: " + remotePath);
+        }
+    }
+
+    // V1.3.3
     private String sanitizeFilename(String input) {
         if (input == null) return "file";
         return input.replaceAll("[^a-zA-Z0-9._-]", "_");
     }
 
     public String uploadBytes(byte[] data, String filename, String subDir) throws StorageException {
+        validateSubDir(subDir); // V1.3.3 / V5.3.2
+        String safeFilename = sanitizeFilename(filename); // V1.3.3 — defence-in-depth
         SSHClient ssh = createClient();
         try (SFTPClient sftp = ssh.newSFTPClient()) {
             String folder = baseRemoteDir + "/" + subDir;
-            String remotePath = folder + "/" + filename;
+            String remotePath = folder + "/" + safeFilename;
             ensureDirExists(sftp, folder);
 
             try (RemoteFile remoteFile = sftp.open(remotePath,
@@ -175,6 +204,7 @@ public class SftpStorageService implements StorageService {
     }
 
     public byte[] downloadFile(String remotePath) throws StorageException {
+        validateRemotePath(remotePath); // V1.3.3 / V5.3.2
         SSHClient ssh = createClient();
         try (SFTPClient sftp = ssh.newSFTPClient();
              RemoteFile remoteFile = sftp.open(remotePath);
@@ -190,6 +220,7 @@ public class SftpStorageService implements StorageService {
     }
 
     public void deleteFile(String remotePath) throws StorageException {
+        validateRemotePath(remotePath); // V1.3.3 / V5.3.2
         SSHClient ssh = createClient();
         try (SFTPClient sftp = ssh.newSFTPClient()) {
             sftp.rm(remotePath);

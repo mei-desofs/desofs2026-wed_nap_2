@@ -15,6 +15,8 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/certs:/etc/nginx/certs:ro
+    networks:
+      - app-services
     depends_on:
       app:
         condition: service_healthy
@@ -63,6 +65,8 @@ services:
       RAWG_API_KEY: ${RAWG_API_KEY:-}
     volumes:
       - ./storage:/app/storage
+    networks:
+      - app-services   # reaches keycloak; nginx reaches app on this network
     # RNF-26 — restart on crash; healthcheck via Spring Boot Actuator
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q UP || exit 1"]
@@ -92,6 +96,9 @@ services:
       KC_HEALTH_ENABLED: ${KC_HEALTH_ENABLED}
     volumes:
       - ../keycloak:/opt/keycloak/data/import
+    networks:
+      - keycloak-internal   # reaches keycloak-db
+      - app-services        # reachable by app for JWT verification and admin API
     # RNF-26 — management interface is on port 9000; no curl in the image, use /dev/tcp
     healthcheck:
       test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && printf 'GET /health/ready HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n' >&3 && grep -q UP <&3"]
@@ -112,6 +119,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - keycloak_db_data:/var/lib/postgresql/data
+    networks:
+      - keycloak-internal   # V1.3.6 — isolated: no internet, not reachable by app directly
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
       interval: 10s
@@ -141,6 +150,9 @@ services:
       - ./backups:/backups
       - ./backup/backup.sh:/backup.sh:ro
       - ./backup/crontab:/etc/crontabs/root:ro
+    networks:
+      - keycloak-internal   # reaches keycloak-db for local pg_dump
+      - app-services        # internet access for remote DB at vsgate-s1.dei.isep.ipp.pt
     # Use sh explicitly — avoids needing execute bit on the mounted script
     command: ["/bin/sh", "-c", "crond -f -l 2"]
     depends_on:
@@ -151,3 +163,13 @@ services:
 volumes:
   storage_data:
   keycloak_db_data:
+
+# V1.3.6 — Docker network isolation as an egress allowlist enforcement layer.
+# keycloak-internal: internal=true isolates keycloak-db from the internet and from the
+#   app container — keycloak-db is only reachable by keycloak and backup.
+# app-services: shared bridge for nginx ↔ app ↔ keycloak communication; allows internet
+#   egress for app (HIBP, RAWG, SFTP, remote DB) and backup (remote DB pg_dump).
+networks:
+  keycloak-internal:
+    internal: true
+  app-services: {}
