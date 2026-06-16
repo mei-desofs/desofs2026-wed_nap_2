@@ -68,7 +68,7 @@ public class RateLimiterFilterTest {
         when(request.getRemoteAddr()).thenReturn("2.3.4.5");
         when(request.getHeader("X-Forwarded-For")).thenReturn(null);
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 30; i++) {
             filter.doFilter(request, mock(HttpServletResponse.class), chain);
         }
         filter.doFilter(request, response, chain);
@@ -91,7 +91,7 @@ public class RateLimiterFilterTest {
         when(request.getRemoteAddr()).thenReturn("127.0.0.1");
 
         filter.doFilter(request, response, chain);
-        for (int i = 0; i < 19; i++) {
+        for (int i = 0; i < 29; i++) {
             filter.doFilter(request, mock(HttpServletResponse.class), chain);
         }
 

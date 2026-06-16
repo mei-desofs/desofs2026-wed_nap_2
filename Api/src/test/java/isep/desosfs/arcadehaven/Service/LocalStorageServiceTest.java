@@ -67,16 +67,16 @@ class LocalStorageServiceTest {
         byte[] data = "INVOICE CONTENT".getBytes(StandardCharsets.UTF_8);
         String path = service.uploadBytes(data, "invoice_test.txt", "invoices");
 
-        assertThat(Path.of(path)).exists();
-        assertThat(Path.of(path)).hasContent("INVOICE CONTENT");
+        assertThat(tempDir.resolve(path)).exists();
+        assertThat(tempDir.resolve(path)).hasContent("INVOICE CONTENT");
     }
 
     @Test
-    void uploadBytes_returnsAbsolutePath() {
+    void uploadBytes_returnsRelativePath() {
         byte[] data = "test".getBytes(StandardCharsets.UTF_8);
         String path = service.uploadBytes(data, "test.txt", "invoices");
 
-        assertThat(Path.of(path).isAbsolute()).isTrue();
+        assertThat(Path.of(path).isAbsolute()).isFalse();
     }
 
     @Test
@@ -84,7 +84,7 @@ class LocalStorageServiceTest {
         byte[] data = "keys content".getBytes(StandardCharsets.UTF_8);
         String path = service.uploadBytes(data, "keys_order1.txt", "keys");
 
-        assertThat(Path.of(path).getParent()).isEqualTo(tempDir.resolve("keys"));
+        assertThat(Path.of(path).getParent()).isEqualTo(Path.of("keys"));
     }
 
     // ── RF-25 — invoice download (downloadFile) ───────────────────────────────────
@@ -157,8 +157,8 @@ class LocalStorageServiceTest {
 
         String path = service.uploadFile(mock, "games/images");
 
-        assertThat(Path.of(path)).exists();
-        assertThat(Path.of(path).getParent()).isEqualTo(tempDir.resolve("games/images"));
+        assertThat(tempDir.resolve(path)).exists();
+        assertThat(Path.of(path).getParent()).isEqualTo(Path.of("games/images"));
     }
 
     @Test

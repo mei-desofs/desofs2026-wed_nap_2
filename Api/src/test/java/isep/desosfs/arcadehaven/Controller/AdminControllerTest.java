@@ -186,7 +186,8 @@ public class AdminControllerTest {
                 null,
                 null,
                 "publisher",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                List.of()
         );
     }
 }

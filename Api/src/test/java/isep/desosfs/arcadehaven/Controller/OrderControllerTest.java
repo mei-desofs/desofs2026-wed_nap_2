@@ -170,7 +170,8 @@ public class OrderControllerTest {
                 "PENDING",
                 BigDecimal.TEN,
                 List.of(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                null
         );
     }
 }

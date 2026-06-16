@@ -68,7 +68,8 @@ public class GameControllerTest {
                 null,
                 null,
                 "publisher",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                List.of()
         );
     }
 }
