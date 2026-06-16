@@ -10,8 +10,8 @@ import java.util.Properties;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies that application.properties configures JWT audience
- * validation to prevent audience confusion attacks.
+ * Verifies that application.properties configures JWT audience and issuer
+ * validation to prevent audience confusion attacks (ASVS V9.2.3 / V9.2.4).
  */
 class JwtAudienceConfigTest {
 
@@ -29,19 +29,19 @@ class JwtAudienceConfigTest {
 
     @Test
     void jwtAudiences_isConfigured_asvs_v9_2_3() {
-        String audiences = props.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri");
+        String audiences = props.getProperty("spring.security.oauth2.resourceserver.jwt.audiences");
         assertThat(audiences)
-                .as("jwt.issuer must be set to prevent audience confusion attacks")
+                .as("jwt.audiences must be set to enforce aud claim validation (ASVS V9.2.3)")
                 .isNotNull()
                 .isNotBlank();
     }
 
     @Test
     void jwtAudiences_containsArcadehavenApi() {
-        String audiences = props.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri");
+        String audiences = props.getProperty("spring.security.oauth2.resourceserver.jwt.audiences");
         assertThat(audiences)
-                .as("jwt.issuer must include 'realms/arcadehaven'")
-                .contains("realms/arcadehaven");
+                .as("jwt.audiences must be 'arcadehaven-api' to bind tokens to this service (ASVS V9.2.4)")
+                .isEqualTo("arcadehaven-api");
     }
 
     @Test
@@ -51,5 +51,14 @@ class JwtAudienceConfigTest {
                 .as("jwk-set-uri must be configured for JWT signature validation (V9.1.3)")
                 .isNotNull()
                 .isNotBlank();
+    }
+
+    @Test
+    void issuerUri_isConfigured() {
+        String issuerUri = props.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri");
+        assertThat(issuerUri)
+                .as("issuer-uri must be set to validate iss claim (ASVS V10.5.3)")
+                .isNotNull()
+                .contains("realms/arcadehaven");
     }
 }
