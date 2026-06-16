@@ -63,6 +63,9 @@ services:
       # V13.2.4 — permitted egress: Keycloak, PostgreSQL (vsgate-s1.dei.isep.ipp.pt:10345),
       #   SFTP, HIBP (api.pwnedpasswords.com), RAWG (api.rawg.io). All hardcoded in code.
       RAWG_API_KEY: ${RAWG_API_KEY:-}
+      # V3.4.2 — CORS origin allowlist. Set in .env for production (e.g. https://yourfrontend.com).
+      # Defaults to localhost dev servers when not set.
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:5173}
     volumes:
       - ./storage:/app/storage
     networks:
