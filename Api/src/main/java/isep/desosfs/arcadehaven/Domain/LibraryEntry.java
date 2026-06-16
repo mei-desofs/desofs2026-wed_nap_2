@@ -11,6 +11,7 @@ import java.util.UUID;
 @Table(name = "library_entries")
 @Getter
 public class LibraryEntry {
+    private static final String ACTIVATION_KEY_REGEX = "^[A-F0-9]{32}$";
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,6 +34,10 @@ public class LibraryEntry {
     protected LibraryEntry() {}
 
     public static LibraryEntry of(Game game, String activationKey) {
+        if (!activationKey.matches(ACTIVATION_KEY_REGEX)) {
+            throw new IllegalArgumentException("Invalid activation key format");
+        }
+
         LibraryEntry entry = new LibraryEntry();
         entry.game = game;
         entry.activationKey = activationKey;

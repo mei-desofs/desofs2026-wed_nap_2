@@ -1,5 +1,6 @@
 package isep.desosfs.arcadehaven.Domain;
 
+import isep.desosfs.arcadehaven.Domain.Enums.GameStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -12,7 +13,6 @@ import java.util.UUID;
 @Table(name = "order_items")
 @Getter
 public class OrderItem {
-
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     @Id
@@ -31,11 +31,20 @@ public class OrderItem {
     protected OrderItem() {}
 
     public static OrderItem of(Game game, BigDecimal price) {
+        if (game.getStatus() != GameStatus.ACTIVE) {
+            throw new IllegalStateException("Cannot order an game that is not active.");
+        }
+
         validatePrice(price);
 
         OrderItem item = new OrderItem();
+
+        // Ensures order price stays the same value or order at the moment of creation
+        BigDecimal gamePrice = game.getPrice();
+
         item.game = game;
-        item.price = price;
+        item.price = gamePrice;
+
         return item;
     }
 
