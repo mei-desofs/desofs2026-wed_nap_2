@@ -178,3 +178,6 @@ settings.local.json
 Api/nginx/certs/*.crt
 Api/nginx/certs/*.key
 Api/nginx/certs/*.pem
+
+#ASVS
+Deliverables/~$ASVS_5.0_Tracker

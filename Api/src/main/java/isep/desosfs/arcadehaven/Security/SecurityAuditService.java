@@ -121,15 +121,12 @@ public class SecurityAuditService {
     }
 
     /** Resolves the client IP from the current HTTP request context (falls back to "unknown"). */
+    // ASVS 4.1.3
     private static String resolveCurrentIp() {
         try {
             var attrs = RequestContextHolder.getRequestAttributes();
             if (attrs instanceof ServletRequestAttributes sra) {
                 HttpServletRequest req = sra.getRequest();
-                String xff = req.getHeader("X-Forwarded-For");
-                if (xff != null && !xff.isBlank()) {
-                    return xff.split(",")[0].trim();
-                }
                 return req.getRemoteAddr();
             }
         } catch (Exception ignored) {
