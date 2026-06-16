@@ -181,3 +181,9 @@ Api/nginx/certs/*.pem
 
 #ASVS
 Deliverables/~$ASVS_5.0_Tracker
+
+# RNF-27 — Backup dumps (tracked directory via .gitkeep, but not the binary dumps)
+Api/backups/*.dump
+Api/backups/*.sql
+Api/backups/*.sql.gz
+Api/backups/backup.log

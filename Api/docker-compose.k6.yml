@@ -1,0 +1,33 @@
+# docker-compose.k6.yml — k6 load-testing service (Docker-based, no local install needed)
+#
+# USAGE (from Api/ directory, with the main stack already running):
+#
+#   # RNF-23 — Game listing response time < 500 ms (single VU, 30 iterations)
+#   docker compose -f docker-compose.yml -f docker-compose.k6.yml run --rm k6 run /scripts/game_listing_perf.js
+#
+#   # RNF-24 — 100 concurrent users for 60 s (ramp up 15 s, hold 60 s, ramp down 10 s)
+#   docker compose -f docker-compose.yml -f docker-compose.k6.yml run --rm k6 run /scripts/load_test.js
+#
+#   # RNF-26 — Availability monitoring for 5 minutes (1 VU, ~1 req/s)
+#   docker compose -f docker-compose.yml -f docker-compose.k6.yml run --rm k6 run /scripts/availability_check.js
+#
+# The k6 container joins the same Docker network as nginx, so it targets
+# https://nginx directly. The self-signed dev cert is accepted via insecureSkipTLSVerify
+# (set in each script's options).
+#
+# To override the base URL (e.g. for a staging deployment):
+#   docker compose -f docker-compose.yml -f docker-compose.k6.yml run --rm \
+#     -e BASE_URL=https://staging.example.com k6 run /scripts/load_test.js
+
+version: '3.8'
+services:
+  k6:
+    image: grafana/k6:latest
+    volumes:
+      - ./k6:/scripts
+    environment:
+      BASE_URL: https://nginx
+    depends_on:
+      - nginx
+    networks:
+      - default
