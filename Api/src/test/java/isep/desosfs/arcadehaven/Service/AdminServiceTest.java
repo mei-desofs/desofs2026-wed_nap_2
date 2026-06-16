@@ -6,6 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,6 +21,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import java.math.BigDecimal;
 
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UsersResource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -48,6 +54,15 @@ public class AdminServiceTest {
     @Mock
     private SecurityAuditService securityAuditService;
 
+    @Mock
+    private Keycloak keycloak;
+
+    @Mock
+    private RealmResource realmResource;
+
+    @Mock
+    private UsersResource usersResource;
+
     @InjectMocks
     private AdminService adminService;
 
@@ -58,6 +73,10 @@ public class AdminServiceTest {
     void setup() {
         id = UUID.randomUUID();
         user = User.create("john", "john@mail.com", "pass", Role.BUYER);
+        ReflectionTestUtils.setField(adminService, "realm", "test-realm");
+        lenient().when(keycloak.realm(anyString())).thenReturn(realmResource);
+        lenient().when(realmResource.users()).thenReturn(usersResource);
+        lenient().when(usersResource.searchByUsername(anyString(), anyBoolean())).thenReturn(List.of());
     }
 
     @Test

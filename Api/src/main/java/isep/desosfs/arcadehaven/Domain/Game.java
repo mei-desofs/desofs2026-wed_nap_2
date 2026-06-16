@@ -38,6 +38,9 @@ public class Game {
     @Column(length = 100)
     private String category;
 
+    @Column(name = "cover_image_url", length = 500)
+    private String coverImageUrl;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -107,6 +110,19 @@ public class Game {
         if (title != null && !title.isBlank()) this.title = title;
         if (description != null) this.description = description;
         if (category != null && !category.isBlank()) this.category = category;
+    }
+
+    // RF-12 — enrich from RAWG: only fills blank fields; coverImageUrl always taken from RAWG
+    public void enrichFromRawg(String rawgDescription, String rawgCategory, String rawgCoverImageUrl) {
+        if ((this.description == null || this.description.isBlank()) && rawgDescription != null) {
+            this.description = rawgDescription;
+        }
+        if ((this.category == null || this.category.isBlank()) && rawgCategory != null) {
+            this.category = rawgCategory;
+        }
+        if (rawgCoverImageUrl != null) {
+            this.coverImageUrl = rawgCoverImageUrl;
+        }
     }
 
     public void addFile(UUID fileId, String filename, String path, FileType type) {

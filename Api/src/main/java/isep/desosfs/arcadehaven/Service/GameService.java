@@ -13,6 +13,7 @@ import isep.desosfs.arcadehaven.Dto.Response.GameResponse;
 import isep.desosfs.arcadehaven.Exception.BusinessException;
 import isep.desosfs.arcadehaven.Exception.ResourceNotFoundException;
 import isep.desosfs.arcadehaven.Exception.StorageException;
+import isep.desosfs.arcadehaven.Integration.RawgApiClient;
 import isep.desosfs.arcadehaven.Repository.GameRepository;
 import isep.desosfs.arcadehaven.Repository.OrderRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
@@ -42,16 +43,19 @@ public class GameService {
     private final OrderRepository orderRepository;
     private final FileValidator fileValidator;
     private final ClamAVService clamAVService;
+    private final RawgApiClient rawgApiClient;
 
     public GameService(GameRepository gameRepository, UserRepository userRepository,
                        FileStorageService fileStorageService, OrderRepository orderRepository,
-                       FileValidator fileValidator, ClamAVService clamAVService) {
+                       FileValidator fileValidator, ClamAVService clamAVService,
+                       RawgApiClient rawgApiClient) {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.fileStorageService = fileStorageService;
         this.orderRepository = orderRepository;
         this.fileValidator = fileValidator;
         this.clamAVService = clamAVService;
+        this.rawgApiClient = rawgApiClient;
     }
 
     @Transactional(readOnly = true)
@@ -81,6 +85,13 @@ public class GameService {
         User publisher = getCurrentUser();
         Game game = Game.create(request.title(), request.description(), request.price(),
                 request.rawgApiId(), request.category(), publisher);
+
+        // RF-12 — enrich description, category and cover image from RAWG when rawgApiId is supplied
+        if (request.rawgApiId() != null && !request.rawgApiId().isBlank()) {
+            rawgApiClient.fetchGame(request.rawgApiId()).ifPresent(rawgData ->
+                    game.enrichFromRawg(rawgData.description(), rawgData.category(), rawgData.coverImageUrl()));
+        }
+
         return GameResponse.from(gameRepository.save(game));
     }
 
