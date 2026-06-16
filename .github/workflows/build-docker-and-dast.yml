@@ -172,7 +172,7 @@ jobs:
             ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py \
             -t https://localhost \
-            -config ssl.verify=false \
+            -z "-config ssl.verify=false" \
             -J zap-baseline-report.json \
             -w zap-baseline-report.md \
             -r zap-baseline-report.html \
