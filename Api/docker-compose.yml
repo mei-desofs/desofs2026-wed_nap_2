@@ -53,6 +53,10 @@ services:
       CLAMAV_TIMEOUT_MS: ${CLAMAV_TIMEOUT_MS}
       # TLS terminated at the reverse proxy; disable Spring Boot SSL to avoid missing-keystore error
       SERVER_SSL_ENABLED: "false"
+      # V12.3.1 / V14.2.4 — DB TLS mode: 'prefer' (dev) or 'require' (production with TLS-enabled DB)
+      DB_SSL_MODE: ${DB_SSL_MODE:-prefer}
+      # V13.2.2 — Set FLYWAY_DATASOURCE_URL / _USERNAME / _PASSWORD in .env to use a separate
+      # DDL-only user for Flyway migrations. When not set, Flyway falls back to the main datasource.
     volumes:
       - ./storage:/app/storage
     # RNF-26 — restart on crash; healthcheck via Spring Boot Actuator
