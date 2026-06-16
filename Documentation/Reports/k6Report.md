@@ -15,7 +15,7 @@ Three k6 scripts were executed against the live Docker Compose stack to validate
 |------|--------|-----|--------|
 | Game listing response time | `game_listing_perf.js` | RNF-23 | ✅ PASS |
 | Concurrent load (100 VUs) | `load_test.js` | RNF-24 | ✅ PASS |
-| Availability monitoring | `availability_check.js` | RNF-26 | ⏳ Pending |
+| Availability monitoring | `availability_check.js` | RNF-26 | ✅ PASS |
 
 ---
 
@@ -163,19 +163,57 @@ docker compose -f docker-compose.yml -f docker-compose.k6.yml run --rm k6 run /s
 
 ### Thresholds
 
-| Threshold | Condition |
-|-----------|-----------|
-| `availability` | rate > 99% |
-| `http_req_failed` | rate < 1% |
-| `http_req_duration` | p(95) < 2000 ms |
+| Threshold | Condition | Result | Value |
+|-----------|-----------|--------|-------|
+| `availability` | rate > 99% | ✅ PASS | **100.00%** |
+| `http_req_failed` | rate < 1% | ✅ PASS | **0.00%** |
+| `http_req_duration` | p(95) < 2000 ms | ✅ PASS | **8.99 ms** |
+
+### Results Summary
+
+| Metric | Value |
+|--------|-------|
+| Checks total | 891 |
+| Checks succeeded | 100.00% (891/891) |
+| Checks failed | 0.00% (0/891) |
+| HTTP requests total | 594 |
+| Request failure rate | 0.00% (0/594) |
+| Request rate | 1.97 req/s |
+| Iterations | 297 |
+| Duration | 5m 0.8s |
+
+### Availability
+
+| Metric | Value |
+|--------|-------|
+| availability (custom rate) | **100.00%** (297/297) |
+
+### Response Time Distribution (`http_req_duration`)
+
+| avg | min | median | max | p(90) | p(95) |
+|-----|-----|--------|-----|-------|-------|
+| 5.89 ms | 3.24 ms | 5.19 ms | 180.42 ms | 7.7 ms | **8.99 ms** |
+
+### Checks Passed
+
+- ✅ `app is UP (200)`
+- ✅ `app status is UP`
+- ✅ `api responds (200)`
+
+### Network
+
+| Metric | Value |
+|--------|-------|
+| Data received | 370 kB (1.2 kB/s) |
+| Data sent | 58 kB (193 B/s) |
 
 ### Evidence
 
-> ⏳ **Pending** — screenshot to be added after next test run.
+![k6 Availability Monitoring Test](Images/k6_availability.png)
 
 ### Conclusion
 
-> ⏳ **Pending** — conclusion to be written after evidence is collected.
+RNF-26 is **satisfied**. Over a continuous 5-minute monitoring window of 297 iterations (594 HTTP requests), the system achieved **100% availability** — well above the required 99% threshold. Zero requests failed. The p95 response time was **8.99 ms**, far below the 2000 ms limit. The auto-restart policy and health checks configured in Docker Compose (`restart: unless-stopped`, `healthcheck`) kept the application fully available without any manual intervention.
 
 ---
 

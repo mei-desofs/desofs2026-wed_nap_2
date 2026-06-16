@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -42,14 +41,9 @@ public class AdminInitializer implements ApplicationRunner {
     }
 
     @Override
-    @Transactional
     public void run(ApplicationArguments args) {
-        try {
-            seedUser(defaultAdminUsername, defaultAdminEmail, Role.ADMIN);
-            DEFAULT_USERS.forEach(u -> seedUser(u.username(), u.email(), u.role()));
-        } catch (Exception e) {
-            log.error("Failed to seed default users — application will continue without them", e);
-        }
+        seedUser(defaultAdminUsername, defaultAdminEmail, Role.ADMIN);
+        DEFAULT_USERS.forEach(u -> seedUser(u.username(), u.email(), u.role()));
     }
 
     private void seedUser(String username, String email, Role role) {

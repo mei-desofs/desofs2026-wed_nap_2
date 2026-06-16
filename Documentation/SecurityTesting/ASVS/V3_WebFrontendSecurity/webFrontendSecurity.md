@@ -44,10 +44,10 @@
 
 | Req ID | Level | Status | Observations                                                                                                                                      |
 |---|---|---|---------------------------------------------------------------------------------------------------------------------------------------------------|
-| V3.4.1 | 1 |  Planned | HSTS header (`Strict-Transport-Security: max-age=31536000; includeSubDomains`) will be enforced on all API responses via Spring Security.         |
-| V3.4.2 | 1 |  Planned | CORS will be configured with a strict allowlist of trusted origins. `Access-Control-Allow-Origin: *` will not be used on authenticated endpoints. |
+| V3.4.1 | 1 | ✅ Compliant | `Strict-Transport-Security: max-age=31536000; includeSubDomains` is set by Spring Security (`.httpStrictTransportSecurity(...)` with `requestMatcher(request -> true)` to cover proxy-terminated TLS) and by nginx (`add_header ... always`). Evidence: [`ASVS_Compliant_Evidence.md`](../../../ASVS_Compliant_Evidence.md). |
+| V3.4.2 | 1 | ✅ Compliant | CORS is configured in `SecurityConfig.corsConfigurationSource()` with an explicit origin allowlist loaded from `CORS_ALLOWED_ORIGINS` env var (defaults to `localhost:3000`, `localhost:5173`). Wildcard is never used. Env var is passed to the Docker container via `docker-compose.yml`. Tests in `SecurityHeadersTest.java` verify allowed/rejected origins. Evidence: [`ASVS_Compliant_Evidence.md`](../../../ASVS_Compliant_Evidence.md). |
 | V3.4.3 | 2 |  N/A | CSP not applicable to JSON REST API without HTML responses.                                                                                       |
-| V3.4.4 | 2 |  Planned | `X-Content-Type-Options: nosniff` will be included on all API responses via Spring Security headers configuration.                                |
+| V3.4.4 | 2 | ✅ Compliant | `X-Content-Type-Options: nosniff` is set globally via `.contentTypeOptions(Customizer.withDefaults())` in `SecurityConfig.filterChain()`. Evidence: [`ASVS_Compliant_Evidence.md`](../../../ASVS_Compliant_Evidence.md). |
 | V3.4.5 | 2 |  N/A | Referrer-Policy has minimal relevance in API-only context.                                                                                        |
 | V3.4.6 | 2 |  N/A | Frame-ancestors not applicable (no browser rendering).                                                                                            |
 | V3.4.7 | 3 |  N/A | CSP reporting not applicable without CSP usage.                                                                                                  |
@@ -92,16 +92,16 @@
 
 ## Summary
 
-| Section | Total |  Planned |  N/A |
-|---|---|---|---|
-| V3.1 Web Frontend Security Documentation | 1 | 0 | 1 |
-| V3.2 Unintended Content Interpretation | 3 | 1 | 2 |
-| V3.3 Cookie Setup | 5 | 0 | 5 |
-| V3.4 Browser Security Mechanism Headers | 8 | 6 | 2 |
-| V3.5 Browser Origin Separation | 8 | 5 | 3 |
-| V3.6 External Resource Integrity | 1 | 0 | 1 |
-| V3.7 Other Browser Security Considerations | 5 | 2 | 3 |
-| **Total** | **31** | **14** | **17** |
+| Section | Total | ✅ Compliant |  Planned |  N/A |
+|---|---|---|---|---|
+| V3.1 Web Frontend Security Documentation | 1 | 0 | 0 | 1 |
+| V3.2 Unintended Content Interpretation | 3 | 0 | 1 | 2 |
+| V3.3 Cookie Setup | 5 | 0 | 0 | 5 |
+| V3.4 Browser Security Mechanism Headers | 8 | 3 | 0 | 5 |
+| V3.5 Browser Origin Separation | 8 | 0 | 5 | 3 |
+| V3.6 External Resource Integrity | 1 | 0 | 0 | 1 |
+| V3.7 Other Browser Security Considerations | 5 | 0 | 2 | 3 |
+| **Total** | **31** | **3** | **8** | **20** |
 
 > The high number of N/A requirements reflects that ArcadeHaven is a back-end REST API with no front-end.
 > The planned items focus on HTTP security headers and CORS configuration, which are relevant even for API-only projects.

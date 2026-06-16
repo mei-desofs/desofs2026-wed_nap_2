@@ -37,7 +37,7 @@ export default function () {
     });
     const appUp = check(appHealth, {
         'app is UP (200)': (r) => r.status === 200,
-        'app status is UP': (r) => r.body.includes('"UP"') || r.body.includes('"status":"UP"'),
+        'app status is UP': (r) => r.body != null && (r.body.includes('"UP"') || r.body.includes('"status":"UP"')),
     });
     availabilityRate.add(appUp ? 1 : 0);
 
