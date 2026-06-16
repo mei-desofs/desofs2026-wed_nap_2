@@ -14,6 +14,7 @@ public record GameResponse(
         String status,
         String rawgApiId,
         String category,
+        String coverImageUrl,
         String publisherUsername,
         LocalDateTime createdAt
 ) {
@@ -26,6 +27,7 @@ public record GameResponse(
                 game.getStatus().name(),
                 game.getRawgApiId(),
                 game.getCategory(),
+                game.getCoverImageUrl(),
                 game.getPublisher().getUsername(),
                 game.getCreatedAt()
         );

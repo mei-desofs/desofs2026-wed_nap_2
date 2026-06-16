@@ -46,6 +46,7 @@ import isep.desosfs.arcadehaven.Exception.StorageException;
 import isep.desosfs.arcadehaven.Repository.GameRepository;
 import isep.desosfs.arcadehaven.Repository.OrderRepository;
 import isep.desosfs.arcadehaven.Repository.UserRepository;
+import isep.desosfs.arcadehaven.Integration.RawgApiClient;
 import isep.desosfs.arcadehaven.Security.ClamAVService;
 import isep.desosfs.arcadehaven.Validation.FileValidator;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -64,6 +65,7 @@ public class GameServiceTest {
     @Mock OrderRepository orderRepository;
     @Mock FileValidator fileValidator;
     @Mock ClamAVService clamAVService;
+    @Mock RawgApiClient rawgApiClient;
 
     @InjectMocks GameService gameService;
 

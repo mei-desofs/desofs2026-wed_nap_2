@@ -310,6 +310,7 @@ public class PublisherControllerTest {
                 "ACTIVE",
                 "rawg-id",
                 null,
+                null,
                 "publisher",
                 LocalDateTime.now()
         );

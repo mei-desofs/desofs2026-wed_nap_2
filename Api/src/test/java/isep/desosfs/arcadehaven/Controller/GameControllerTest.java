@@ -66,6 +66,7 @@ public class GameControllerTest {
                 "ACTIVE",
                 "rawg-id",
                 null,
+                null,
                 "publisher",
                 LocalDateTime.now()
         );
