@@ -167,9 +167,7 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"username": "${{ env.ADMIN_USERNAME }}", "password": "${{ env.ADMIN_PASSWORD }}"}')
 
-          echo "Raw response: $RESPONSE"
-
-          TOKEN=$(echo $RESPONSE | jq -r '.token')
+          TOKEN=$(echo $RESPONSE | jq -r '.access_token')
 
           echo "Parsed token: $TOKEN"
 
