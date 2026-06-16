@@ -51,6 +51,13 @@ public class AdminController {
         return ResponseEntity.ok(adminService.changeUserRole(id, role));
     }
 
+    // V7.4.5 — force immediate re-authentication by revoking all active sessions
+    @DeleteMapping("/users/{id}/sessions")
+    public ResponseEntity<Void> revokeUserSessions(@PathVariable UUID id) {
+        adminService.revokeUserSessions(id);
+        return ResponseEntity.noContent().build();
+    }
+
     // Game management
     @GetMapping("/games")
     public ResponseEntity<List<GameResponse>> getAllGames() {
