@@ -158,6 +158,37 @@ jobs:
 
           exit 1
 
+      - name: Fetch auth token
+        id: auth_token
+        run: |
+          RESPONSE=$(curl -s -X POST \
+            "https://localhost/api/auth/login" \
+            -k \
+            -H "Content-Type: application/json" \
+            -d '{"username": "${{ env.ADMIN_USERNAME }}", "password": "${{ env.ADMIN_PASSWORD }}"}')
+
+          TOKEN=$(echo $RESPONSE | jq -r '.access_token')
+
+          echo "Parsed token: $TOKEN"
+
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+            echo "Failed to fetch auth token"
+            exit 1
+          fi
+
+          echo "TOKEN=$TOKEN" >> $GITHUB_OUTPUT
+
+      # Write ZAP options file with auth header
+      - name: Create ZAP options file
+        run: |
+          cat > ${{ github.workspace }}/Api/reports/zap/options.prop << EOF
+          replacer.full_list(0).description=auth
+          replacer.full_list(0).enabled=true
+          replacer.full_list(0).matchtype=REQ_HEADER
+          replacer.full_list(0).matchstr=Authorization
+          replacer.full_list(0).replacement=Bearer ${{ steps.auth_token.outputs.TOKEN }}
+          EOF
+
       # Fix permissions so ZAP container can write reports
       - name: Fix ZAP report directory permissions
         run: |
@@ -172,13 +203,15 @@ jobs:
             ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py \
             -t https://localhost \
-            -config ssl.verify=false \
+            -z "-config ssl.verify=false" \
+            -z "-configfile /zap/wrk/options.prop" \
             -J zap-baseline-report.json \
             -w zap-baseline-report.md \
             -r zap-baseline-report.html \
             -I
         continue-on-error: true
 
+      # Run OWASP ZAP API scan against OpenAPI spec with auth header injected
       - name: OWASP ZAP API Scan (OpenAPI)
         run: |
           docker run --network=host \
@@ -188,6 +221,7 @@ jobs:
             -t https://localhost/v3/api-docs \
             -f openapi \
             -z "-config ssl.verify=false" \
+            -z "-configfile /zap/wrk/options.prop" \
             -J zap-api-report.json \
             -w zap-api-report.md \
             -r zap-api-report.html \
